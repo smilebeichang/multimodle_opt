@@ -64,7 +64,7 @@ public class SimpleProcess {
             }
             set.toArray(testGene);
             Arrays.sort(testGene);
-            System.out.println(Arrays.toString(testGene));
+            System.out.println(i+" 初始化："+Arrays.toString(testGene));
             paper_genetic[i] = testGene;
         }
         System.out.println("=== init end ===");
@@ -81,9 +81,9 @@ public class SimpleProcess {
         for (int i = 0; i < papers.getPaperSize()-1; i++) {
             if (Math.random() < papers.getPc()) {
                 //单点交叉
-                int a = new Random().nextInt(point);
                 Integer[] temp1 = new Integer[point];
                 Integer[] temp2 = new Integer[point];
+                int a = new Random().nextInt(point);
 
                 for (int j = 0; j < a; j++) {
                     temp1[j] = paper_genetic[i][j];
@@ -103,8 +103,11 @@ public class SimpleProcess {
         System.out.println("=== crossCover end ===");
     }
 
+    /**
+     * 判断size，执行修补操作
+     */
     public static void correct(int i,Integer[] temp1,Integer[] temp2) {
-        //判断size，执行修补操作
+
         Set<Integer> set_begin = new HashSet<Integer>(Arrays.asList(temp1));
         Set<Integer> set_end = new HashSet<Integer>();
         Set<Integer> set_choice = new HashSet<Integer>();
@@ -115,10 +118,11 @@ public class SimpleProcess {
         int num_fill = 0;
         int num_summary = 0;
         if (size == 20){
-            System.out.println("正常交叉");
+            System.out.println(i+ " 正常交叉");
         }else{
-            System.out.println("交叉导致类型不匹配： "+set_begin.size());
+            System.out.println(i+ " 交叉导致类型不匹配： "+set_begin.size());
 
+            //分别将三张类型的数量进行统计
             Iterator<Integer> it = set_begin.iterator();
             while (it.hasNext()) {
                 Integer num =  it.next();
@@ -132,20 +136,13 @@ public class SimpleProcess {
                     num_summary = num_summary+1;
                     set_summary.add(num);
                 }
-
             }
-            System.out.println("choice: "+num_choice+" fill: "+num_fill+" summary: "+num_summary);
+            System.out.println("  choice: "+num_choice+" fill: "+num_fill+" summary: "+num_summary);
 
             if(num_choice<10){
                 while(set_choice.size() != 10){
                     Integer key = new Random().nextInt(20);
                     set_choice.add(key);
-                }
-            }else{
-                while(set_choice.size() != 10){
-                    Iterator<Integer> its = set_choice.iterator();
-                    Integer key = its.next();
-                    set_choice.remove(key);
                 }
             }
 
@@ -154,12 +151,6 @@ public class SimpleProcess {
                     Integer key = Math.abs(new Random().nextInt()) % 10 + 20;
                     set_fill.add(key);
                 }
-            }else{
-                while(set_fill.size() != 5){
-                    Iterator<Integer> its = set_fill.iterator();
-                    Integer key = its.next();
-                    set_fill.remove(key);
-                }
             }
 
             if(num_summary<5){
@@ -167,13 +158,8 @@ public class SimpleProcess {
                     Integer key = Math.abs(new Random().nextInt()) % 10 + 30;
                     set_summary.add(key);
                 }
-            }else{
-                while(set_summary.size() != 5){
-                    Iterator<Integer> its = set_summary.iterator();
-                    Integer key = its.next();
-                    set_summary.remove(key);
-                }
             }
+
 
             set_end.addAll(set_choice);
             set_end.addAll(set_fill);
@@ -182,7 +168,7 @@ public class SimpleProcess {
             Arrays.sort(temp1);
             paper_genetic[i]=temp1;
         }
-        System.out.println(Arrays.toString(paper_genetic[i]));
+        System.out.println("  "+Arrays.toString(paper_genetic[i]));
     }
 
 
@@ -194,22 +180,20 @@ public class SimpleProcess {
         Integer key = 0;
         for (int i = 0; i < papers.getPaperSize(); i++) {
             if(Math.random() < papers.getPm()){
-//                System.out.println("执行变异 "+ i);
                 Random random = new Random();
                 int mutate_point = random.nextInt(papers.getQuestSize()-1);
-                Integer s = paper_genetic[i][mutate_point];
                 Set<Integer> set = new HashSet<Integer>(Arrays.asList( paper_genetic[i]));
+                Integer s = paper_genetic[i][mutate_point];
 
-
-                System.out.println("remove element: "+ s);
-                System.out.println(set);
+                System.out.println(i+" 原试卷: "+set);
+                System.out.println("  remove element: "+ s);
                 set.remove(s);
-                System.out.println(set);
+                System.out.println("  现试卷：  "+set);
 
                 Integer[] temp1 = new Integer[20];
 
                 if (mutate_point<10){
-                    //生成一个合适的key,且不存在set中
+                    //生成一个合适的且不存在set中的key
                     while (set.size() != 20 ){
                         key = random.nextInt(20);
                         if (!key.equals(s)){
@@ -235,8 +219,9 @@ public class SimpleProcess {
                 Arrays.sort(temp1);
                 paper_genetic[i]=temp1;
             }
-            System.out.println(" add element: "+ key);
-            System.out.println(Arrays.toString(paper_genetic[i]));
+            System.out.println("  add element: "+ key);
+            System.out.println("  最终试卷： "+Arrays.toString(paper_genetic[i]));
+            System.out.println();
         }
         System.out.println("=== mutate end ===");
     }
