@@ -13,6 +13,9 @@ import java.util.*;
  */
 public class SimpleProcess2 {
 
+    /**
+     * 初始化题库
+     */
     private static Integer ATTRIBUTE_MAX = 3;
     private static Integer TYPE_CHOICE_NUM = 20;
     private static Integer TYPE_FILL_NUM  = 10;
@@ -23,23 +26,26 @@ public class SimpleProcess2 {
     private static Integer ACT_SUMMARY_NUM  = 5;
     private static Integer[][] paper_genetic =new Integer[100][20];
 
-    static  Questions[] questions =new Questions[40];
+    /**
+     * 容器
+     */
+    static Questions[] questions =new Questions[40];
     static  double[] all_fitness =new double[40];
     static  double[] paper_fitness =new double[100];
+    static Integer[] best_genetic =new Integer[20];
+    static Integer[] best_genetic_one =new Integer[20];
 
-    //定义一个student,其掌握的属性
-    static  String studentHaveAttribute = "abc";
+
+    /**
+     * 定义一个student,其掌握的属性
+     */
+    static  String student_have_attribute = "abc";
 
     static  double ps = 0.2;
     static  double pg = 0.5;
-
-    static Integer[] best_gentic =new Integer[20];
-
-    //全局最好二进制基因，值如何传递下去  ①全局变量  ②方法调用
-    static Integer[] best_gentic_one =new Integer[20];
-
-    //全局最大适应度,flag
     static double best_one =0;
+
+
 
     public static void main(String[] args) {
 
@@ -65,25 +71,6 @@ public class SimpleProcess2 {
             getPaperFitness(paper_genetic);
             elitiststrategy();
         }
-
-
-
-
-//        ga.init();      //500个个体   300Iteration  .7  .05
-//        for (int i = 0; i < ga.getGenerations(); i++) {    //300代迭代
-//            ga.spiltlist();
-//            ga.decoding();
-//            ga.cfitness();           //计算适应度，并赋值给fitness[]
-//            Object[] objects = ga.best_value();//计算一次最小值
-//            best_solution[i] = Double.parseDouble(objects[1].toString());
-//            ga.selection();           //genetic_population_1利用原值并产生新值
-//            ga.crosssover();
-//            ga.change();
-//            ga.elitiststrategy();     //精英策略
-//            minnum[i]=1030-best_solution[i];        //f2
-//            ga.setIteration(i+1);
-//            ga.setMinnum2(minnum[i]);
-//        }
 
     }
 
@@ -154,6 +141,7 @@ public class SimpleProcess2 {
         for (int i = 0; i < papers.getPaperSize(); i++) {
             //随机生成取题目id序列
             int a1=1;
+            int a2=1;
             Integer[] testGene= new Integer[papers.getQuestSize()];
             Set<Integer> set = new HashSet<Integer>();
             for(int j = 0; j < ACT_CHOICE_NUM; j++){
@@ -349,7 +337,7 @@ public class SimpleProcess2 {
         double function_value ;
         int p_temp ;
         for (int i = 0; i < 40; i++) {
-            boolean b = studentHaveAttribute.contains(question[i].getAttributes());
+            boolean b = student_have_attribute.contains(question[i].getAttributes());
             p_temp = b ? 1 : 0;
             function_value = Math.pow(pg,(1-p_temp))*Math.pow((1-ps), p_temp);
             all_fitness[i]=function_value;
@@ -383,20 +371,20 @@ public class SimpleProcess2 {
             if(paper_fitness[i]>max_fitness){
                 max_fitness = paper_fitness[i];
                 max_index = i;
-                best_gentic = paper_genetic[max_index];
+                best_genetic = paper_genetic[max_index];
             }
         }
 
         if (max_fitness>best_one){   //局部变量和全局变量的比较
             best_one = max_fitness;
             max_index_2 = max_index;    //随着每次交叉，轮盘赌，下标产生了变化，只要保存住最优解的基因编码就ok
-            best_gentic_one = paper_genetic[max_index_2];       //全局最优解
+            best_genetic_one = paper_genetic[max_index_2];       //全局最优解
         }
 
         //index,fitness,gentic
         objects[0]=max_index;
         objects[1]=max_fitness;
-        objects[2]=best_gentic;
+        objects[2]=best_genetic;
 
         return objects;
     }
@@ -405,7 +393,7 @@ public class SimpleProcess2 {
         getPaperFitness(paper_genetic);
         Object[] objects = best_value();
         // 替换掉局部最优解
-        paper_genetic[(Integer) objects[0]]= best_gentic_one;
+        paper_genetic[(Integer) objects[0]]= best_genetic_one;
 
     }
 
