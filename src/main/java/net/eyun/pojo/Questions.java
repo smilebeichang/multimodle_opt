@@ -1,5 +1,7 @@
 package net.eyun.pojo;
 
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -7,6 +9,7 @@ import java.util.Set;
 /**
  * @author Created by songb
  */
+@Data
 public class Questions implements Serializable{
     /**
      * 编号
@@ -29,44 +32,10 @@ public class Questions implements Serializable{
      */
 	private String exposure;
 
+    /**
+     * 属性
+     * 5个不同的属性:a b c d e
+     */
+    private String attributes;
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getTypes() {
-        return types;
-    }
-
-    public void setTypes(int types) {
-        this.types = types;
-    }
-
-    public int getChapter() {
-        return chapter;
-    }
-
-    public void setChapter(int chapter) {
-        this.chapter = chapter;
-    }
-
-    public String getDifficult() {
-        return difficult;
-    }
-
-    public void setDifficult(String difficult) {
-        this.difficult = difficult;
-    }
-
-    public String getExposure() {
-        return exposure;
-    }
-
-    public void setExposure(String exposure) {
-        this.exposure = exposure;
-    }
 }
