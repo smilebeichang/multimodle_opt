@@ -1,0 +1,237 @@
+
+body {
+	margin:0;
+	padding:0;
+	/* 原始颜色 */
+	/*background:*#f6f8ff*/
+	/* 根据广农商无法正确显示颜色，使用以下临时颜色 */
+	background-color:#ecf0ff;
+	color: #000000;
+	width: 100%;height: 100%;
+	
+}
+a{
+	font-size:12px;font-family:宋体
+}
+a:link{
+	color:#0000ff;
+	text-decoration:none;
+}
+a:visited{
+	color:#0000ff;
+	text-decoration:none;
+}
+a:hover{
+	color:#ff0000;
+	text-decoration:none;
+}
+
+/* 重写easyui按钮字体颜色，避免和超链接颜色相同 */
+.l-btn-text{
+	color:#000000;
+}
+
+.layout_north{
+	
+}
+
+.div_layout_1{
+	padding:10px 0;
+}
+
+/*信用卡综合区高度*/
+.div_layout_2{
+	height:210px;
+} 
+
+/*借记卡综合区高度*/
+.div_layout_3{
+	height:160px;
+}
+
+/*公司综合区高度*/
+.div_layout_4{
+	height:208px;
+}
+
+/*明细类查询样式*/
+.div_container {
+	margin:auto;
+	padding: 0px;
+	width:100%; 
+}
+.div_container table{
+	width: 100%;
+	border-spacing: 0;	 
+	border-collapse: separate;
+    color: #000000; 
+    border-style: dotted;
+   	border-color: #d2d2d2; 
+    border-width: 0px 0px 0px 1px;
+}
+.div_container  td, .div_container  th {
+	font: normal 12px/12px Arial, Helvetica, sans-serif; 
+	border-collapse: separate;
+    color: #000000;
+    padding: 6px 4px; 
+   	border-style: dotted;
+   	border-color: #d2d2d2; 
+    border-width: 0px 1px 1px 0px;
+   	width:170px;
+}
+.div_container  th {
+	background-color:#efefef; 
+	width:150px;
+	text-align: right;
+}
+.div_container  tr {
+	background-color:#FFFFFF; 
+}
+/* 明细类查询样式结束 */
+
+/*定制化表格样式*/
+.div_table{
+	border-spacing: 0;	 
+	border-collapse: separate;
+    color: #000000; 
+    border-style: dotted;
+   	border-color: #d2d2d2; 
+    border-width: 0px 0px 0px 1px;
+}
+.div_tr {
+	background-color:#FFFFFF; 
+}
+.div_tr > td, .div_tr >th {
+	font: normal 12px/12px Arial, Helvetica, sans-serif; 
+	border-collapse: separate;
+    color: #000000;
+    padding: 6px 2px;
+   	border-style: dotted;
+   	border-color: #d2d2d2; 
+    border-width: 0px 1px 1px 0px;
+}
+.div_tr >th {
+	background-color:#efefef; 
+	text-align: right;
+}
+
+/* 定制化表格样式*/
+
+/* 未使用，后续扩展 */
+.datagrid_table_1{
+	margin:auto;
+	padding: 0;
+	width:100%;
+	height:100%; 	
+}
+
+/*工具条样式，原来toolbar_div_1样式都是自定义的*/
+.toolbar_div_1,.toolbar_div_2{
+	margin:auto;
+	padding: 0;
+	width:100%; 
+	border:0px;
+}
+.toolbar_div_1 table,.toolbar_div_2 table{
+	border-spacing: 0;
+	width: 100%;
+}
+.toolbar_div_1  td, .toolbar_div_1  th ,.toolbar_div_2 td, .toolbar_div_2  th{
+	font: normal 12px/12px Arial, Helvetica, sans-serif; 
+   	border-style: dotted;
+   	/* 原始表框颜色 */
+   	/* border-color: #dddddd; */
+   	/* border-color: #d7d7d7; */
+   	/* 根据广农商无法正确显示颜色，使用以下临时颜色 */
+  	border-color: #d2d2d2; 
+    border-width: 0 1px 1px 0;
+    padding: 2px 2px;
+    width:150px;
+}
+
+.toolbar_div_1  th,.toolbar_div_2  th {
+	/* 根据广农商无法正确显示颜色，使用以下临时颜色 */
+	background-color:#efefef;
+	text-align: right;
+	width:80px;
+}
+.toolbar_div_1  td,.toolbar_div_2  td {
+	background-color:#FFFFFF;
+}
+/*工具条样式结束*、
+
+/*工具条按钮对齐样式*/
+.toolbar_div_1  a {
+	float: left;
+	padding: 1px 1px;
+}
+.toolbar_div_2  a {
+	float: right;
+	padding: 1px 1px;
+}
+/*工具条按钮对齐样式结束*/ 
+ 
+/*  页面按钮样式 */
+
+
+/* .btn_query span,.btn_detail span,.btn_submit span,.btn_insert span,.btn_delete span,.btn_update span,.btn_save span,.btn_import span,.btn_export span,.btn_reset span,.btn_other span{  
+	color:#000000;
+
+} */
+
+/* 页面按钮样式结束 */
+
+/* 设置通用页面背景色 */
+.div_color_1 {
+	/* 原始表框颜色 */
+	/* background-color:#f6f8ff; */
+	/* 根据广农商无法正确显示颜色，使用以下临时颜色 */
+	background-color:#ecf0ff;
+}
+
+/* 重写datagrid背景色 */
+ .datagrid-body{
+	/* 原始表框颜色 */
+	/* background-color:#f6f8ff; */
+	/* 根据广农商无法正确显示颜色，使用以下临时颜色 */
+	background-color:#ecf0ff;
+}
+.datagrid-btable tbody{
+	background-color:#ffffff;
+}
+
+/* 由于广农商设备无法正确识别颜色，故重新调整颜色值 */
+/* 调整datagrid标题背景颜色 */
+.datagrid-header-inner{
+	background-color:#eaeaea;
+}
+.pagination {
+	background-color:#eaeaea;
+}
+.searchMenu{
+	background-color:orange;
+}
+.searchMenunext{
+	background-color:red;
+}
+.broadcast_1{
+	border-style: solid;
+   	border-color: #96c8fe; 
+    border-width: 1px 1px 1px 1px;
+}
+table .workbill_flow{
+		border-color: #95b8e7;
+		border-width: 1px 0px 1px 0px;
+		border-style: solid;
+		background: rgba(0, 0, 0, 0) linear-gradient(to bottom, #eff5ff 0px, #e0ecff 100%) repeat-x scroll 0 0;
+
+	}
+/*设置readonly输入框底色*/
+/*IE写法*/
+/* input{ */
+/* 	background-color:expression((this.readOnly&&this.readOnly==true)?'#efefef':''); */
+/* } */
+/*FireFox chrome写法*/
+/* input[readonly]{ */
+/* 	background-color:#E0E0E0; */
+/* } */

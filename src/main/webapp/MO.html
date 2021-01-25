@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>算法</title>
+    <script type="text/javascript" src="js/sunriseui.js"></script>
+    <link rel="stylesheet" type="text/css" href="themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="themes/icon.css">
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="js/pagination-extend.js"></script>
+    <script type="text/javascript" src="js/mo.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/tradeCss.css" />
+</head>
+<body>
+<div class="easyui-layout" style="width:100%;height:700px;">
+    <!--ztree-->
+    <div data-options="region:'west',split:true" title="Ztree" style="width:200px;">
+        <ul class="easyui-tree" data-options="url:'tree_data.json'"></ul>
+    </div>
+
+   <!--中间-->
+    <div data-options="region:'center'" class="easyui-layout" style="width:100%;height:100%;">
+        <div class="easyui-tabs" style="width:100%;height:100%">
+            <!--第二个table-->
+            <div title="GA" style="padding:10px">
+                <div data-options="region:'center',split:true,border:false,title:'评分表列表'"
+                     style="height: 50%; width: 100%;"  >
+                    <div title="遗传算法" style="padding:10px">
+                        <div id="tb-trans_ga" class="toolbar_div_2">
+                            <form id="query_form_ga">
+                                <table class="datagrid_table_1">
+                                    <tr>
+                                        <th>种群数量：</th>
+                                        <td>
+                                            <input name="population_size" id="population_size" class="easyui-textbox" value="500"  />
+                                        </td>
+                                        <th>迭代次数：</th>
+                                        <td>
+                                            <input name="generations" id="generations" class="easyui-textbox" value="300" />
+                                        </td>
+                                        <th>交叉概率：</th>
+                                        <td>
+                                            <input name="pc" id="pc" class="easyui-textbox" value="0.7" />
+                                        </td>
+                                        <th>变异概率：</th>
+                                        <td>
+                                            <input name="pchange" id="pchange" class="easyui-textbox" value="0.01" />
+                                        </td>
+
+                                        <td colspan="6">
+                                            <a href="#" class="easyui-linkbutton" iconCls="icon-reload" onclick="javascript:$('#query_form_ga').form('reset')">重置</a>
+
+                                            <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'"
+                                               onclick="javascript:insertAndSelectGa()">运行</a>
+
+                                        </td>
+                                    </tr>
+                                </table>
+                            </form>
+                        </div>
+
+                        <table id="query_list_ga" class="easyui-datagrid datagrid_table_1"
+                               data-options="singleSelect:true,nowrap:false,collapsible:true">
+                            <thead>
+                            <tr>
+                                <th data-options="field:'iteration',width:200">迭代次数</th>
+                                <th data-options="field:'minnum2',width:400">最小值</th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+</body>
+</html>
