@@ -23,6 +23,6 @@
 
     <!--配置扫描：交给spring-->
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="net.eyun.mapper"></property>
+        <property name="basePackage" value="net.sysu.mapper"></property>
     </bean>
 </beans>

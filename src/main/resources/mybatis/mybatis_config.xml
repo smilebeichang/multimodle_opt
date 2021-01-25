@@ -11,7 +11,7 @@
     </settings>
     <!--类型取别名,缩写  stu-->
     <typeAliases>
-        <package name="net.eyun.pojo"></package>
+        <package name="net.sysu.pojo"></package>
     </typeAliases>
 
     <!--分页插件-->

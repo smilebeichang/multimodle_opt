@@ -20,6 +20,6 @@
         </tx:attributes>
     </tx:advice>
     <aop:config>
-        <aop:advisor advice-ref="txAdvice" pointcut="execution(* net.eyun.service..*.*(..))"></aop:advisor>
+        <aop:advisor advice-ref="txAdvice" pointcut="execution(* net.sysu.service..*.*(..))"></aop:advisor>
     </aop:config>
 </beans>
