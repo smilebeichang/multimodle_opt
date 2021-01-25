@@ -66,7 +66,7 @@ public class GA {
         GA.population_size = population_size;
     }
 
-    public static int getGenerations() {
+    public  int getGenerations() {
         return generations;
     }
 
