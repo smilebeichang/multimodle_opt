@@ -1,6 +1,9 @@
 package net.sysu.niche.niching;
 import java.util.BitSet;
 
+/**
+ * @author songb
+ */
 public class Individual {
 	private BitSet xBits;
 	private BitSet yBits;

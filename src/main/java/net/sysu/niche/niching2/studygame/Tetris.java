@@ -34,7 +34,7 @@ public class Tetris extends JFrame {
     menu.add(help);
     frame.setLocationRelativeTo(null);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    frame.setSize(220, 275);
+    frame.setSize(520, 575);
     frame.setTitle("TetrisÄÚ²â°æ");
     // frame.setUndecorated(true);
     frame.setVisible(true);

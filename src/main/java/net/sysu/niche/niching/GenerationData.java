@@ -1,5 +1,8 @@
 package net.sysu.niche.niching;
 
+/**
+ * @author songb
+ */
 public class GenerationData {
  
 	private int timesAdded;
@@ -21,7 +24,8 @@ public class GenerationData {
 		maxFitness += _maxFitness;
 	}
 	
-	public String toString() {
+	@Override
+    public String toString() {
 		return (avgFitness / timesAdded) + "\t" + (minFitness / timesAdded) + "\t" + (maxFitness / timesAdded);
 	}
 

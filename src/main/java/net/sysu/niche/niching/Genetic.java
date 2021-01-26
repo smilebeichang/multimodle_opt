@@ -21,11 +21,11 @@ import javafx.util.Duration;
 
 public class Genetic extends Application {
 
-    /*
+    /**
      * Global Variables
      */
-	final int bitLength = 32;   // Amount of bits to represent the chromosomes
-	final double maxValue = Math.pow(2, bitLength);   // Max value for the given bit length
+	final int bitLength = 32;  // Amount of bits to represent the chromosomes
+	final double maxValue = Math.pow(2, bitLength); // Max value for the given bit length
 	final double minRange = 0;   // Range of chromosomes - depends on function
 	final double maxRange = 1;
 	final double range = Math.abs(maxRange - minRange);
@@ -39,7 +39,7 @@ public class Genetic extends Application {
 	final boolean useY = functionNumber == 6;  // Only M6 uses y
 	Random rand = new Random();
 	
-    /*
+    /**
      * Start
      * Entry point to application using JavaFX
      */
@@ -55,8 +55,12 @@ public class Genetic extends Application {
 		int numGenerations = 500;
 		
 		// These must be even
-		if (populationSize % 2 != 0) populationSize = populationSize + 1;
-		if (crossoverIndividuals % 2 != 0) crossoverIndividuals = crossoverIndividuals + 1;
+		if (populationSize % 2 != 0) {
+            populationSize = populationSize + 1;
+        }
+		if (crossoverIndividuals % 2 != 0) {
+            crossoverIndividuals = crossoverIndividuals + 1;
+        }
 
 		// Niching methods - either sharing or sequential
 		boolean useSharing = false;
@@ -170,7 +174,9 @@ public class Genetic extends Application {
         					// Choose first parent
         					roll = rand.nextDouble();
         					do {
-        						if (roll <= rouletteWheel[parent1Idx]) break;
+        						if (roll <= rouletteWheel[parent1Idx]) {
+                                    break;
+                                }
         						parent1Idx++;
         					} while (parent1Idx < populationSize);
         					parent1 = population[parent1Idx];
@@ -178,11 +184,15 @@ public class Genetic extends Application {
         					// Choose second parent
         					roll = rand.nextDouble();
         					do {
-        						if (roll <= rouletteWheel[parent2Idx]) break;
+        						if (roll <= rouletteWheel[parent2Idx]) {
+                                    break;
+                                }
         						parent2Idx++;
         					} while(parent2Idx < populationSize);
         					if (parent1Idx == parent2Idx)   // Choose the next one if same
-        						parent2Idx = (parent2Idx >= populationSize - 1) ? 0 : parent2Idx + 1;
+                            {
+                                parent2Idx = (parent2Idx >= populationSize - 1) ? 0 : parent2Idx + 1;
+                            }
         					parent2 = population[parent2Idx];
         					
         					///////////////////////////////
@@ -226,12 +236,14 @@ public class Genetic extends Application {
         					// Mutate children
         					for (int idx = 0; idx < bitLength; idx++) {
         						roll = rand.nextDouble();
-        						if (roll < mutationRate)
-        							childXBits1.flip(idx);
+        						if (roll < mutationRate) {
+                                    childXBits1.flip(idx);
+                                }
         						
         						roll = rand.nextDouble();
-        						if (roll < mutationRate)
-        							childXBits2.flip(idx);
+        						if (roll < mutationRate) {
+                                    childXBits2.flip(idx);
+                                }
         					}
         					
         					childXValue1 = childXBits1.toLongArray() == null ? 0 : childXBits1.toLongArray()[0];
@@ -292,16 +304,18 @@ public class Genetic extends Application {
         				}   // End crossover
         				
         				// Assign fitness if sharing is used
-        				if (useSharing)
-        					for (int idx = 0; idx < populationSize; idx++)
-        					{
-        						nextGenPopulation[idx].setEffectiveFitness(calculateFitnessSharing(nextGenPopulation[idx], nextGenPopulation));
-        					}
-        				if (useSequential)
-        					for (int idx = 0; idx < populationSize; idx++)
-        					{
-        						population[idx].setEffectiveFitness(calculateFitnessSequential(nextGenPopulation[idx], sequentialSolutionsX, sequentialSolutionsY));
-        					}
+        				if (useSharing) {
+                            for (int idx = 0; idx < populationSize; idx++)
+                            {
+                                nextGenPopulation[idx].setEffectiveFitness(calculateFitnessSharing(nextGenPopulation[idx], nextGenPopulation));
+                            }
+                        }
+        				if (useSequential) {
+                            for (int idx = 0; idx < populationSize; idx++)
+                            {
+                                population[idx].setEffectiveFitness(calculateFitnessSequential(nextGenPopulation[idx], sequentialSolutionsX, sequentialSolutionsY));
+                            }
+                        }
         				
         				// Move to next generation
         				population = nextGenPopulation;
@@ -334,8 +348,9 @@ public class Genetic extends Application {
             	double maxFitness = Double.MIN_VALUE;
             	
             	for (int idx = 0; idx < populationSize; idx++) {
-            		if (population[idx].getActualFitness() > maxFitness)
-            			apex = population[idx];
+            		if (population[idx].getActualFitness() > maxFitness) {
+                        apex = population[idx];
+                    }
             	}
 
             	sequentialSolutionsX[sequenceIdx] = apex.getX();
@@ -387,12 +402,14 @@ public class Genetic extends Application {
 
 		for (int idx = 0; idx < population.length; idx++) {
 			distanceSquared = Math.pow(population[idx].getX() - individual.getX(), 2) + Math.pow(population[idx].getY() - individual.getY(), 2);
-			if (distanceSquared < sigmaSquared) 
-				denominator += 1 - Math.pow(distanceSquared / sigmaSquared, SHARED_ALPHA / 2);
+			if (distanceSquared < sigmaSquared) {
+                denominator += 1 - Math.pow(distanceSquared / sigmaSquared, SHARED_ALPHA / 2);
+            }
 		}
 		
-		if (denominator == 0)
-			denominator = 1;
+		if (denominator == 0) {
+            denominator = 1;
+        }
 		return individual.getActualFitness() / denominator;
 	}
 	
@@ -480,8 +497,12 @@ public class Genetic extends Application {
 			BitSet xBits = new BitSet(bitLength);   // initializes to all 0
 			BitSet yBits = new BitSet(bitLength);
 			for (int i = 0; i < bitLength; i++) {
-			 	if (rand.nextDouble() < 0.5) xBits.flip(i);   // randomly flip bits
-			 	if (rand.nextDouble() < 0.5) yBits.flip(i);
+			 	if (rand.nextDouble() < 0.5) {
+                    xBits.flip(i);   // randomly flip bits
+                }
+			 	if (rand.nextDouble() < 0.5) {
+                    yBits.flip(i);
+                }
 			}
 			xValue = xBits.toLongArray() == null ? 0 : xBits.toLongArray()[0];
 			yValue = yBits.toLongArray() == null ? 0 : yBits.toLongArray()[0];
@@ -493,16 +514,18 @@ public class Genetic extends Application {
 		}
 		
 		// Assign fitness if sharing is used
-		if (useSharing)
-			for (int idx = 0; idx < populationSize; idx++)
-			{
-				population[idx].setEffectiveFitness(calculateFitnessSharing(population[idx], population));
-			}
-		if (useSequential)
-			for (int idx = 0; idx < populationSize; idx++)
-			{
-				population[idx].setEffectiveFitness(calculateFitnessSequential(population[idx], sequentialSolutionsX, sequentialSolutionsY));
-			}
+		if (useSharing) {
+            for (int idx = 0; idx < populationSize; idx++)
+            {
+                population[idx].setEffectiveFitness(calculateFitnessSharing(population[idx], population));
+            }
+        }
+		if (useSequential) {
+            for (int idx = 0; idx < populationSize; idx++)
+            {
+                population[idx].setEffectiveFitness(calculateFitnessSequential(population[idx], sequentialSolutionsX, sequentialSolutionsY));
+            }
+        }
 		
 		return population;
     }
@@ -517,8 +540,12 @@ public class Genetic extends Application {
 		for (int idx = 0; idx < population.length; idx++) {
 			fitness = population[idx].getActualFitness();
 			sumFitness += fitness;
-			if (fitness < minFitness) minFitness = fitness;
-			if (fitness > maxFitness) maxFitness = fitness;
+			if (fitness < minFitness) {
+                minFitness = fitness;
+            }
+			if (fitness > maxFitness) {
+                maxFitness = fitness;
+            }
 		}
 		//System.out.println("Avg Fit (" + (sumFitness / population.length) + "), Min Fit (" + minFitness + "), Max Fitness (" + maxFitness + ")");
 		System.out.println(generationIdx + "\t" + (sumFitness / population.length) + "\t" + minFitness + "\t" + maxFitness);
@@ -534,8 +561,12 @@ public class Genetic extends Application {
 		for (int idx = 0; idx < population.length; idx++) {
 			fitness = population[idx].getActualFitness();
 			sumFitness += fitness;
-			if (fitness < minFitness) minFitness = fitness;
-			if (fitness > maxFitness) maxFitness = fitness;
+			if (fitness < minFitness) {
+                minFitness = fitness;
+            }
+			if (fitness > maxFitness) {
+                maxFitness = fitness;
+            }
 		}
 		
 		generationData[generationIdx].addData(minFitness, (sumFitness / population.length), maxFitness);
