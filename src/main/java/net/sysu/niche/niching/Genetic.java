@@ -19,6 +19,9 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+/**
+ * @author songb
+ */
 public class Genetic extends Application {
 
     /**
@@ -78,7 +81,7 @@ public class Genetic extends Application {
         		new LineChart<Number,Number>(xAxis,yAxis);
         lineChart.setTitle("Population=" + populationSize + ", Generations=" + numGenerations);
         lineChart.setAnimated(false);
-        
+
         // Plot Function
         XYChart.Series series = new XYChart.Series();
         series.setName("Function");
@@ -302,7 +305,13 @@ public class Genetic extends Application {
         					nextGenPopulation[childIdx + 1] = new Individual(childXBits2, childYBits2, childX2, childY2, calculateFitness(childX2, childY2));
         				
         				}   // End crossover
-        				
+
+        				//////////////////////////////
+                        //////////
+                        //////////    NICHE
+                        //////////
+                        /////////////////////////////
+
         				// Assign fitness if sharing is used
         				if (useSharing) {
                             for (int idx = 0; idx < populationSize; idx++)
@@ -464,7 +473,7 @@ public class Genetic extends Application {
     }
 
 	/*
-	 * Get Roulette Wheel
+	 * Get Roulette Wheel   轮盘赌  适应度加权
 	 * Return cumulative distribution weighted by fitness
 	 */
 	double[] getRouletteWheel(Individual[] population) {
