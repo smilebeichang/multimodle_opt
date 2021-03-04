@@ -6,11 +6,12 @@ import net.sysu.pojo.Questions;
 import java.math.BigDecimal;
 import java.util.*;
 
+
 /**
  * Created by IntelliJ IDEA.
  *
  * @Author : songbeichang
- * @create 2020/11/23 0:17
+ * @create 2021/02/23 0:17
  */
 public class SimpleProcess2 {
 
@@ -46,6 +47,8 @@ public class SimpleProcess2 {
     static  double ps = 0.2;
     //在并不完全掌握试题j所考察的所有知识点下猜对的概率。
     static  double pg = 0.5;
+
+
 
 
 

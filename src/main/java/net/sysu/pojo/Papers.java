@@ -29,7 +29,7 @@ public class Papers implements Serializable{
     private double pc;
     private double pm;
 
-    private  double[] fitness =new double[400];
+    private  double[] fitness =new double[40];
     private Integer[] bestGene =new Integer[20];
 
 
