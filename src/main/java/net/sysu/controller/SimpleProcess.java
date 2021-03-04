@@ -82,7 +82,6 @@ public class SimpleProcess {
             if (Math.random() < papers.getPc()) {
                 //单点交叉
                 Integer[] temp1 = new Integer[point];
-                Integer[] temp2 = new Integer[point];
                 int a = new Random().nextInt(point);
 
                 for (int j = 0; j < a; j++) {
@@ -91,13 +90,8 @@ public class SimpleProcess {
                 for (int j = a; j < point; j++) {
                     temp1[j] = paper_genetic[i+1][j];
                 }
-//                for (int j = 0; j < a; j++) {
-//                    temp2[j] = paper_genetic[i+1][j];
-//                }
-//                for (int j = a; j < point; j++) {
-//                    temp2[j] = paper_genetic[i][j];
-//                }
-                correct(i,temp1,temp2);
+                //执行修补操作
+                correct(i,temp1);
             }
         }
         System.out.println("=== crossCover end ===");
@@ -106,7 +100,7 @@ public class SimpleProcess {
     /**
      * 判断size，执行修补操作
      */
-    public static void correct(int i,Integer[] temp1,Integer[] temp2) {
+    public static void correct(int i,Integer[] temp1) {
 
         Set<Integer> set_begin = new HashSet<Integer>(Arrays.asList(temp1));
         Set<Integer> set_end = new HashSet<Integer>();
@@ -118,7 +112,7 @@ public class SimpleProcess {
         int num_fill = 0;
         int num_summary = 0;
         if (size == 20){
-            System.out.println(i+ " 正常交叉");
+            System.out.println(i+ " 正常交叉,无需处理");
         }else{
             System.out.println(i+ " 交叉导致类型不匹配： "+set_begin.size());
 
@@ -188,7 +182,7 @@ public class SimpleProcess {
                 System.out.println(i+" 原试卷: "+set);
                 System.out.println("  remove element: "+ s);
                 set.remove(s);
-                System.out.println("  现试卷：  "+set);
+                System.out.println("  临时试卷： "+set);
 
                 Integer[] temp1 = new Integer[20];
 
