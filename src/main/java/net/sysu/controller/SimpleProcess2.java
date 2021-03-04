@@ -3,6 +3,7 @@ package net.sysu.controller;
 import net.sysu.pojo.Papers;
 import net.sysu.pojo.Questions;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -24,51 +25,45 @@ public class SimpleProcess2 {
     private static Integer ACT_CHOICE_NUM = 10;
     private static Integer ACT_FILL_NUM  = 5;
     private static Integer ACT_SUMMARY_NUM  = 5;
-    private static Integer[][] paper_genetic =new Integer[100][20];
+    private static Integer[][] paper_genetic =new Integer[10][20];
 
     /**
      * 容器
      */
     static Questions[] questions =new Questions[40];
     static  double[] all_fitness =new double[40];
-    static  double[] paper_fitness =new double[100];
-    static Integer[] best_genetic =new Integer[20];
-    static Integer[] best_genetic_one =new Integer[20];
+
+    static  double[] paper_fitness =new double[10];
+
 
 
     /**
      * 定义一个student,其掌握的属性
      */
-    static  String student_have_attribute = "abc";
+    static  String student_have_attribute = "abcd";
 
+    //在掌握了试题j所考察的所有知识点的情况下做错的概率；
     static  double ps = 0.2;
+    //在并不完全掌握试题j所考察的所有知识点下猜对的概率。
     static  double pg = 0.5;
-    static double best_one =0;
 
 
 
     public static void main(String[] args) {
 
         Papers papers = new Papers();
-        papers.setPaperSize(100);
+        papers.setPaperSize(10);
         papers.setQuestSize(20);
-        papers.setPc(1);
-        papers.setPm(1);
+        papers.setPc(0.5);
+        papers.setPm(0.5);
         initItemBank();
-//        for (int i = 0; i < 20; i++) {
-//            System.out.println(questions[i].toString());
-//
-//        }
+        calFitness(questions);
         init(papers);
-        for (int i = 0; i < 100; i++) {
-            selection(paper_genetic);
+//        getPaperFitness();
+        for (int i = 0; i < 2; i++) {
+            selection();
             crossCover(papers);
             mutate(papers);
-            getALLFitness(questions);
-//        for (int i = 0; i < 40; i++) {
-//            System.out.println(i+" 试题的适应度："+all_fitness[i]);
-//        }
-            getPaperFitness(paper_genetic);
             elitiststrategy();
         }
 
@@ -81,67 +76,143 @@ public class SimpleProcess2 {
     public static void initItemBank(){
 
         //选择题
-//        System.out.println("====== 选择题  ======");
+        System.out.println("====== 选择题  ======");
         for (int i = 0; i < TYPE_CHOICE_NUM; i++) {
             Questions question = new Questions();
             String attributes = "";
             int attNum = new Random().nextInt(ATTRIBUTE_MAX);
+            Set<String> fill_set = new HashSet<>();
             for (int j = 0; j < attNum+1; j++) {
-                attributes = attributes + (char)(Math.random()*5+'a');
+                //a的ASCII码 将这个运算后的数字强制转换成字符
+                //属性的去重操作
+                while (fill_set.size() == j ){
+                    String c = ((char) (Math.random() * 5 + 'a'))+"";
+                    fill_set.add(c);
+                }
             }
+            attributes = fill_set.toString();
             question.setId(i);
             question.setAttributes(attributes);
             questions[question.getId()]=question;
-//            System.out.println("id："+question.getId()+" 属性："+question.getAttributes());
+            System.out.println("id："+question.getId()+" 属性："+question.getAttributes());
 
         }
         System.out.println();
 
         //填空题
-//        System.out.println("====== 填空题  ======");
+        System.out.println("====== 填空题  ======");
         for (int i = 0; i < TYPE_FILL_NUM; i++) {
             Questions question = new Questions();
             String attributes = "";
             int attNum = new Random().nextInt(ATTRIBUTE_MAX);
+            Set<String> fill_set = new HashSet<>();
             for (int j = 0; j < attNum+1; j++) {
-                attributes = attributes + (char)(Math.random()*5+'a');
+                //属性的去重操作
+                while (fill_set.size() == j ){
+                    String c = ((char) (Math.random() * 5 + 'a'))+"";
+                    fill_set.add(c);
+                }
             }
+            attributes = fill_set.toString();
             question.setId(i+TYPE_CHOICE_NUM);
             question.setAttributes(attributes);
             questions[question.getId()]=question;
-//            System.out.println("id："+question.getId()+" 属性："+question.getAttributes());
+            System.out.println("id："+question.getId()+" 属性："+question.getAttributes());
             System.out.print("");
         }
         System.out.println();
 
         //简答题
-//        System.out.println("====== 简答题  ======");
+        System.out.println("====== 简答题  ======");
+
         for (int i = 0; i < TYPE_SUMMARY_NUM; i++) {
             Questions question = new Questions();
             String attributes = "" ;
             int attNum = new Random().nextInt(ATTRIBUTE_MAX);
+            Set<String> fill_set = new HashSet<>();
             for (int j = 0; j < attNum+1; j++) {
-                attributes = attributes + (char)(Math.random()*5+'a');
+                //属性的去重操作
+                while (fill_set.size() == j ){
+                    String c = ((char) (Math.random() * 5 + 'a'))+"";
+                    fill_set.add(c);
+                }
             }
+            attributes = fill_set.toString();
             question.setId(i+TYPE_CHOICE_NUM+TYPE_FILL_NUM);
             question.setAttributes(attributes);
             questions[question.getId()]=question;
-//            System.out.println("id："+question.getId()+" 属性："+question.getAttributes());
+            System.out.println("id："+question.getId()+" 属性："+question.getAttributes());
         }
 
+    }
 
+    /**
+     * 根据属性掌握情况，计算每道题的适应度值
+     */
+    public static void calFitness(Questions[] questions){
+        for (int i = 0; i < questions.length; i++){
+//
+
+            boolean a = true;
+            boolean b = true;
+            boolean c = true;
+            String attSub = questions[i].getAttributes().substring(1,questions[i].getAttributes().length()-1);
+            String attArray[] = attSub.split(",");
+
+            for (int j = 0; j < attArray.length; j++){
+                switch (j){
+                    case 0: a = student_have_attribute.contains(attArray[j].trim());break;
+                    case 1: b = student_have_attribute.contains(attArray[j].trim());break;
+                    case 2: c = student_have_attribute.contains(attArray[j].trim());break;
+                    default:break;
+                }
+
+            }
+            int potential_responses = 0;
+            if (a & b & c){
+                potential_responses = 1;
+            }
+
+            double que_fit = (Math.pow(pg,(1-potential_responses))) * (Math.pow((1-ps),potential_responses));
+            all_fitness[i]=que_fit;
+        }
+        System.out.println("试题的适应度容器大小："+all_fitness.length+"  试题的适应度如下： ");
+        for (int i = 0; i < all_fitness.length; i++) {
+            System.out.print(all_fitness[i]+",");
+        }
+        System.out.println();
+
+    }
+
+
+    /**
+     * 计算每张试卷的适应度
+     */
+    public static void getPaperFitness() {
+        double sum = 0;
+        for (int i = 0; i < 10; i++) {
+            double tmp_value =0;
+            Integer[] integers = paper_genetic[i];
+            for (int j = 0; j < 20; j++) {
+                tmp_value += all_fitness[integers[j]];
+            }
+            double   f   =   tmp_value;
+            BigDecimal b   =   new   BigDecimal(f);
+            double   f1   =   b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            paper_fitness[i]=f1;
+            sum = sum + f1;
+        }
+        System.out.println("总和："+sum);
     }
 
     /**
      * 随机生成初代种群
      */
     public static void  init(Papers papers) {
-        System.out.println();
-//        System.out.println("=== init begin ===");
+        System.out.println("=== init begin ===");
         for (int i = 0; i < papers.getPaperSize(); i++) {
             //随机生成取题目id序列
-            int a1=1;
-            int a2=1;
+
             Integer[] testGene= new Integer[papers.getQuestSize()];
             Set<Integer> set = new HashSet<Integer>();
             for(int j = 0; j < ACT_CHOICE_NUM; j++){
@@ -165,10 +236,10 @@ public class SimpleProcess2 {
             }
             set.toArray(testGene);
             Arrays.sort(testGene);
-//            System.out.println(i+" 初始化："+Arrays.toString(testGene));
+            System.out.println(i+" 选取题ID，构成初始试卷："+Arrays.toString(testGene));
             paper_genetic[i] = testGene;
         }
-//        System.out.println("=== init end ===");
+        System.out.println("=== init end ===");
 
     }
 
@@ -178,13 +249,12 @@ public class SimpleProcess2 {
      */
     public static void crossCover(Papers papers){
         System.out.println();
-//        System.out.println("=== crossCover begin ===");
+        System.out.println("=== crossCover begin ===");
         Integer point = papers.getQuestSize();
         for (int i = 0; i < papers.getPaperSize()-1; i++) {
             if (Math.random() < papers.getPc()) {
                 //单点交叉
                 Integer[] temp1 = new Integer[point];
-                Integer[] temp2 = new Integer[point];
                 int a = new Random().nextInt(point);
 
                 for (int j = 0; j < a; j++) {
@@ -194,16 +264,16 @@ public class SimpleProcess2 {
                     temp1[j] = paper_genetic[i+1][j];
                 }
                 int a1=1;
-                correct(i,temp1,temp2);
+                correct(i,temp1);
             }
         }
-//        System.out.println("=== crossCover end ===");
+        System.out.println("=== crossCover end ===");
     }
 
     /**
      * 判断size，执行修补操作
      */
-    public static void correct(int i,Integer[] temp1,Integer[] temp2) {
+    public static void correct(int i,Integer[] temp1) {
 
         int a1=1;
         Set<Integer> set_begin = new HashSet<Integer>(Arrays.asList(temp1));
@@ -216,9 +286,9 @@ public class SimpleProcess2 {
         int num_fill = 0;
         int num_summary = 0;
         if (size == 20){
-//            System.out.println(i+ " 正常交叉");
+            System.out.println(i+ " 正常交叉,无需处理");
         }else{
-//            System.out.println(i+ " 交叉导致类型不匹配： "+set_begin.size());
+            System.out.println(i+ " 交叉导致类型不匹配： "+set_begin.size());
 
             //分别将三张类型的数量进行统计
             Iterator<Integer> it = set_begin.iterator();
@@ -236,8 +306,8 @@ public class SimpleProcess2 {
                     set_summary.add(num);
                 }
             }
-            int a2=1;
-//            System.out.println("  choice: "+num_choice+" fill: "+num_fill+" summary: "+num_summary);
+
+            System.out.println("  choice: "+num_choice+" fill: "+num_fill+" summary: "+num_summary);
 
             if(num_choice<10){
                 while(set_choice.size() != 10){
@@ -260,7 +330,6 @@ public class SimpleProcess2 {
                 }
             }
 
-
             set_end.addAll(set_choice);
             set_end.addAll(set_fill);
             set_end.addAll(set_summary);
@@ -268,7 +337,7 @@ public class SimpleProcess2 {
             Arrays.sort(temp1);
             paper_genetic[i]=temp1;
         }
-//        System.out.println("  "+Arrays.toString(paper_genetic[i]));
+        System.out.println("  "+Arrays.toString(paper_genetic[i]));
     }
 
 
@@ -277,7 +346,7 @@ public class SimpleProcess2 {
      */
     public static void mutate(Papers papers){
         System.out.println();
-//        System.out.println("=== mutate begin ===");
+        System.out.println("=== mutate begin ===");
         Integer key = 0;
         for (int i = 0; i < papers.getPaperSize(); i++) {
             if(Math.random() < papers.getPm()){
@@ -286,10 +355,10 @@ public class SimpleProcess2 {
                 Set<Integer> set = new HashSet<Integer>(Arrays.asList( paper_genetic[i]));
                 Integer s = paper_genetic[i][mutate_point];
                 int a=1;
-//                System.out.println(i+" 原试卷: "+set);
-//                System.out.println("  remove element: "+ s);
+                System.out.println(i+" 原试卷: "+set);
+                System.out.println("  remove element: "+ s);
                 set.remove(s);
-//                System.out.println("  现试卷：  "+set);
+                System.out.println("  临时试卷：  "+set);
 
                 Integer[] temp1 = new Integer[20];
 
@@ -323,130 +392,99 @@ public class SimpleProcess2 {
                 Arrays.sort(temp1);
                 paper_genetic[i]=temp1;
             }
-//            System.out.println("  add element: "+ key);
-//            System.out.println("  最终试卷： "+Arrays.toString(paper_genetic[i]));
-//            System.out.println();
+            System.out.println("  add element: "+ key);
+            System.out.println("  最终试卷： "+Arrays.toString(paper_genetic[i]));
+            System.out.println();
         }
-//        System.out.println("=== mutate end ===");
-    }
-
-    /**
-     * 计算每道题目的适应度
-     */
-    public static void getALLFitness(Questions[] question) {
-        double function_value ;
-        int p_temp ;
-        for (int i = 0; i < 40; i++) {
-            boolean b = student_have_attribute.contains(question[i].getAttributes());
-            p_temp = b ? 1 : 0;
-            function_value = Math.pow(pg,(1-p_temp))*Math.pow((1-ps), p_temp);
-            all_fitness[i]=function_value;
-        }
-    }
-
-    /**
-     * 计算每张试卷的适应度
-     */
-    public static void getPaperFitness(Integer[][] paper_genetic) {
-        for (int i = 0; i < 100; i++) {
-            double function_value =0;
-            Integer[] integers = paper_genetic[i];
-            for (int j = 0; j < 20; j++) {
-                function_value += all_fitness[integers[j]];
-            }
-            paper_fitness[i]=function_value;
-            System.out.println(i+"试卷的适应度： "+function_value);
-        }
+        System.out.println("=== mutate end ===");
     }
 
 
 
-    public static Object[] best_value(){
-        Object[] objects = new Object[3];
-        double max_fitness = paper_fitness[0];
-        int max_index = 0;
-        int max_index_2 = 0;
 
-        for (int i = 0; i < 100; i++) {
-            if(paper_fitness[i]>max_fitness){
-                max_fitness = paper_fitness[i];
-                max_index = i;
-                best_genetic = paper_genetic[max_index];
-            }
-        }
-
-        if (max_fitness>best_one){   //局部变量和全局变量的比较
-            best_one = max_fitness;
-            max_index_2 = max_index;    //随着每次交叉，轮盘赌，下标产生了变化，只要保存住最优解的基因编码就ok
-            best_genetic_one = paper_genetic[max_index_2];       //全局最优解
-        }
-
-        //index,fitness,gentic
-        objects[0]=max_index;
-        objects[1]=max_fitness;
-        objects[2]=best_genetic;
-
-        return objects;
-    }
 
     public static void  elitiststrategy(){
-        getPaperFitness(paper_genetic);
-        Object[] objects = best_value();
-        // 替换掉局部最优解
-        paper_genetic[(Integer) objects[0]]= best_genetic_one;
+//        getPaperFitness(paper_genetic);
+//        Object[] objects = best_value();
+//        // 全局最优解替换掉局部最优解
+//        paper_genetic[(Integer) objects[0]]= best_genetic_one;
 
     }
 
 
 
-    public static   void selection(Integer[][] paper_genetic){
-        int population_size = 100;
+    public static   void selection( ){
+        //10个个体（试卷）   20个基因（题目）
+        int population_size = 10;
         double fitness_sum = 0;
+        double[] fitness_tmp = new double[population_size];
         double[] fitness_proportion = new double[population_size];
         double cumsum = 0;
-        double[] pie_fitness = new double[100];
+        double[] pie_fitness = new double[population_size];
 
 
         Integer[][] new_genetic_population =new Integer[population_size][];
         int random_selection_id = 0;
 
+
         for (int i = 0; i < population_size; i++) {
-            fitness_sum += paper_fitness[i];
+
+            double tmp_value =0;
+            double tmp_fitness_sum =0;
+            Integer[] integers = paper_genetic[i];
+            for (int j = 0; j < 20; j++) {
+                tmp_value += all_fitness[integers[j]];
+            }
+            BigDecimal b  =   new   BigDecimal(tmp_value);
+            tmp_fitness_sum =   b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            double tmp =tmp_fitness_sum;
+            fitness_tmp[i]=tmp;
+            System.out.println(i+"试卷的适应度： "+tmp_fitness_sum);
+            fitness_sum = tmp_fitness_sum + fitness_sum;
+            System.out.println("目前总试卷的适应度： "+fitness_sum);
         }
-        //各自的比例
+
         for (int i = 0; i < population_size; i++) {
-            fitness_proportion[i] = paper_fitness[i] / fitness_sum;
+            //各自的比例
+            fitness_proportion[i] = fitness_tmp[i] / fitness_sum;
         }
+
         //越大的适应度，其叠加时增长越快，所以有更大的概率被选中
         for (int i = 0; i < population_size; i++) {
             pie_fitness[i] = cumsum + fitness_proportion[i];
             cumsum += fitness_proportion[i];
+            System.out.println(i+"目前总试卷的适应度百分比： "+pie_fitness[i]);
         }
+
         //累加的概率为1
         pie_fitness[population_size-1] = 1;
 
-
+        //初始化容器
         double[] random_selection = new double[population_size];
 
         for (int i = 0; i < population_size; i++) {
             random_selection[i] = Math.random();
+            //System.out.println(random_selection[i]);
         }
         //排序
         Arrays.sort(random_selection);
 
+        //轮盘赌可能存在点问题
         //随着random_selection_id的递增,random_selection[random_selection_id]逐渐变大
         for (int i = 0; i < population_size; i++) {
             while (random_selection_id < population_size && random_selection[random_selection_id] < pie_fitness[i]){
-                new_genetic_population[random_selection_id]   =paper_genetic[i];
+                new_genetic_population[random_selection_id]   = paper_genetic[i];
                 random_selection_id += 1;
             }
         }
-
+        System.out.println();
+        //输出老种群的适应度值
+        getPaperFitness();
         //重新赋值种群的编码
         paper_genetic=new_genetic_population;
-
+        //输出新种群的适应度值
+        getPaperFitness();
     }
-
 
 }
 
