@@ -26,7 +26,7 @@ public class SimpleProcess2 {
     private static Integer ACT_CHOICE_NUM = 10;
     private static Integer ACT_FILL_NUM  = 5;
     private static Integer ACT_SUMMARY_NUM  = 5;
-    private static Integer[][] paper_genetic =new Integer[10][20];
+
 
     /**
      * 容器
@@ -34,7 +34,8 @@ public class SimpleProcess2 {
     static Questions[] questions =new Questions[40];
     static  double[] all_fitness =new double[40];
 
-    static  double[] paper_fitness =new double[10];
+    static  double[]   paper_fitness =new double[10];
+    static Integer[][] paper_genetic =new Integer[10][20];
 
 
 
@@ -60,13 +61,14 @@ public class SimpleProcess2 {
         papers.setPc(0.5);
         papers.setPm(0.5);
         initItemBank();
-        calFitness(questions);
+//        calFitness(questions);
         init(papers);
 //        getPaperFitness();
         for (int i = 0; i < 2; i++) {
             selection();
             crossCover(papers);
             mutate(papers);
+
             elitiststrategy();
         }
 

@@ -10,7 +10,7 @@ import java.util.Arrays;
 public class Niche {
 
     /**
-     *  算法 NGA
+     *  算法 小生境
      *
      * （1）设置进化代数计数器；随机生成M个初始群体P（t），并求出各个个体的适应度F （i=1，2，M）。
      *
@@ -39,8 +39,8 @@ public class Niche {
     }
 
     private static int population_size  = 10;
-    static int Glength = 24;        //Glength = 24
-    static int singlelength = 8;          //singlelength = 8
+    private static int Glength = 24;              //Glength = 24
+    private static int singlelength = 8;          //singlelength = 8
 
     static Integer[][] genetic_population =new Integer[10][24];
     static Integer[][] genetic_population_1 =new Integer[10][8];  //genetic_population = []
