@@ -23,6 +23,9 @@ public class SimpleProcess2 {
     private static Integer TYPE_FILL_NUM  = 10;
     private static Integer TYPE_SUMMARY_NUM  = 10;
 
+    /**
+     * 单张试卷题目数量
+     */
     private static Integer ACT_CHOICE_NUM = 10;
     private static Integer ACT_FILL_NUM  = 5;
     private static Integer ACT_SUMMARY_NUM  = 5;
@@ -40,17 +43,17 @@ public class SimpleProcess2 {
 
 
     /**
-     * 定义一个student,其掌握的属性
+     * 定义一个student,其掌握的属性  有误差
      */
     static  String student_have_attribute = "abcd";
 
-    //在掌握了试题j所考察的所有知识点的情况下做错的概率；
+
+    /**
+     * 在掌握了试题j所考察的所有知识点的情况下做错的概率 ps
+     * 在并不完全掌握试题j所考察的所有知识点下猜对的概率 pg
+     */
     static  double ps = 0.2;
-    //在并不完全掌握试题j所考察的所有知识点下猜对的概率。
     static  double pg = 0.5;
-
-
-
 
 
     public static void main(String[] args) {
@@ -60,7 +63,9 @@ public class SimpleProcess2 {
         papers.setQuestSize(20);
         papers.setPc(0.5);
         papers.setPm(0.5);
+        //题库放到数据库中去  放到共用方法中去
         initItemBank();
+        //计算适应度值  ①什么时候计算  ②计算单位（单套试卷/单个题目）
 //        calFitness(questions);
         init(papers);
 //        getPaperFitness();
@@ -68,9 +73,11 @@ public class SimpleProcess2 {
             selection();
             crossCover(papers);
             mutate(papers);
-
+            //小生境环境的搭建
             elitiststrategy();
         }
+
+
 
     }
 
@@ -419,7 +426,7 @@ public class SimpleProcess2 {
 
 
     public static   void selection( ){
-        //10个个体（试卷）   20个基因（题目）
+        //10个体（试卷）   20个基因（题目）
         int population_size = 10;
         double fitness_sum = 0;
         double[] fitness_tmp = new double[population_size];
