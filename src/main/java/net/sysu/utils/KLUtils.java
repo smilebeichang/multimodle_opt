@@ -5,8 +5,6 @@ import jeasy.analysis.MMAnalyzer;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @Author : song bei chang
@@ -15,19 +13,17 @@ import java.util.regex.Pattern;
 public class KLUtils {
 
 
-
     /**
      *  主程序
      */
     public static void KLCal(String path_one,String path_two) throws FileNotFoundException, IOException {
 
-
         // TODO Auto-generated method stub;
-        ArrayList<Entity2> enList1;
+        ArrayList<Entity> enList1;
         enList1=CalcuP(path_one);
         System.out.println(" size "+enList1.size());
 
-        ArrayList<Entity2> enList2;
+        ArrayList<Entity> enList2;
         enList2=CalcuP(path_two);
 
 
@@ -42,7 +38,7 @@ public class KLUtils {
     }
 
     /**
-     * this function read in a string from disk file
+     * 读取文件
      *
      **/
     public static String GetFileText(String path) throws  FileNotFoundException,IOException
@@ -87,7 +83,7 @@ public class KLUtils {
      * 计算文本中每个词语出现的相对频率代替概率
      *
      */
-    public static ArrayList<Entity2> CalcuP(String path) throws IOException
+    public static ArrayList<Entity> CalcuP(String path) throws IOException
     {    //以词为单位计算相对熵
         String result=CutText(path);
         //以字为单位计算相对熵
@@ -95,9 +91,9 @@ public class KLUtils {
         String []words=result.split("\\|");
 
 
-        ArrayList<Entity2> enList=new ArrayList();
+        ArrayList<Entity> enList=new ArrayList();
         for(String w: words) {  w=w.trim();
-            Entity2 en=new Entity2();
+            Entity en=new Entity();
             en.word=w;
             en.pValue=1;
             enList.add(en);
@@ -137,19 +133,16 @@ public class KLUtils {
      * 用于计算两段文本的相对熵
      *
      **/
-    public static float CalKL(ArrayList<Entity2>p,ArrayList<Entity2>q) {
+    public static float CalKL(ArrayList<Entity>p,ArrayList<Entity>q) {
         float kl=0;
         float infinity=10000000;//无穷大
         double accretion=infinity;//设置熵增加量的初始值为无穷大。
         //从q中找出与p中相对应词的概率，如果找到了，就将accretion的值更新，并累加到相对熵上面；如果没找到，则增加了为无穷大
-        for(int i=0;i<p.size();i++)
-        {
+        for(int i=0;i<p.size();i++) {
             if(q.size()!=0)
-            {   for(int j=q.size()-1;j>=0;j--)
-            {
-                if(p.get(i).word.equals(q.get(j).word))
-                {  accretion=p.get(i).pValue*Math.log(p.get(i).pValue/q.get(j).pValue);
-                    //q.remove(j);
+            {   for(int j=q.size()-1;j>=0;j--) {
+                if(p.get(i).word.equals(q.get(j).word)) {
+                    accretion=p.get(i).pValue*Math.log(p.get(i).pValue/q.get(j).pValue);
                     break;
                 }
             }
@@ -163,17 +156,3 @@ public class KLUtils {
 
 
 
-
-class Entity2
-{
-    String word;
-    float pValue;
-
-    public Entity2()
-    {
-        pValue=0;
-        word="";
-
-    }
-
-}
