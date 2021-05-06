@@ -1,9 +1,6 @@
 package net.sysu.controller;
 
 
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Random;
 
 /**
  * Created by songb
@@ -21,12 +18,7 @@ public class Test {
         random_selection[1] = 0.450126;
         random_selection[2] = 0.572496;
         random_selection[3] = 0.98503;
-//        for (int i = 0; i < population_size; i++) {
-//            random_selection[i] = Math.random();
-//            System.out.println(random_selection[i]);
-//        }
-//        //排序
-//        Arrays.sort(random_selection);
+
 
         double[] pie_fitness = new double[4];
         pie_fitness[0] = 0.14;
