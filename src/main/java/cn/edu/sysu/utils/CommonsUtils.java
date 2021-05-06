@@ -1,10 +1,6 @@
-package net.sysu.utils;
+package cn.edu.sysu.utils;
 
-import net.sysu.pojo.Questions;
-
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
+import cn.edu.sysu.pojo.Questions;
 
 /**
  * @Author : songbeichang

@@ -1,4 +1,4 @@
-package net.sysu.controller;
+package cn.edu.sysu.controller;
 
 
 

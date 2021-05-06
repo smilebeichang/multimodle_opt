@@ -1,4 +1,4 @@
-package net.sysu.utils;
+package cn.edu.sysu.utils;
 
 import jeasy.analysis.MMAnalyzer;
 

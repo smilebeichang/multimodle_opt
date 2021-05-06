@@ -1,4 +1,4 @@
-package net.sysu.utils;
+package cn.edu.sysu.utils;
 
 
 public class Entity

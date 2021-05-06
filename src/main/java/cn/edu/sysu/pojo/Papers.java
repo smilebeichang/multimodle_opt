@@ -1,4 +1,4 @@
-package net.sysu.pojo;
+package cn.edu.sysu.pojo;
 
 import lombok.Data;
 

@@ -1,4 +1,4 @@
-package net.sysu.test;
+package cn.edu.sysu.test;
 
 /**
  * @Author : songbeichang

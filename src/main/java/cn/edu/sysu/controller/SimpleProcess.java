@@ -1,6 +1,6 @@
-package net.sysu.controller;
+package cn.edu.sysu.controller;
 
-import net.sysu.pojo.Papers;
+import cn.edu.sysu.pojo.Papers;
 
 import java.util.*;
 

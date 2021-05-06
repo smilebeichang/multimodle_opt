@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.sysu.filter;
+package cn.edu.sysu.filter;
 
 import java.io.IOException;
 import java.util.Map;

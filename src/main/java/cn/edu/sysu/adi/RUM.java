@@ -1,4 +1,4 @@
-package net.sysu.adi;
+package cn.edu.sysu.adi;
 
 import org.junit.Test;
 

@@ -1,4 +1,4 @@
-package net.sysu.niche;
+package cn.edu.sysu.niche;
 
 import java.math.BigDecimal;
 import java.util.Arrays;

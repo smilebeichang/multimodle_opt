@@ -1,6 +1,6 @@
-package net.sysu.adi;
+package cn.edu.sysu.adi;
 
-import net.sysu.pojo.Questions;
+import cn.edu.sysu.pojo.Questions;
 import org.junit.Test;
 
 /**
