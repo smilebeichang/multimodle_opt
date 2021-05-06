@@ -26,10 +26,10 @@ public class DINA {
      * 在并不完全掌握试题j所考察的所有知识点下猜对的概率 pg
      * 容器：适应度值
      */
-      String student_have_attribute = "abcd";
+      String student_have_attribute = "abcde";
       double ps = 0.2;
       double pg = 0.5;
-      double[] all_fitness =new double[40];
+      double[] all_fitness =new double[2];
 
     /**
      * 模仿RUM计算出概率
@@ -37,7 +37,18 @@ public class DINA {
      */
     @Test
     public void main1(){
+        Questions question = new Questions();
+        question.setId(0);
+        question.setAttributes("[b, d, e]");
 
+        Questions question1 = new Questions();
+        question1.setId(0);
+        question1.setAttributes("[b, d, f]");
+
+        Questions[] questions = new Questions[2];
+        questions[0] = question;
+        questions[1] = question1;
+        calFitness(questions);
     }
 
     /**
@@ -82,7 +93,7 @@ public class DINA {
         }
         System.out.println("试题的适应度容器大小："+all_fitness.length+"  试题的适应度如下： ");
         for (int i = 0; i < all_fitness.length; i++) {
-            System.out.print(all_fitness[i]+",");
+            System.out.print(all_fitness[i]+",  ");
         }
         System.out.println();
 

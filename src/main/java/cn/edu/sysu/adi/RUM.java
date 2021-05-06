@@ -13,7 +13,7 @@ public class RUM {
 
     @Test
     public  void main1() {
-        System.out.println(" junit 测试");
+        System.out.println(" junit 测试 ");
     }
 
     @Test
