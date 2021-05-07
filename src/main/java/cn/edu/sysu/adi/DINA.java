@@ -29,7 +29,7 @@ public class DINA {
       String student_have_attribute = "abcde";
       double ps = 0.2;
       double pg = 0.5;
-      double[] all_fitness =new double[2];
+      double[] all_fitness =new double[4];
 
     /**
      * 模仿RUM计算出概率
@@ -45,18 +45,33 @@ public class DINA {
         question1.setId(0);
         question1.setAttributes("[b, d, f]");
 
-        Questions[] questions = new Questions[2];
+        Questions question2 = new Questions();
+        question2.setId(0);
+        question2.setAttributes("[h, f, g]");
+
+        Questions question3 = new Questions();
+        question3.setId(0);
+        question3.setAttributes("[b, d, e]");
+
+
+        Questions[] questions = new Questions[4];
         questions[0] = question;
         questions[1] = question1;
+        questions[2] = question2;
+        questions[3] = question3;
         calFitness(questions);
     }
 
     /**
      * 根据概率算出K_L矩阵
+     *      1.生成题库，并保存到数据库
+     *      2.计算单个学生对每套试卷的作答概率
+     *      3.形成K_L矩阵
      *
      */
     @Test
     public void main2(){
+
 
     }
 
@@ -91,7 +106,7 @@ public class DINA {
             double que_fit = (Math.pow(pg,(1-potential_responses))) * (Math.pow((1-ps),potential_responses));
             all_fitness[i]=que_fit;
         }
-        System.out.println("试题的适应度容器大小："+all_fitness.length+"  试题的适应度如下： ");
+        System.out.println("试题的适应度容器大小："+all_fitness.length+"\n试题的适应度如下： ");
         for (int i = 0; i < all_fitness.length; i++) {
             System.out.print(all_fitness[i]+",  ");
         }

@@ -2,6 +2,7 @@ package cn.edu.sysu.controller;
 
 import cn.edu.sysu.pojo.Papers;
 import cn.edu.sysu.pojo.Questions;
+import cn.edu.sysu.utils.JDBCUtils;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -13,7 +14,7 @@ import java.util.*;
  * @Author : songbeichang
  * @create 2021/02/23 0:17
  */
-public class SimpleProcess2 {
+public class SimpleProcess2<psvm> {
 
     /**
      * 初始化题库
@@ -30,7 +31,6 @@ public class SimpleProcess2 {
     private static Integer ACT_FILL_NUM  = 5;
     private static Integer ACT_SUMMARY_NUM  = 5;
 
-
     /**
      * 容器
      */
@@ -42,12 +42,6 @@ public class SimpleProcess2 {
 
 
 
-
-
-
-
-
-
     public static void main(String[] args) {
 
         Papers papers = new Papers();
@@ -55,12 +49,23 @@ public class SimpleProcess2 {
         papers.setQuestSize(20);
         papers.setPc(0.5);
         papers.setPm(0.5);
-        //题库放到数据库中去  放到共用方法中去
+
+        //原始方法
+        //ori(Papers papers);
+
+        //初始化题库存到数据库
+        initItemBank();
+
+    }
+
+    public static void ori(Papers papers) {
+
+        //初始化题库
         initItemBank();
         //计算适应度值  ①什么时候计算  ②计算单位（单套试卷/单个题目）
-//        calFitness(questions);
+        //calFitness(questions);
         init(papers);
-//        getPaperFitness();
+        //getPaperFitness();
         for (int i = 0; i < 2; i++) {
             selection();
             crossCover(papers);
@@ -68,9 +73,6 @@ public class SimpleProcess2 {
             //小生境环境的搭建
             elitiststrategy();
         }
-
-
-
     }
 
 
@@ -78,6 +80,8 @@ public class SimpleProcess2 {
      * 生成题库(类型、属性、id)
      */
     public static void initItemBank(){
+
+        JDBCUtils jdbcUtils = new JDBCUtils();
 
         //选择题
         System.out.println("====== 选择题  ======");
@@ -99,6 +103,7 @@ public class SimpleProcess2 {
             question.setAttributes(attributes);
             questions[question.getId()]=question;
             System.out.println("id："+question.getId()+" 属性："+question.getAttributes());
+            jdbcUtils.insert(question.getId(),"'"+question.getAttributes()+"'");
 
         }
         System.out.println();
@@ -123,12 +128,12 @@ public class SimpleProcess2 {
             questions[question.getId()]=question;
             System.out.println("id："+question.getId()+" 属性："+question.getAttributes());
             System.out.print("");
+            jdbcUtils.insert(question.getId(),"'"+question.getAttributes()+"'");
         }
         System.out.println();
 
         //简答题
         System.out.println("====== 简答题  ======");
-
         for (int i = 0; i < TYPE_SUMMARY_NUM; i++) {
             Questions question = new Questions();
             String attributes = "" ;
@@ -146,6 +151,7 @@ public class SimpleProcess2 {
             question.setAttributes(attributes);
             questions[question.getId()]=question;
             System.out.println("id："+question.getId()+" 属性："+question.getAttributes());
+            jdbcUtils.insert(question.getId(),"'"+question.getAttributes()+"'");
         }
 
     }
