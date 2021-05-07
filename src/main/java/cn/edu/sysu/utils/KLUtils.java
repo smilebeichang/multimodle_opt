@@ -152,6 +152,36 @@ public class KLUtils {
         }
         return kl;
     }
+
+
+    /**
+     * 使用foreach方法对二维数组进行遍历
+     * foreach一般和for循环差不多，不过foreach看着简单些
+     *
+     */
+    public  void foreach( ArrayList<Double> lists1,ArrayList<Double> lists2) {
+        System.out.println();
+        Double[][] klArray =new Double[4][4];
+        for (int i = 0;i<lists1.size();i++){
+            for (int j = 0; j < lists2.size(); j++) {
+                //(0,0) vs (0,0)
+                double v = lists1.get(i) * Math.log(lists1.get(i) / lists2.get(j)) +
+                        (1 - lists1.get(i)) * Math.log((1 - lists1.get(i)) / (1 - lists2.get(j)));
+
+                v = Double.valueOf((v+"0000").substring(0,4));
+                klArray[i][j] = v;
+            }
+        }
+        System.out.println("K_L information矩阵如下: ");
+        for (Double[] fs:klArray) {
+            for (Double fss:fs) {
+                System.out.print(fss+"  ");//相当于arr[i][j]
+            }
+            System.out.println();
+        }
+        System.out.println("====================");
+    }
+
 }
 
 

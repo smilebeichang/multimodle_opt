@@ -1,5 +1,6 @@
 package cn.edu.sysu.adi;
 
+import cn.edu.sysu.utils.KLUtils;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -72,18 +73,7 @@ public class RUM {
             add(0.8);
         }};
 
-        Double[][] klArray =new Double[4][4];
-        for (int i = 0;i<lists1.size();i++){
-            for (int j = 0; j < lists2.size(); j++) {
-                //(0,0) vs (0,0)
-                double v = lists1.get(i) * Math.log(lists1.get(i) / lists2.get(j)) +
-                        (1 - lists1.get(i)) * Math.log((1 - lists1.get(i)) / (1 - lists2.get(j)));
-
-                v = Double.valueOf((v+"0000").substring(0,4));
-                klArray[i][j] = v;
-            }
-        }
-        foreach(klArray);
+        new KLUtils().foreach(lists1,lists2);
     }
 
 
@@ -91,20 +81,6 @@ public class RUM {
         System.out.println(" D(A)ij 计算 ");
         // D(A)ij 表示 i vs j
     }
-
-    //使用foreach方法对二维数组进行遍历，foreach一般和for循环差不多，不过foreach看着简单些。
-    private  void foreach( Double [][] arr ) {
-        System.out.println(" K_L 矩阵: ");
-        for (Double[] fs:arr) {
-            for (Double fss:fs) {
-                System.out.print(fss+"  ");//相当于arr[i][j]
-            }
-            System.out.println();
-        }
-        System.out.println("====================");
-    }
-
-
 
 
 
