@@ -2,7 +2,6 @@ package cn.edu.sysu.utils;
 
 
 
-import com.sun.org.apache.bcel.internal.generic.NEW;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -10,8 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+
 
 
 /**
@@ -27,6 +25,9 @@ public class JDBCUtils {
     }
 
 
+    /**
+     * 查询，并返回list   limit4
+     */
     public  ArrayList select() {
             ArrayList list = new ArrayList();
             Connection conn ;
@@ -44,7 +45,7 @@ public class JDBCUtils {
                 conn =
                         DriverManager.getConnection("jdbc:mysql://localhost/sysu?"+"user=root&password=root");
                 System.out.println("数据库连接成功");
-                ps = conn.prepareStatement("select id,attributes from question limit 4;");
+                ps = conn.prepareStatement("select id,attributes from question order by id  limit 4;");
                 rs = ps.executeQuery();
                 System.out.println("id"+"\t\t"+"attributes");
                 while(rs.next()) {
@@ -64,6 +65,9 @@ public class JDBCUtils {
             return list;
     }
 
+    /**
+     * 新增到数据库
+     */
     public  void insert(int id,String attributes) {
         Connection conn ;
         PreparedStatement ps ;
@@ -86,6 +90,7 @@ public class JDBCUtils {
             e.printStackTrace();
         }
     }
+
 }
 
 

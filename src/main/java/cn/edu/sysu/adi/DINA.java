@@ -6,7 +6,6 @@ import cn.edu.sysu.utils.KLUtils;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * @Author : song bei chang
@@ -26,7 +25,7 @@ public class DINA {
 
 
     /**
-     * 定义一个student,其掌握的属性  有误差
+     * 定义一个student,其掌握的属性  (存在误差，因目前为止只是对一个学生进行测试的)
      * 在掌握了试题j所考察的所有知识点的情况下做错的概率 ps
      * 在并不完全掌握试题j所考察的所有知识点下猜对的概率 pg
      * 容器：适应度值
@@ -38,24 +37,23 @@ public class DINA {
 
     /**
      * 模仿RUM计算出概率
-     *
      */
     @Test
     public void main1(){
         Questions question = new Questions();
         question.setId(0);
-        question.setAttributes("[a, b]");
+        question.setAttributes("[a, b, e]");
 
         Questions question1 = new Questions();
-        question1.setId(0);
-        question1.setAttributes("[b, d]");
+        question1.setId(1);
+        question1.setAttributes("[b,c,e]");
 
         Questions question2 = new Questions();
-        question2.setId(0);
-        question2.setAttributes("[h, f, g]");
+        question2.setId(2);
+        question2.setAttributes("[a]");
 
         Questions question3 = new Questions();
-        question3.setId(0);
+        question3.setId(3);
         question3.setAttributes("[b,c]");
 
 
@@ -71,15 +69,17 @@ public class DINA {
      * 根据概率算出K_L矩阵
      *      1.生成题库，并保存到数据库
      *      2.从数据库中读取数据
-     *      2.计算单个学生对每套试卷的作答概率
-     *      3.形成K_L矩阵
+     *      3.计算单个xueshenS\对每套pattern的作答概率
+     *      4.形成K_L矩阵
      */
     @Test
     public void main2(){
+
         JDBCUtils jdbcUtils = new JDBCUtils();
         ArrayList<String> list = jdbcUtils.select();
         Questions[] questions = new Questions[4];
 
+        //读取数据，格式清洗
         for (String s:list) {
             Questions question = new Questions();
             String[] split = s.split(":");
@@ -87,6 +87,8 @@ public class DINA {
             question.setAttributes(split[1]);
             questions[Integer.valueOf(split[0])]=question;
         }
+
+
         ArrayList<Double> list1 = calFitness(questions);
         new KLUtils().foreach(list1,list1);
 
@@ -120,11 +122,13 @@ public class DINA {
             if (a & b & c){
                 potential_responses = 1;
             }
-
+            // DINA 的适应度值计算公式
             double que_fit = (Math.pow(pg,(1-potential_responses))) * (Math.pow((1-ps),potential_responses));
+
             all_fitness[i]=que_fit;
             list.add(que_fit);
         }
+        //遍历输出
         System.out.println("试题的适应度容器大小："+all_fitness.length+"\n试题的适应度如下： ");
         for (int i = 0; i < all_fitness.length; i++) {
             System.out.print(all_fitness[i]+",  ");

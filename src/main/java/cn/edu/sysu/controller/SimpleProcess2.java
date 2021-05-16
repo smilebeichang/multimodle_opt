@@ -14,7 +14,7 @@ import java.util.*;
  * @Author : songbeichang
  * @create 2021/02/23 0:17
  */
-public class SimpleProcess2<psvm> {
+public class SimpleProcess2 {
 
     /**
      * 初始化题库
@@ -41,7 +41,6 @@ public class SimpleProcess2<psvm> {
     static Integer[][] paper_genetic =new Integer[10][20];
 
 
-
     public static void main(String[] args) {
 
         Papers papers = new Papers();
@@ -51,7 +50,7 @@ public class SimpleProcess2<psvm> {
         papers.setPm(0.5);
 
         //原始方法
-        //ori(Papers papers);
+        //ori(papers);
 
         //初始化题库存到数据库
         initItemBank();
@@ -62,7 +61,9 @@ public class SimpleProcess2<psvm> {
 
         //初始化题库
         initItemBank();
-        //计算适应度值  ①什么时候计算  ②计算单位（单套试卷/单个题目）
+        //计算适应度值  ①什么时候计算                可以初始化时计算，但和被试掌握属性有关 ==》 交叉变异的时候计算
+        //            ②计算单位（单套试卷/单个题目）  适应度值以单套试卷为单位，交叉变异也以试卷为单位 但目前，计算的适应度值都是以题目为单位。取平均值，是按属性取列值的平均（横坐标代表pattern  纵坐标如何理解呢）
+
         //calFitness(questions);
         init(papers);
         //getPaperFitness();
@@ -87,7 +88,7 @@ public class SimpleProcess2<psvm> {
         System.out.println("====== 选择题  ======");
         for (int i = 0; i < TYPE_CHOICE_NUM; i++) {
             Questions question = new Questions();
-            String attributes = "";
+            String attributes ;
             int attNum = new Random().nextInt(ATTRIBUTE_MAX);
             Set<String> fill_set = new HashSet<>();
             for (int j = 0; j < attNum+1; j++) {
@@ -103,6 +104,8 @@ public class SimpleProcess2<psvm> {
             question.setAttributes(attributes);
             questions[question.getId()]=question;
             System.out.println("id："+question.getId()+" 属性："+question.getAttributes());
+
+            // 将数据保存到数据库
             jdbcUtils.insert(question.getId(),"'"+question.getAttributes()+"'");
 
         }
@@ -112,7 +115,7 @@ public class SimpleProcess2<psvm> {
         System.out.println("====== 填空题  ======");
         for (int i = 0; i < TYPE_FILL_NUM; i++) {
             Questions question = new Questions();
-            String attributes = "";
+            String attributes ;
             int attNum = new Random().nextInt(ATTRIBUTE_MAX);
             Set<String> fill_set = new HashSet<>();
             for (int j = 0; j < attNum+1; j++) {
@@ -128,6 +131,8 @@ public class SimpleProcess2<psvm> {
             questions[question.getId()]=question;
             System.out.println("id："+question.getId()+" 属性："+question.getAttributes());
             System.out.print("");
+
+            // 将数据保存到数据库
             jdbcUtils.insert(question.getId(),"'"+question.getAttributes()+"'");
         }
         System.out.println();
@@ -136,7 +141,7 @@ public class SimpleProcess2<psvm> {
         System.out.println("====== 简答题  ======");
         for (int i = 0; i < TYPE_SUMMARY_NUM; i++) {
             Questions question = new Questions();
-            String attributes = "" ;
+            String attributes  ;
             int attNum = new Random().nextInt(ATTRIBUTE_MAX);
             Set<String> fill_set = new HashSet<>();
             for (int j = 0; j < attNum+1; j++) {
@@ -151,6 +156,8 @@ public class SimpleProcess2<psvm> {
             question.setAttributes(attributes);
             questions[question.getId()]=question;
             System.out.println("id："+question.getId()+" 属性："+question.getAttributes());
+
+            // 将数据保存到数据库
             jdbcUtils.insert(question.getId(),"'"+question.getAttributes()+"'");
         }
 
