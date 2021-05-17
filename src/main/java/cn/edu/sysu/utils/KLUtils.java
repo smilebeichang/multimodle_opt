@@ -177,6 +177,68 @@ public class KLUtils {
         return klArray;
     }
 
+    public  void arrayPrint(Double[][] klArray) {
+        //遍历输出 K_L 矩阵
+        System.out.println("K_L information矩阵如下: ");
+        for (Double[] fs:klArray) {
+            for (Double fss:fs) {
+                System.out.print(fss+"  ");//相当于arr[i][j]
+            }
+            System.out.println();
+        }
+    }
+
+
+    /**
+     *  定义一个返回能够返回所有元素的子集
+     */
+     ArrayList<ArrayList<Integer>> sub(ArrayList<Integer> arr, int index) {
+        //声明一个装子集的集合
+        ArrayList<ArrayList<Integer>> all = new ArrayList<>();
+        //判断:如果传入的集合长度==传入的元素索引(实质上是要求子集的元素个数),即前面的所有元素都安排完了
+        if(arr.size() == index){
+            //添加一个空的集合
+            all.add(new ArrayList<>());
+        }else{
+            //递归调用:从索引为0的元素开始将索引增加不断调用
+            all = sub(arr, index+1);
+            //获得当前索引的元素
+            int item = arr.get(index);
+            //声明一个装所有(index-1)个元素的所有子集元素+当前索引元素的集合
+            ArrayList<ArrayList<Integer>> subsets =  new ArrayList<>();
+            //遍历包含index-1的所有子集和的集合,将其中的子集输出
+            for(ArrayList<Integer> s: all){
+                //声明一个新的数组来装(index-1)个元素的所有子集元素+当前索引index元素的集合
+                ArrayList<Integer> newSubset = new ArrayList<>();
+                //先将(index-1)个元素的每一个子集添加到新的集合中
+                newSubset.addAll(s);
+                //再将index位置的元素添加进去
+                newSubset.add(item);
+                //最后将新的子集添加到集合subsets中
+                subsets.add(newSubset);
+            }
+            //最后将加入新的元素后的所有子集添加到包含(index-1)个元素的所有子集的集合当中当中
+            all.addAll(subsets);
+        }
+         System.out.println(all.size());
+        return all;
+    }
+
+    public  void Combin() {
+        ArrayList<Integer> arrayList = new ArrayList<>();
+        arrayList.add(1);
+        arrayList.add(2);
+        arrayList.add(3);
+        arrayList.add(4);
+        System.out.println(arrayList);
+
+        System.out.println(sub(arrayList,0));
+
+    }
+
+
+
+
 }
 
 

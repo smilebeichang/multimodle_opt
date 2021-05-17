@@ -17,7 +17,7 @@ import java.util.Map;
 public class RUM {
 
     @Test
-    public  void main1() {
+    public  void TestMath() {
 
         System.out.println(" junit 测试 ");
 
@@ -25,6 +25,10 @@ public class RUM {
         //计算的是(0,0) vs (0,0)
         double v = (0.1) * Math.log((0.1) / (0.1))+(0.9) * Math.log((0.9) / (0.9));
         System.out.println(v);
+
+        //new KLUtils().Combin();
+
+
     }
 
     /**
@@ -43,35 +47,54 @@ public class RUM {
      *      P(0,1)(1,0)=0.8 * (0.125^1) * 1 = 0.1
      *      P(1,0)(1,0)=0.8 * (1) * 1 = 0.8
      *      P(1,1)(1,0)=0.8 * (1) * 1 = 0.8
+     *
+     *          *         (0,0,0) (0,0,1) (0,1,0) (1,0,0) (0,1,1) (1,0,1) (1,1,0)  (1,1,1)
+     *          * (0,0,0)  0.8
+     *          * (0,0,1)  0.1
+     *          * (0,1,0)  0.1
+     *          * (1,0,0)  0.1
+     *          * (0,1,1)  0.0125
+     *          * (1,0,1)  0.0125
+     *          * (1,1,0)  0.0125
+     *          * (1,1,1)  0.0015625
+     *          *
+     *
+     *         //错误
+     *         //P(0,0,0)(0,0,0) = 0.8 * ( 1 * 1 *1 ) = 0.8
+     *         //P(0,0,0)(0,0,1) = 0.8 * ( 1 * 1 * 0.125 ) = 0.1
+     *         //P(0,0,0)(0,1,0) = 0.8 * ( 1 * 0.125 * 1 ) = 0.1
+     *         //P(0,0,0)(1,0,0) = 0.8 * ( 0.125 * 1 * 1 ) = 0.1
+     *         //P(0,0,0)(0,1,1) = 0.8 * ( 1 * 0.125 * 0.125 ) = 0.0125
+     *         //P(0,0,0)(1,0,1) = 0.8 * ( 0.125 * 1 * 0.125 ) = 0.0125
+     *         //P(0,0,0)(1,1,0) = 0.8 * ( 0.125 * 0.125 * 1 ) = 0.0125
+     *         //P(0,0,0)(1,1,1) = 0.8 * ( 0.125 * 0.125 * 0.125 ) = 0.0015625
+     *
+     *
+     *         //随机生成题库,每道试题的 0.86 πj*   （0.1,0,0,0.25,0）rjk*  pattern（1,0,0,1,0）
+     *         //需要后期将adi完善
+     *
+     *
+     *         //计算单道题的daj3=(daj30+daj31)/2
+     *         //计算试卷的 adi1  adi2  adi3  adi4  adi5
+     *
      */
     @Test
-    public  void main2() {
+    public  void GetAdi() {
 
-        //先来一个简单的 3 个属性 8 * 8 的矩阵
         //计算K_L information
         //学生的掌握patter vs  题目考察pattern  固定的
         //0.8 πj*   0.125 rjk*
-        /**
-         *         (0,0,0) (0,0,1) (0,1,0) (1,0,0) (0,1,1) (1,0,1) (1,1,0)  (1,1,1)
-         * (0,0,0)  0.8
-         * (0,0,1)  0.1
-         * (0,1,0)  0.1
-         * (1,0,0)  0.1
-         * (0,1,1)  0.0125
-         * (1,0,1)  0.0125
-         * (1,1,0)  0.0125
-         * (1,1,1)  0.0015625
-         *
-         */
-        //错误
-        //P(0,0,0)(0,0,0) = 0.8 * ( 1 * 1 *1 ) = 0.8
-        //P(0,0,0)(0,0,1) = 0.8 * ( 1 * 1 * 0.125 ) = 0.1
-        //P(0,0,0)(0,1,0) = 0.8 * ( 1 * 0.125 * 1 ) = 0.1
-        //P(0,0,0)(1,0,0) = 0.8 * ( 0.125 * 1 * 1 ) = 0.1
-        //P(0,0,0)(0,1,1) = 0.8 * ( 1 * 0.125 * 0.125 ) = 0.0125
-        //P(0,0,0)(1,0,1) = 0.8 * ( 0.125 * 1 * 0.125 ) = 0.0125
-        //P(0,0,0)(1,1,0) = 0.8 * ( 0.125 * 0.125 * 1 ) = 0.0125
-        //P(0,0,0)(1,1,1) = 0.8 * ( 0.125 * 0.125 * 0.125 ) = 0.0015625
+
+        //试题pattern(0,0,0)
+        //P(0,0,0)(0,0,0) = 0.8 * (1 * 1 * 1 ) = 0.8
+        //P(0,0,1)(0,0,0) = 0.8 * (1 * 1 * 1 ) = 0.8
+        //P(0,1,0)(0,0,0) = 0.8 * (1 * 1 * 1 ) = 0.8
+        //P(1,0,0)(0,0,0) = 0.8 * (1 * 1 * 1 ) = 0.8
+        //P(0,1,1)(0,0,0) = 0.8 * (1 * 1 * 1 ) = 0.8
+        //P(1,0,1)(0,0,0) = 0.8 * (1 * 1 * 1 ) = 0.8
+        //P(1,1,0)(0,0,0) = 0.8 * (1 * 1 * 1 ) = 0.8
+        //P(1,1,1)(0,0,0) = 0.8 * (1 * 1 * 1 ) = 0.8
+
 
         //试题pattern(1,0,0)
         //P(0,0,0)(1,0,0) = 0.8 * (0.125^1 * 1 * 1 ) = 0.1
@@ -82,6 +105,67 @@ public class RUM {
         //P(1,0,1)(1,0,0) = 0.8 * ( 1 * 1 * 1 ) = 0.8
         //P(1,1,0)(1,0,0) = 0.8 * ( 1 * 1 * 1 ) = 0.8
         //P(1,1,1)(1,0,0) = 0.8 * ( 1 * 1 * 1 ) = 0.8
+
+        //试题pattern(0,1,0)
+        //P(0,0,0)(0,1,0) = 0.8 * (1 * 0.125^1  * 1 ) = 0.1
+        //P(0,0,1)(0,1,0) = 0.8 * (1 * 0.125^1  * 1 ) = 0.1
+        //P(0,1,0)(0,1,0) = 0.8 * (1 * 1  * 1 ) = 0.8
+        //P(1,0,0)(0,1,0) = 0.8 * (1 * 0.125^1  * 1 ) = 0.1
+        //P(0,1,1)(0,1,0) = 0.8 * (1 * 1 * 1 ) = 0.8
+        //P(1,0,1)(0,1,0) = 0.8 * (1 * 0.125^1  * 1 ) = 0.1
+        //P(1,1,0)(0,1,0) = 0.8 * ( 1 * 1 * 1 ) = 0.8
+        //P(1,1,1)(0,1,0) = 0.8 * ( 1 * 1 * 1 ) = 0.8
+
+        //试题pattern(0,0,1)
+        //P(0,0,0)(0,0,1) = 0.8 * (1 * 1 * 0.125^1 ) = 0.1
+        //P(0,0,1)(0,0,1) = 0.8 * (1 * 1  * 1 ) = 0.8
+        //P(0,1,0)(0,0,1) = 0.8 * (1 * 1 * 0.125^1 ) = 0.1
+        //P(1,0,0)(0,0,1) = 0.8 * (1 * 1 * 0.125^1 ) = 0.1
+        //P(0,1,1)(0,0,1) = 0.8 * (1 * 1 * 1 ) = 0.8
+        //P(1,0,1)(0,0,1) = 0.8 * (1 * 1 * 1 ) = 0.8
+        //P(1,1,0)(0,0,1) = 0.8 * (1 * 1 * 0.125^1 ) = 0.1
+        //P(1,1,1)(0,0,1) = 0.8 * ( 1 * 1 * 1 ) = 0.8
+
+        //试题pattern(0,1,1)
+        //P(0,0,0)(0,1,1) = 0.8 * (1 * 0.125^1 * 0.125^1 ) = 0.0125
+        //P(0,0,1)(0,1,1) = 0.8 * (1 * 0.125^1  * 1 ) = 0.1
+        //P(0,1,0)(0,1,1) = 0.8 * (1 * 1 * 0.125^1 ) = 0.1
+        //P(1,0,0)(0,1,1) = 0.8 * (1 * 0.125^1 * 0.125^1 ) = 0.0125
+        //P(0,1,1)(0,1,1) = 0.8 * (1 * 1 * 1 ) = 0.8
+        //P(1,0,1)(0,1,1) = 0.8 * (1 * 0.125^1 * 1 ) = 0.1
+        //P(1,1,0)(0,1,1) = 0.8 * (1 * 1 * 0.125^1 ) = 0.1
+        //P(1,1,1)(0,1,1) = 0.8 * ( 1 * 1 * 1 ) = 0.8
+
+        //试题pattern(1,0,1)
+        //P(0,0,0)(1,0,1) = 0.8 * (0.125^1 * 1 * 0.125^1  ) = 0.0125
+        //P(0,0,1)(1,0,1) = 0.8 * (0.125^1 * 1  * 1 ) = 0.1
+        //P(0,1,0)(1,0,1) = 0.8 * (0.125^1 * 1 * 0.125^1  ) = 0.0125
+        //P(1,0,0)(1,0,1) = 0.8 * (1 * 1 * 0.125^1 ) = 0.1
+        //P(0,1,1)(1,0,1) = 0.8 * (0.125^1 * 1 * 1 ) = 0.1
+        //P(1,0,1)(1,0,1) = 0.8 * (1 * 1 * 1 ) = 0.8
+        //P(1,1,0)(1,0,1) = 0.8 * (1 * 1 * 0.125^1 ) = 0.1
+        //P(1,1,1)(1,0,1) = 0.8 * ( 1 * 1 * 1 ) = 0.8
+
+
+        //试题pattern(1,1,0)
+        //P(0,0,0)(1,1,0) = 0.8 * (0.125^1 * 0.125^1 * 1 ) = 0.0125
+        //P(0,0,1)(1,1,0) = 0.8 * (0.125^1 * 0.125^1  * 1 ) = 0.125
+        //P(0,1,0)(1,1,0) = 0.8 * (0.125^1 * 1 * 1  ) = 0.1
+        //P(1,0,0)(1,1,0) = 0.8 * (1 * 0.125^1 * 1 ) = 0.1
+        //P(0,1,1)(1,1,0) = 0.8 * (0.125^1 * 1 * 1 ) = 0.1
+        //P(1,0,1)(1,1,0) = 0.8 * (1 * 0.125^1 * 1 ) = 0.1
+        //P(1,1,0)(1,1,0) = 0.8 * (1 * 1 * 1 ) = 0.8
+        //P(1,1,1)(1,1,0) = 0.8 * (1 * 1 * 1 ) = 0.8
+
+        //试题pattern(1,1,1)
+        //P(0,0,0)(1,1,1) = 0.8 * (0.125^1 * 0.125^1 * 0.125^1 ) = 0.0015625
+        //P(0,0,1)(1,1,1) = 0.8 * (0.125^1 * 0.125^1  * 1 ) = 0.125
+        //P(0,1,0)(1,1,1) = 0.8 * (0.125^1 * 1 * 0.125^1  ) = 0.125
+        //P(1,0,0)(1,1,1) = 0.8 * (1 * 0.125^1 * 0.125^1 ) = 0.125
+        //P(0,1,1)(1,1,1) = 0.8 * (0.125^1 * 1 * 1 ) = 0.1
+        //P(1,0,1)(1,1,1) = 0.8 * (1 * 0.125^1 * 1 ) = 0.1
+        //P(1,1,0)(1,1,1) = 0.8 * (1 * 1 * 0.125^1 ) = 0.1
+        //P(1,1,1)(1,1,1) = 0.8 * (1 * 1 * 1 ) = 0.8
 
         /*
          * K_L information矩阵如下: 每道题
@@ -95,104 +179,140 @@ public class RUM {
          * 1.36  1.36  1.36  0.0  1.36  0.0  0.0  0.0
          *
          */
+//以试题pattern(1,0)为单位,这样才能算出一个矩阵 rum，然后根据此矩阵，求出该试题的矩阵 k_L，然后求出该试题的矩阵 Da，最后平均求出该试题的 adi
+        Map<String,Integer> map = new HashMap<>(8);
+        map.put("(0 0 0)",1);
+        map.put("(0 0 1)",2);
+        map.put("(0 1 0)",3);
+        map.put("(1 0 0)",4);
+        map.put("(0 1 1)",5);
+        map.put("(1 0 1)",6);
+        map.put("(1 1 0)",7);
+        map.put("(1 1 1)",8);
 
-        ArrayList<Double> lists1 = new ArrayList<>();
-        lists1.add(0.1);
-        lists1.add(0.1);
-        lists1.add(0.1);
-        lists1.add(0.8);
-        lists1.add(0.1);
-        lists1.add(0.8);
-        lists1.add(0.8);
-        lists1.add(0.8);
-        Double[][] klArray = new KLUtils().foreach(lists1, lists1);
-
-
-
-        //Method 1
-        /*
-         * eg:0.8   0.125    (1,0)
-         *      //(0,0)
-         *      P(0,0)(0,0)=0.8 * (1) * 1 = 0.8
-         *      P(0,1)(0,0)=0.8 * (1) * 1 = 0.8
-         *      P(1,0)(0,0)=0.8 * (1) * 1 = 0.8
-         *      P(1,0)(0,0)=0.8 * (1) * 1 = 0.8
-         *
-         *      //试题pattern(1,0)  以试题为单位,这样才能算出一个矩阵 rum，然后根据此矩阵，求出该试题的矩阵 k_L，最后求出该试题的矩阵 Da，然后平均求出该试题的 adi
-         *      P(0,0)(1,0)=0.8 * (0.125^1) * 1 = 0.1
-         *      P(0,1)(1,0)=0.8 * (0.125^1) * 1 = 0.1
-         *      P(1,0)(1,0)=0.8 * (1) * 1 = 0.8
-         *      P(1,1)(1,0)=0.8 * (1) * 1 = 0.8
-         *
-         */
-
-        /*  K_L information 和 rum 的区别
-         *   hql 大厂急缺人   (1,0)
-         *         (0,0)  (0,1)  (1,0)  (1,1)
-         *  (0,0)
-         *  (0,1)
-         *  (1,0)
-         *  (1,1)
-         *
-         */
-        /*
-         * K_L information矩阵如下:
-         * 0.0  0.0  1.14  1.14
-         * 0.0  0.0  1.14  1.14
-         * 1.36  1.36  0.0  0.0
-         * 1.36  1.36  0.0  0.0
-         */
-
-        //随机生成题库,每道试题的 0.86 πj*   （0.1,0,0,0.25,0）rjk*  pattern（1,0,0,1,0）
-        //需要后期将adi完善
-
-
-        //计算单道题的daj3=(daj30+daj31)/2
-        //计算试卷的 adi1  adi2  adi3  adi4  adi5
-
-
-    }
-
-
-    /**
-     *  K_L 矩阵计算
-     *  行列分别表示 （0,0）（0,1）（1,0）（1,1）
-     *               0.1    0.1   0.8   0.8
-     *  Dj 表示 K_L 矩阵
-     *    1. 定义一维数组 和 二维数组  The probability of a correct response
-     *    2. for 计算并存储
-     *    3. 遍历输出
-     */
-    //@Test
-    public Double[][] main3(){
-        //Method 1
-        ArrayList<Double> lists1 = new ArrayList<>();
-        lists1.add(0.1);
-        lists1.add(0.1);
-        lists1.add(0.8);
-        lists1.add(0.8);
-
-        //Method 2 , (double brace initialization)
-        ArrayList<Double> lists2 = new ArrayList<Double>(){{
+        //试题pattern(1,0,0)
+        ArrayList<Double> lists1 = new ArrayList<Double>(){{
+            //pattern1(1,0,0)
+//            add(0.1);
+//            add(0.1);
+//            add(0.1);
+//            add(0.8);
+//            add(0.1);
+//            add(0.8);
+//            add(0.8);
+//            add(0.8);
+            //pattern1(0,1,0)
             add(0.1);
+            add(0.1);
+            add(0.8);
+            add(0.1);
+            add(0.8);
             add(0.1);
             add(0.8);
             add(0.8);
         }};
 
-        Double[][] klArray = new KLUtils().foreach(lists1, lists2);
+        Double[][] klArray = new KLUtils().foreach(lists1, lists1);
+        new KLUtils().arrayPrint(klArray);
 
-        //遍历输出 K_L 矩阵
-        System.out.println("K_L information矩阵如下: ");
-        for (Double[] fs:klArray) {
-            for (Double fss:fs) {
-                System.out.print(fss+"  ");//相当于arr[i][j]
+        //捋思路 计算 adi1
+        //adi1 = D(A)jk1 +  D(A)jk0;
+        // D(A)jk1 (1,X,Y) to (0,X,Y)  ;          D(A)jk0  (0,X,Y) to (1,X,Y)
+        // (1,0,0)  (1,0,1)  (1,1,0)  (1,1,1)         (0,0,0)   (0,0,1)   (0,1,0)  (0,1,1)
+        // (0,0,0)  (0,0,1)  (0,1,0)  (0,1,1)         (1,0,0)   (1,0,1)   (1,1,0)  (1,1,1)
+        //  D41      D62      D73      D85             D14       D26       D37      D58
+        // [41, 14, 62, 26, 73, 37, 85, 58]
+
+        /*
+         * 两个元素，遍历组合即可, 随机遍历顺序没影响
+         */
+        ArrayList<String> combineList = new ArrayList<>();
+        for(int X=0;X<2; X++){
+            for(int Y=0;Y<2; Y++) {
+                String value = X +" "+ Y;
+                combineList.add(value);
             }
-            System.out.println();
         }
 
-        return klArray;
+
+        //获取下标
+        ArrayList<String> list1 = new ArrayList();
+        ArrayList<String> list2 = new ArrayList();
+        ArrayList<String> list3 = new ArrayList();
+        Double sum1 = 0.0;
+        Double sum2 = 0.0;
+        Double sum3 = 0.0;
+        Double adi1 ;
+        Double adi2 ;
+        Double adi3 ;
+
+        for (int X =0;X<combineList.size();X++){
+            //adi1
+            Integer index11 = map.get("(1 " + combineList.get(X) + ")");
+            Integer index12 = map.get("(0 " + combineList.get(X) + ")");
+            Integer index13 = map.get("(0 " + combineList.get(X) + ")");
+            Integer index14 = map.get("(1 " + combineList.get(X) + ")");
+
+
+            list1.add(""+index11+index12);
+            list1.add(""+index13+index14);
+
+            //adi2
+            Integer index21 = map.get("(" +combineList.get(X).substring(0,1)+ " 1 " +combineList.get(X).substring(2,3) + ")");
+            Integer index22 = map.get("(" +combineList.get(X).substring(0,1)+ " 0 " +combineList.get(X).substring(2,3) + ")");
+            Integer index23 = map.get("(" +combineList.get(X).substring(0,1)+ " 0 " +combineList.get(X).substring(2,3) + ")");
+            Integer index24 = map.get("(" +combineList.get(X).substring(0,1)+ " 1 " +combineList.get(X).substring(2,3) + ")");
+
+
+            list2.add(""+index21+index22);
+            list2.add(""+index23+index24);
+
+            //adi3
+            Integer index31 = map.get("("+combineList.get(X)+" 1)");
+            Integer index32 = map.get("("+combineList.get(X)+" 0)");
+            Integer index33 = map.get("("+combineList.get(X)+" 0)");
+            Integer index34 = map.get("("+combineList.get(X)+" 1)");
+
+
+            list3.add(""+index31+index32);
+            list3.add(""+index33+index34);
+
+
+        }
+        System.out.println(list1);
+        System.out.println(list2);
+        System.out.println(list3);
+
+        System.out.println("list 遍历 ;拿list的值去Array中匹配寻找,然后输出其大小");
+        for(String data  :    list1)    {
+            System.out.print(data);
+            Double v  = klArray[Integer.parseInt(data.substring(0,1))-1][Integer.parseInt(data.substring(1,2))-1];
+            System.out.println("  "+v);
+            sum1+=v;
+        }
+        adi1=sum1/8;
+        System.out.println("adi1: "+adi1);
+
+        for(String data  :    list2)    {
+            System.out.print(data);
+            Double v  = klArray[Integer.parseInt(data.substring(0,1))-1][Integer.parseInt(data.substring(1,2))-1];
+            System.out.println("  "+v);
+            sum2+=v;
+        }
+        adi2=sum2/8;
+        System.out.println("adi2: "+adi2);
+
+        for(String data  :    list3)    {
+            System.out.print(data);
+            Double v  = klArray[Integer.parseInt(data.substring(0,1))-1][Integer.parseInt(data.substring(1,2))-1];
+            System.out.println("  "+v);
+            sum3+=v;
+        }
+        adi3=sum3/8;
+        System.out.println("adi3: "+adi3);
     }
+
+
 
 
     //TODO  暂时未实现  D(A)ij 表示 i vs j
@@ -214,7 +334,7 @@ public class RUM {
      */
 
     @Test
-    public void main4(){
+    public void GetRumAdi(){
 
         System.out.println("D(A)ij 计算 ");
 
@@ -230,47 +350,133 @@ public class RUM {
         map.put("(1 0)",3);
         map.put("(1 1)",4);
 
-        Double[][] klarray = main3();
+        Double[][] klArray = GetRumKLArray();
+
+        new KLUtils().arrayPrint(klArray);
 
         //d(A)j11 辨别第一个属性，且固定为(1 X) to (0 X)
         System.out.println("获取下标");
-        ArrayList<String> list = new ArrayList();
-        Double sum = 0.0;
-        Double adi = 0.0;
-        if("d(A)j11".equals("d(A)j11")){
-            int X;
-            for (int i =0;i<2;i++){
-                X = i;
-                Integer index1 = map.get("(1 " + X + ")");
-                Integer index2 = map.get("(0 " + X + ")");
-                System.out.println("D"+index1+index2);
-                list.add(""+index1+index2);
-            }
-        }
+        ArrayList<String> list1 = new ArrayList();
+        ArrayList<String> list2 = new ArrayList();
+        Double sum1 = 0.0;
+        Double sum2 = 0.0;
+        Double adi1 ;
+        Double adi2 ;
 
 
-        if("d(A)j10".equals("d(A)j10")){
-            int X;
-            for (int i =0;i<2;i++){
-                X = i;
-                Integer index1 = map.get("(0 " + X + ")");
-                Integer index2 = map.get("(1 " + X + ")");
-                System.out.println("D"+index1+index2);
-                list.add(""+index1+index2);
-            }
+        for (int X =0;X<2;X++){
+            //adi1
+            Integer index1 = map.get("(1 " + X + ")");
+            Integer index2 = map.get("(0 " + X + ")");
+            Integer index3 = map.get("(0 " + X + ")");
+            Integer index4 = map.get("(1 " + X + ")");
+
+            //adi2
+            Integer index5 = map.get("(" + X + " 1)");
+            Integer index6 = map.get("(" + X + " 0)");
+            Integer index7 = map.get("(" + X + " 0)");
+            Integer index8 = map.get("(" + X + " 1)");
+
+            System.out.println("D"+index1+index2);
+            System.out.println("D"+index3+index4);
+            list1.add(""+index1+index2);
+            list1.add(""+index3+index4);
+
+            System.out.println("D"+index5+index6);
+            System.out.println("D"+index7+index8);
+            list2.add(""+index5+index6);
+            list2.add(""+index7+index8);
         }
+
 
         System.out.println("list 遍历 ;拿list的值去Array中匹配寻找,然后输出其大小");
-        for(String data  :    list)    {
+        for(String data  :    list1)    {
             System.out.print(data);
-            Double v  = klarray[Integer.parseInt(data.substring(0,1))-1][Integer.parseInt(data.substring(1,2))-1];
+            Double v  = klArray[Integer.parseInt(data.substring(0,1))-1][Integer.parseInt(data.substring(1,2))-1];
             System.out.println("  "+v);
-            sum+=v;
+            sum1+=v;
         }
-        adi=sum/4;
-        System.out.println("ADI结果");
-        System.out.println("adi: "+adi);
-        
+        adi1=sum1/4;
+
+        for(String data  :    list2)    {
+            System.out.print(data);
+            Double v  = klArray[Integer.parseInt(data.substring(0,1))-1][Integer.parseInt(data.substring(1,2))-1];
+            System.out.println("  "+v);
+            sum2+=v;
+        }
+        adi2=sum2/4;
+
+        System.out.println("ADI结果如下:");
+        System.out.println("adi1: "+adi1);
+        System.out.println("adi2: "+adi2);
+
+    }
+
+
+
+    /*
+     * eg:0.8   0.125    (1,0)
+     *      //(0,0)
+     *      P(0,0)(0,0)=0.8 * (1) * 1 = 0.8
+     *      P(0,1)(0,0)=0.8 * (1) * 1 = 0.8
+     *      P(1,0)(0,0)=0.8 * (1) * 1 = 0.8
+     *      P(1,0)(0,0)=0.8 * (1) * 1 = 0.8
+     *
+     *
+     *      P(0,0)(1,0)=0.8 * (0.125^1) * 1 = 0.1
+     *      P(0,1)(1,0)=0.8 * (0.125^1) * 1 = 0.1
+     *      P(1,0)(1,0)=0.8 * (1) * 1 = 0.8
+     *      P(1,1)(1,0)=0.8 * (1) * 1 = 0.8
+     *
+     */
+
+    /*  K_L information 和 rum 的区别
+     *   hql 大厂急缺人   (1,0)
+     *         (0,0)  (0,1)  (1,0)  (1,1)
+     *  (0,0)
+     *  (0,1)
+     *  (1,0)
+     *  (1,1)
+     *
+     */
+    /*
+     * K_L information矩阵如下:
+     * 0.0  0.0  1.14  1.14
+     * 0.0  0.0  1.14  1.14
+     * 1.36  1.36  0.0  0.0
+     * 1.36  1.36  0.0  0.0
+     */
+
+    /**
+     *  K_L 矩阵计算
+     *  行列分别表示 （0,0）（0,1）（1,0）（1,1）
+     *               0.1    0.1   0.8   0.8
+     *  Dj 表示 K_L 矩阵
+     *    1. 定义一维数组 和 二维数组  The probability of a correct response
+     *    2. for 计算并存储
+     *    3. 遍历输出
+     */
+    public Double[][] GetRumKLArray(){
+        //Method 1
+        ArrayList<Double> lists1 = new ArrayList<>();
+        lists1.add(0.1);
+        lists1.add(0.1);
+        lists1.add(0.8);
+        lists1.add(0.8);
+
+        //Method 2 , (double brace initialization)
+        ArrayList<Double> lists2 = new ArrayList<Double>(){{
+            add(0.1);
+            add(0.1);
+            add(0.8);
+            add(0.8);
+        }};
+
+        Double[][] klArray = new KLUtils().foreach(lists1, lists2);
+
+        new KLUtils().arrayPrint(klArray);
+
+        return klArray;
     }
 
 
