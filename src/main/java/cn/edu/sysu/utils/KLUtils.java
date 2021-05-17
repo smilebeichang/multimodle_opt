@@ -158,31 +158,23 @@ public class KLUtils {
      * 并使用foreach方法对二维数组进行遍历
      *
      */
-    public  void foreach( ArrayList<Double> lists1,ArrayList<Double> lists2) {
+    public   Double[][] foreach( ArrayList<Double> lists1,ArrayList<Double> lists2) {
 
         //计算 K_L
         System.out.println();
-        Double[][] klArray =new Double[4][4];
+        Double[][] klArray =new Double[lists1.size()][lists2.size()];
         for (int i = 0;i<lists1.size();i++){
             for (int j = 0; j < lists2.size(); j++) {
                 //(0,0) vs (0,0)   K_L 的计算公式
                 double v = lists1.get(i) * Math.log(lists1.get(i) / lists2.get(j)) +
                         (1 - lists1.get(i)) * Math.log((1 - lists1.get(i)) / (1 - lists2.get(j)));
-
+                //System.out.println(lists1.get(i) + " * " +  Math.log(lists1.get(i) / lists2.get(j)) +" " +(1 - lists1.get(i)) + " * " + Math.log((1 - lists1.get(i)) / (1 - lists2.get(j))));
                 v = Double.valueOf((v+"0000").substring(0,4));
                 klArray[i][j] = v;
             }
         }
 
-        //遍历输出 K_L 矩阵
-        System.out.println("K_L information矩阵如下: ");
-        for (Double[] fs:klArray) {
-            for (Double fss:fs) {
-                System.out.print(fss+"  ");//相当于arr[i][j]
-            }
-            System.out.println();
-        }
-        System.out.println("====================");
+        return klArray;
     }
 
 }
