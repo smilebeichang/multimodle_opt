@@ -106,7 +106,7 @@ public class SimpleProcess2 {
             System.out.println("id："+question.getId()+" 属性："+question.getAttributes());
 
             // 将数据保存到数据库
-            jdbcUtils.insert(question.getId(),"'"+question.getAttributes()+"'");
+            //jdbcUtils.insert(question.getId(),"'"+question.getAttributes()+"'");
 
         }
         System.out.println();
@@ -133,7 +133,7 @@ public class SimpleProcess2 {
             System.out.print("");
 
             // 将数据保存到数据库
-            jdbcUtils.insert(question.getId(),"'"+question.getAttributes()+"'");
+            //jdbcUtils.insert(question.getId(),"'"+question.getAttributes()+"'");
         }
         System.out.println();
 
@@ -158,7 +158,7 @@ public class SimpleProcess2 {
             System.out.println("id："+question.getId()+" 属性："+question.getAttributes());
 
             // 将数据保存到数据库
-            jdbcUtils.insert(question.getId(),"'"+question.getAttributes()+"'");
+            //jdbcUtils.insert(question.getId(),"'"+question.getAttributes()+"'");
         }
 
     }

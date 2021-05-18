@@ -18,11 +18,6 @@ import java.util.ArrayList;
  */
 public class JDBCUtils {
 
-    public static void main(String []args) {
-
-        //insert(777,"'[a,d]'");
-        //select();
-    }
 
 
     /**
@@ -68,7 +63,7 @@ public class JDBCUtils {
     /**
      * 新增到数据库
      */
-    public  void insert(int id,String attributes) {
+    public  void insert(int id,String pattern,Double base,String penalty,Double adi1,Double adi2,Double adi3,Double adi4,Double adi5) {
         Connection conn ;
         PreparedStatement ps ;
 
@@ -77,7 +72,9 @@ public class JDBCUtils {
             conn =
                     DriverManager.getConnection("jdbc:mysql://localhost/sysu?"+"user=root&password=root");
             System.out.println("数据库连接成功");
-            String sql = "insert into question values ("+id+","+ attributes +");";
+            String sql = "INSERT INTO sysu.rum_adi \n" +
+                    "(id, pattern, base, penalty, adi1, adi2, adi3, adi4, adi5) \n" +
+                    "VALUES("+id+",\""+pattern+"\","+base+",\""+penalty+"\","+adi1+","+adi2+","+adi3+","+adi4+","+adi5+");";
             System.out.println(sql);
             ps = conn.prepareStatement(sql);
             ps.execute();

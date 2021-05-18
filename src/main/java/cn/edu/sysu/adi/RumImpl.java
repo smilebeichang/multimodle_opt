@@ -1,5 +1,6 @@
 package cn.edu.sysu.adi;
 
+import cn.edu.sysu.utils.JDBCUtils;
 import cn.edu.sysu.utils.KLUtils;
 import org.junit.Test;
 
@@ -37,7 +38,7 @@ import java.util.Map;
  */
 public class RumImpl {
 
-    private int id = 1  ;
+    private int id =1;
     private String pattern ;
     private Double base ;
     private String penalty ;
@@ -47,20 +48,13 @@ public class RumImpl {
     private Double adi4;
     private Double adi5;
 
-    @Test
-    public void test(){
-        String s = "41_18";
-        String[] spli = s.split("_");
-        System.out.println(spli[0]);
-        System.out.println(spli[1]);
 
-    }
 
     //1. 实现一个方法 通过base 和 penalty来获取rum  否则题目太相似
     //2. 上层返回ArrayList<Double> lists
     //3. 根据list=》获取klArray,map=》获取index,拿index和klArray获取对应的值,并计算出adi1 adi2 adi3
     //4. 用list集合将上一步获取的adi1 adi2 adi3,保存到全局变量。  故一道试题pattern对应三个adi
-    //5. 生成单道题的属性值：id  base概率  pattern  penalty  adi   共7个字段
+    //5. 生成单道题的属性值：id  base概率  pattern  penalty  adi   共9个字段
     //6. 生成题库 要求比例均衡
 
     //存在问题： 惩罚系数 目前未实现,系数比例精细化
@@ -70,25 +64,39 @@ public class RumImpl {
     @Test
     public  void TestMath() throws InterruptedException {
 
+        JDBCUtils jdbcUtils = new JDBCUtils();
         //捋思路
-        for (int i = 0; i < 20; i++) {
-            start(3);
+//        start(2);
+//        jdbcUtils.insert(id,pattern,base,penalty,adi1,adi2,adi3,adi4,adi5);
+
+
+
+//      5:10:10:5:1 假设题库62道题  则10:20:20:10:2
+        for (int i = 1; i <= 10; i++) {
+            id = i;
+            start(1);
+            jdbcUtils.insert(id,pattern,base,penalty,adi1,adi2,adi3,adi4,adi5);
         }
-
-
-        //3:3:1 假设题库50道题  则21：21:8
-//        for (int i = 1; i <= 3; i++) {
-//            id = i;
-//            start(1);
-//        }
-//        for (int i = 4; i <= 6; i++) {
-//            id = i;
-//            start(2);
-//        }
-//        for (int i = 7; i <= 7; i++) {
-//            id = i;
-//            start(3);
-//        }
+        for (int i = 11; i <= 30; i++) {
+            id = i;
+            start(2);
+            jdbcUtils.insert(id,pattern,base,penalty,adi1,adi2,adi3,adi4,adi5);
+        }
+        for (int i = 31; i <= 50; i++) {
+            id = i;
+            start(3);
+            jdbcUtils.insert(id,pattern,base,penalty,adi1,adi2,adi3,adi4,adi5);
+        }
+        for (int i = 51; i <= 60; i++) {
+            id = i;
+            start(4);
+            jdbcUtils.insert(id,pattern,base,penalty,adi1,adi2,adi3,adi4,adi5);
+        }
+        for (int i = 61; i <= 62; i++) {
+            id = i;
+            start(5);
+            jdbcUtils.insert(id,pattern,base,penalty,adi1,adi2,adi3,adi4,adi5);
+        }
 
 
     }
@@ -241,12 +249,12 @@ public class RumImpl {
 
 
         }
-//        System.out.println("adi的计算指标：");
-//        System.out.println("adi1: "+list1);
-//        System.out.println("adi2: "+list2);
-//        System.out.println("adi3: "+list3);
-//        System.out.println("adi4: "+list4);
-//        System.out.println("adi5: "+list5);
+        System.out.println("adi的计算指标：");
+        System.out.println("adi1个数: "+list1.size() +" 具体指标为:"+list1);
+        System.out.println("adi2个数: "+list2.size() +" 具体指标为:"+list2);
+        System.out.println("adi3个数: "+list3.size() +" 具体指标为:"+list3);
+        System.out.println("adi4个数: "+list4.size() +" 具体指标为:"+list4);
+        System.out.println("adi5个数: "+list5.size() +" 具体指标为:"+list5);
 
         System.out.println("list 遍历 ;拿list的值去Array中匹配寻找,然后输出其大小：");
         List<Double> calAdiList = CalAdiImple(klArray, list1, list2, list3, list4, list5);
