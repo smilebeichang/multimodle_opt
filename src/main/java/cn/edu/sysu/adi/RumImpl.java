@@ -13,10 +13,33 @@ import java.util.Map;
 /**
  * @Author : song bei chang
  * @create 2021/5/18 19:34
+ *
+ * Reduce-RUM 统一参数化模型  的实现
+ *
+ * double que_fit = πj * ( (rjk* * γ * β) .... );
+ *
+ * p* 是正确应用第j项所有必要属性的概率，
+ * πj* 为项目难度参数，表示被试i掌握item j 所需要的全部属性，正确作答item j的概率，其值越大（接近1）表示被试掌握了所需属性很可能成功应答。  每道题一个固定值
+ * rjk*表示被试缺乏属性K,答对item j vs 被试掌握属性k答对j的概率比。其值越小（接近0）,表示掌握属性K很重要。rjk*也被称做属性K在itemj上的区分度参数。  每道题的一个考察属性的pattern
+ * super high   high      low
+ * [0.05,0.2]  [0.4,0.85] [0.6,0.92]
+ *
+ *
+ *          *         (0,0,0)(0,0,1)(0,1,0)(1,0,0)(0,1,1)(1,0,1)(1,1,0)(1,1,1)
+ *          * (0,0,0)
+ *          * (0,0,1)
+ *          * (0,1,0)
+ *          * (1,0,0)
+ *          * (0,1,1)
+ *          * (1,0,1)
+ *          * (1,1,0)
+ *          * (1,1,1)
+ *          *
+ *
  */
 public class RumImpl {
 
-
+    private int id ;
     private String pattern ;
     private Double base ;
     private String penalty ;
@@ -25,55 +48,47 @@ public class RumImpl {
     private Double adi3;
 
 
+    //1. 实现一个方法 通过base 和 penalty来获取rum  否则题目太相似
+    //2. 上层返回ArrayList<Double> lists
+    //3. 根据list=》获取klArray,map=》获取index,拿index和klArray获取对应的值,并计算出adi1 adi2 adi3
+    //4. 用list集合将上一步获取的adi1 adi2 adi3,保存到全局变量。  故一道试题pattern对应三个adi
+    //5. 生成单道题的属性值：id  base概率  pattern  penalty  adi   共7个字段
+    //6. 生成题库 要求比例均衡
+
+    //存在问题： 惩罚系数 目前未实现,系数比例精细化
+
     @Test
-    public  void TestMath() {
+    public  void TestMath() throws InterruptedException {
 
-        System.out.println(" junit 测试 ");
-        String ip = new KLUtils().RandomInit();
-        GetAdi(ip);
-        pattern = ip;
-        //捋思路  前33次 0.05~0.2  34~66 0.4~0.85 67~ 0.6~0.92
-        //存在问题： 惩罚系数 目前未实现,系数比例精细化
+        //捋思路
+        //3:3:1 假设题库50道题  则21：21:8
+        for (int i = 1; i <= 3; i++) {
+            id = i;
+            start(1);
+        }
+        for (int i = 4; i <= 6; i++) {
+            id = i;
+            start(2);
+        }
+        for (int i = 7; i <= 7; i++) {
+            id = i;
+            start(3);
+        }
 
-        System.out.printf("pattern=%s \t base=%s \t penalty=%s \t adi1=%s \t adi2=%s \t adi3=%s \n", pattern, base,penalty,adi1,adi2,adi3);
+
+    }
+
+    public void start(int num) throws InterruptedException {
+        pattern = new KLUtils().RandomInit(num);
+        GetAdi(pattern);
+
+        System.out.printf("id=%s \t pattern=%s \t base=%s \t penalty=%s \t adi1=%s \t adi2=%s \t adi3=%s \n", id, pattern, base,penalty,adi1,adi2,adi3);
     }
 
 
 
 
-    /**
-     * Reduce-RUM 统一参数化模型  的实现
-     *
-     * double que_fit = πj * ( (rjk* * γ * β) .... );
-     *
-     * p* 是正确应用第j项所有必要属性的概率，
-     * πj* 为项目难度参数，表示被试i掌握item j 所需要的全部属性，正确作答item j的概率，其值越大（接近1）表示被试掌握了所需属性很可能成功应答。  每道题一个固定值
-     * rjk*表示被试缺乏属性K,答对item j vs 被试掌握属性k答对j的概率比。其值越小（接近0）,表示掌握属性K很重要。rjk*也被称做属性K在itemj上的区分度参数。  每道题的一个考察属性的pattern
-     * super high   high      low
-     * [0.05,0.2]  [0.4,0.85] [0.6,0.92]
-     *
-     *
-     *          *         (0,0,0)(0,0,1)(0,1,0)(1,0,0)(0,1,1)(1,0,1)(1,1,0)(1,1,1)
-     *          * (0,0,0)
-     *          * (0,0,1)
-     *          * (0,1,0)
-     *          * (1,0,0)
-     *          * (0,1,1)
-     *          * (1,0,1)
-     *          * (1,1,0)
-     *          * (1,1,1)
-     *          *
-     *
-     */
-
     public  void GetAdi(String ip) {
-
-        //0. 实现一个方法 通过base 和 penalty来获取rum  否则题目太相似
-        //1. 上层返回ArrayList<Double> lists
-        //2. 根据list=》获取klArray,map=》获取index,拿index和klArray获取对应的值,并计算出adi1 adi2 adi3
-        //3. 用list集合将上一步获取的adi1 adi2 adi3,保存到全局变量。  故一道试题pattern对应三个adi
-        //4. 生成题库,每道题目的属性值：id  base概率  pattern  penalty  adi   共7个字段
-
 
 //以试题pattern(1,0,0)为单位,这样才能算出一个矩阵 rum，然后求出该试题的矩阵 k_L，然后求出该试题的矩阵 Da，最后平均求出该试题的 adi
         //index map
@@ -98,7 +113,7 @@ public class RumImpl {
 
 
         base = new KLUtils().makeRandom(0.95f, 0.75f, 2);
-        System.out.println("base: "+ base);
+//        System.out.println("base: "+ base);
 
         ArrayList<Double> rumList = GetRumListsRandom(base,ip);
 
@@ -106,7 +121,7 @@ public class RumImpl {
         //根据 rumList 计算出K_L二维数组
         Double[][] klArray = new KLUtils().foreach(rumList, rumList);
         //打印
-        new KLUtils().arrayPrint(klArray);
+//        new KLUtils().arrayPrint(klArray);
 
 
         /*
@@ -159,12 +174,12 @@ public class RumImpl {
 
 
         }
-        System.out.println("adi的计算指标：");
-        System.out.println("adi1: "+list1);
-        System.out.println("adi2: "+list2);
-        System.out.println("adi3: "+list3);
+//        System.out.println("adi的计算指标：");
+//        System.out.println("adi1: "+list1);
+//        System.out.println("adi2: "+list2);
+//        System.out.println("adi3: "+list3);
 
-        System.out.println("list 遍历 ;拿list的值去Array中匹配寻找,然后输出其大小：");
+//        System.out.println("list 遍历 ;拿list的值去Array中匹配寻找,然后输出其大小：");
         List<Double> calAdiList = CalAdiImple(klArray, list1, list2, list3);
         System.out.println(calAdiList);
 
@@ -217,7 +232,7 @@ public class RumImpl {
             int num2 = ab2?0:1;
             int num3 = ab3?0:1;
 
-            System.out.printf("ip=%s \t base=%s \t penalty1=%s \t penalty2=%s \t penalty3=%s \n", ip, base,penalty1,penalty2,penalty3);
+//            System.out.printf("ip=%s \t base=%s \t penalty1=%s \t penalty2=%s \t penalty3=%s \n", ip, base,penalty1,penalty2,penalty3);
 
             double p = base * Math.pow(penalty1, num1) * Math.pow(penalty2, num2) * Math.pow(penalty3, num3) ;
 
@@ -246,7 +261,7 @@ public class RumImpl {
             sum1+=v;
         }
         adi1=sum1/8;
-        System.out.println("adi1: "+adi1);
+//        System.out.println("adi1: "+adi1);
 
         for(String data  :    list2)    {
             //System.out.print(data);
@@ -255,7 +270,7 @@ public class RumImpl {
             sum2+=v;
         }
         adi2=sum2/8;
-        System.out.println("adi2: "+adi2);
+//        System.out.println("adi2: "+adi2);
 
         for(String data  :    list3)    {
             //System.out.print(data);
@@ -264,7 +279,7 @@ public class RumImpl {
             sum3+=v;
         }
         adi3=sum3/8;
-        System.out.println("adi3: "+adi3);
+//        System.out.println("adi3: "+adi3);
 
         List<Double> adiList = new ArrayList<Double>(){{
             add(adi1);

@@ -214,36 +214,33 @@ public class KLUtils {
     /**
      * 随机生成pattern,同时生成 penalty
      */
-    public String RandomInit(){
-        //0属性 1属性 2属性 3属性
-        //3 9 9 3
-        String ip = "";
-        for (int i = 0; i < 1; i++) {
-//            int v = new java.util.Random().nextBoolean() ? 1 : 0;
-//            System.out.println(v);
-            //完全随机？  这个有点离谱啊
-            String attributes ;
-            int ATTRIBUTE_MAX = 3;
-            int attNum = new Random().nextInt(ATTRIBUTE_MAX);
-            Set<String> fill_set = new HashSet<>();
-            for (int j = 0; j < 2; j++) {
-                //a的ASCII码 将这个运算后的数字强制转换成字符,然后转pattern,通过这种方式,保证了每个pattern的概率
-                //属性的去重操作
-                while (fill_set.size() == j ){
-                    String c = ((char) (Math.random() * 3 + 'a'))+"";
-                    fill_set.add(c);
-                }
-            }
-            attributes = fill_set.toString();
-            System.out.println(attributes);
-            int p1 = fill_set.contains("a")?1:0;
-            int p2 = fill_set.contains("b")?1:0;
-            int p3 = fill_set.contains("c")?1:0;
-            ip = "("+p1+","+p2+","+p3+")";
-            System.out.println(ip);
-
-
+    public String RandomInit(int num ) throws InterruptedException {
+        if(num == 0 ){
+            System.err.println("提示：属性不能全为空！！");
+            Thread.sleep(2000);
         }
+        //1属性 2属性 3属性
+        //9 9 3
+
+        //完全随机？  这个有点离谱啊
+        String attributes ;
+        Set<String> fill_set = new HashSet<>();
+        for (int j = 0; j < num; j++) {
+            //a的ASCII码 将这个运算后的数字强制转换成字符,然后转pattern,通过这种方式,保证了每个pattern的概率
+            //属性的去重操作
+            while (fill_set.size() == j ){
+                String c = ((char) (Math.random() * 3 + 'a'))+"";
+                fill_set.add(c);
+            }
+        }
+        attributes = fill_set.toString();
+        int p1 = fill_set.contains("a")?1:0;
+        int p2 = fill_set.contains("b")?1:0;
+        int p3 = fill_set.contains("c")?1:0;
+        String ip = "("+p1+","+p2+","+p3+")";
+//        System.out.println("属性："+attributes);
+//        System.out.println("属性："+ip);
+
         return ip;
 
     }
