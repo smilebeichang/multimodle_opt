@@ -5,7 +5,11 @@ import org.junit.Test;
 
 
 import java.io.*;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
 
 /**
  * @Author : song bei chang
@@ -192,62 +196,57 @@ public class KLUtils {
 
 
 
+
     /**
-     * 返回 rum 的 集合 ArrayList<ArrayList<Double>>
-     * @param base  基线系数
-     * @param penalty 惩罚系数
+     * 生成指定范围，指定小数位数的随机数
+     * @param max 最大值
+     * @param min 最小值
+     * @param scale 小数位数
+     * @return
      */
-    public ArrayList<ArrayList<Double>> GetRumListsRandom(Double base,Double penalty){
-
-        ArrayList<ArrayList<Double>> patternLists = new ArrayList<>();
-
-        //试题试卷_pattern ips
-        ArrayList<String> ips = new ArrayList<String>(){{
-            add("(0,0,0)");
-            add("(0,0,1)");
-            add("(0,1,0)");
-            add("(1,0,0)");
-            add("(0,1,1)");
-            add("(1,0,1)");
-            add("(1,1,0)");
-            add("(1,1,1)");
-        }};
-
-        //定义学生pattern
-        ArrayList<String> sps = ips;
-
-        for (String pattern : ips) {
-            //根据学生pattern vs 题目pattern 获取答对此题的rum
-            int b1 = Integer.parseInt(pattern.substring(1, 2));
-            int b2 = Integer.parseInt(pattern.substring(3, 4));
-            int b3 = Integer.parseInt(pattern.substring(5, 6));
-
-            ArrayList<Double> lists0 = new ArrayList<>();
-
-            for (String sp : sps) {
-                int a1 = Integer.parseInt(sp.substring(1, 2));
-                int a2 = Integer.parseInt(sp.substring(3, 4));
-                int a3 = Integer.parseInt(sp.substring(5, 6));
-
-                //a>=b则*1, a<b 则*penalty^1
-                boolean ab1 = a1 >= b1;
-                boolean ab2 = a2 >= b2;
-                boolean ab3 = a3 >= b3;
-                int num1 = ab1?0:1;
-                int num2 = ab2?0:1;
-                int num3 = ab3?0:1;
-                int sum = num1 + num2 + num3;
-
-                double p = base * Math.pow(penalty, sum);
-
-                lists0.add(p);
-            }
-            patternLists.add(lists0);
-        }
-        return  patternLists;
-
+    public Double makeRandom(float max, float min, int scale){
+        BigDecimal cha = new BigDecimal(Math.random() * (max-min) + min);
+        //保留 scale 位小数，并四舍五入
+        return cha.setScale(scale,BigDecimal.ROUND_HALF_UP).doubleValue();
     }
 
+
+    /**
+     * 随机生成pattern,同时生成 penalty
+     */
+    public String RandomInit(){
+        //0属性 1属性 2属性 3属性
+        //3 9 9 3
+        String ip = "";
+        for (int i = 0; i < 1; i++) {
+//            int v = new java.util.Random().nextBoolean() ? 1 : 0;
+//            System.out.println(v);
+            //完全随机？  这个有点离谱啊
+            String attributes ;
+            int ATTRIBUTE_MAX = 3;
+            int attNum = new Random().nextInt(ATTRIBUTE_MAX);
+            Set<String> fill_set = new HashSet<>();
+            for (int j = 0; j < 2; j++) {
+                //a的ASCII码 将这个运算后的数字强制转换成字符,然后转pattern,通过这种方式,保证了每个pattern的概率
+                //属性的去重操作
+                while (fill_set.size() == j ){
+                    String c = ((char) (Math.random() * 3 + 'a'))+"";
+                    fill_set.add(c);
+                }
+            }
+            attributes = fill_set.toString();
+            System.out.println(attributes);
+            int p1 = fill_set.contains("a")?1:0;
+            int p2 = fill_set.contains("b")?1:0;
+            int p3 = fill_set.contains("c")?1:0;
+            ip = "("+p1+","+p2+","+p3+")";
+            System.out.println(ip);
+
+
+        }
+        return ip;
+
+    }
 
 }
 
