@@ -1,0 +1,1795 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="ssm:war" />
+    </artifacts-to-build>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="ed8f7aed-469d-451d-9caf-210d14ebdd5a" name="Default" comment="DINA 初步完成">
+      <change beforePath="$PROJECT_DIR$/src/main/java/cn/edu/sysu/adi/DINA.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/edu/sysu/adi/DINA.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cn/edu/sysu/adi/RUM.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/edu/sysu/adi/RUM.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cn/edu/sysu/controller/SimpleProcess2.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/edu/sysu/controller/SimpleProcess2.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cn/edu/sysu/utils/JDBCUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/edu/sysu/utils/JDBCUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cn/edu/sysu/utils/KLUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/edu/sysu/utils/KLUtils.java" afterDir="false" />
+    </list>
+    <ignored path="$PROJECT_DIR$/out/" />
+    <ignored path="$PROJECT_DIR$/target/" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DatabaseView">
+    <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_TABLE_DETAILS" value="true" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+  </component>
+  <component name="FUSProjectUsageTrigger">
+    <session id="-656800821">
+      <usages-collector id="statistics.lifecycle.project">
+        <counts>
+          <entry key="project.closed" value="1" />
+          <entry key="project.open.time.2" value="1" />
+          <entry key="project.open.time.33" value="1" />
+          <entry key="project.opened" value="2" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.open">
+        <counts>
+          <entry key="html" value="1" />
+          <entry key="java" value="2" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.open">
+        <counts>
+          <entry key="HTML" value="1" />
+          <entry key="JAVA" value="2" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.edit">
+        <counts>
+          <entry key="java" value="5" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.edit">
+        <counts>
+          <entry key="JAVA" value="5" />
+        </counts>
+      </usages-collector>
+    </session>
+    <session id="-108017438">
+      <usages-collector id="statistics.lifecycle.project">
+        <counts>
+          <entry key="project.closed" value="37" />
+          <entry key="project.open.time.1" value="1" />
+          <entry key="project.open.time.102" value="1" />
+          <entry key="project.open.time.108" value="1" />
+          <entry key="project.open.time.11" value="1" />
+          <entry key="project.open.time.13" value="1" />
+          <entry key="project.open.time.15" value="1" />
+          <entry key="project.open.time.17" value="3" />
+          <entry key="project.open.time.19" value="1" />
+          <entry key="project.open.time.21" value="1" />
+          <entry key="project.open.time.24" value="1" />
+          <entry key="project.open.time.27" value="1" />
+          <entry key="project.open.time.31" value="1" />
+          <entry key="project.open.time.33" value="2" />
+          <entry key="project.open.time.36" value="4" />
+          <entry key="project.open.time.39" value="3" />
+          <entry key="project.open.time.4" value="3" />
+          <entry key="project.open.time.40" value="3" />
+          <entry key="project.open.time.41" value="1" />
+          <entry key="project.open.time.42" value="2" />
+          <entry key="project.open.time.44" value="1" />
+          <entry key="project.open.time.45" value="4" />
+          <entry key="project.open.time.48" value="1" />
+          <entry key="project.open.time.5" value="1" />
+          <entry key="project.open.time.51" value="1" />
+          <entry key="project.open.time.56" value="1" />
+          <entry key="project.open.time.6" value="2" />
+          <entry key="project.open.time.60" value="1" />
+          <entry key="project.open.time.7" value="2" />
+          <entry key="project.open.time.88" value="1" />
+          <entry key="project.open.time.94" value="1" />
+          <entry key="project.opened" value="48" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.open">
+        <counts>
+          <entry key="class" value="3" />
+          <entry key="html" value="2" />
+          <entry key="java" value="132" />
+          <entry key="js" value="3" />
+          <entry key="jsp" value="3" />
+          <entry key="md" value="8" />
+          <entry key="properties" value="8" />
+          <entry key="txt" value="10" />
+          <entry key="vmoptions" value="1" />
+          <entry key="xml" value="24" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.open">
+        <counts>
+          <entry key="CLASS" value="3" />
+          <entry key="HTML" value="2" />
+          <entry key="JAVA" value="132" />
+          <entry key="JSP" value="3" />
+          <entry key="JavaScript" value="3" />
+          <entry key="Markdown" value="8" />
+          <entry key="PLAIN_TEXT" value="11" />
+          <entry key="Properties" value="8" />
+          <entry key="XML" value="24" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.edit">
+        <counts>
+          <entry key="dummy" value="18" />
+          <entry key="html" value="1" />
+          <entry key="java" value="8685" />
+          <entry key="jsp" value="13" />
+          <entry key="md" value="3" />
+          <entry key="properties" value="4" />
+          <entry key="txt" value="414" />
+          <entry key="xml" value="11" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.edit">
+        <counts>
+          <entry key="HTML" value="1" />
+          <entry key="JAVA" value="8685" />
+          <entry key="JSP" value="13" />
+          <entry key="Markdown" value="3" />
+          <entry key="PLAIN_TEXT" value="432" />
+          <entry key="Properties" value="4" />
+          <entry key="SQL" value="1" />
+          <entry key="XML" value="10" />
+        </counts>
+      </usages-collector>
+    </session>
+  </component>
+  <component name="FavoritesManager">
+    <favorites_list name="ssm2" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="spring-beans.schema" />
+        <option value="Jsp File" />
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>1278</find>
+      <find>getBetterAnt</find>
+      <find>f1</find>
+      <find>query_form_ga</find>
+      <find>type_choice</find>
+      <find>remove</find>
+      <find>正常交叉</find>
+      <find>注释</find>
+      <find>QuestSize</find>
+      <find>population_size</find>
+      <find>99试卷的适应度</find>
+      <find>studentHaveAttribute</find>
+      <find>best_gentic</find>
+      <find>test</find>
+      <find>1111</find>
+      <find>Ctrl + Z</find>
+      <find>out</find>
+      <find>eyun</find>
+      <find>SequentialNiching</find>
+      <find>childX2</find>
+      <find>nextGenPopulation</find>
+      <find>getPaperFitness</find>
+      <find>大</find>
+      <find>CutTextSingleCharacter</find>
+      <find>Entity</find>
+      <find>Entity2</find>
+      <find>ju</find>
+      <find>GetFileText</find>
+      <find>student_have_attribute</find>
+      <find>all_fitness</find>
+    </findStrings>
+    <replaceStrings>
+      <replace>m_dbPathLength</replace>
+      <replace>GA</replace>
+      <replace>student_have_attribute</replace>
+      <replace>best_genetic</replace>
+      <replace>2222</replace>
+      <replace>Entity</replace>
+    </replaceStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/src/main/java/net/sysu/mapper/GAMapper.java" />
+        <option value="$PROJECT_DIR$/src/main/java/net/sysu/filter/CharacterEncodingFilter.java" />
+        <option value="$PROJECT_DIR$/src/main/java/net/sysu/pojo/Questions.java" />
+        <option value="$PROJECT_DIR$/src/main/java/net/sysu/pojo/Score.java" />
+        <option value="$PROJECT_DIR$/src/main/java/net/sysu/service/IGAService.java" />
+        <option value="$PROJECT_DIR$/src/main/java/net/sysu/service/impl/GAServiceImpl.java" />
+        <option value="$PROJECT_DIR$/src/main/resources/net/sysu/mapper/GAMapper.xml" />
+        <option value="$PROJECT_DIR$/src/main/resources/mybatis/mybatis_config.xml" />
+        <option value="$PROJECT_DIR$/src/main/resources/spring/application-dao.xml" />
+        <option value="$PROJECT_DIR$/src/main/resources/spring/application-service.xml" />
+        <option value="$PROJECT_DIR$/src/main/resources/spring/apptication-trans.xml" />
+        <option value="$PROJECT_DIR$/src/main/resources/spring/springmvc.xml" />
+        <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml" />
+        <option value="$PROJECT_DIR$/src/main/test/net/eyun/test/Test01.java" />
+        <option value="$PROJECT_DIR$/src/main/webapp/index.jsp" />
+        <option value="$PROJECT_DIR$/src/main/java/net/sysu/controller/GAController.java" />
+        <option value="$PROJECT_DIR$/src/main/java/net/sysu/niche/MultimodalGA-master/niching/GenerationData.java" />
+        <option value="$PROJECT_DIR$/src/main/java/net/sysu/niche/niching2/gamestudy/SnakeGame.java" />
+        <option value="$PROJECT_DIR$/src/main/java/net/sysu/niche/niching2/studygame/Game_Snake.java" />
+        <option value="$PROJECT_DIR$/src/main/java/net/sysu/niche/niching2/studygame/Game_Tetris.java" />
+        <option value="$PROJECT_DIR$/src/main/java/net/sysu/niche/niching2/gamestudy/TetrisGame.java" />
+        <option value="$PROJECT_DIR$/src/main/java/net/sysu/niche/niching/GenerationData.java" />
+        <option value="$PROJECT_DIR$/src/main/java/net/sysu/niche/niching/Individual.java" />
+        <option value="$PROJECT_DIR$/src/main/java/net/sysu/niche/niching/SequentialNiching.java" />
+        <option value="$PROJECT_DIR$/src/main/java/net/sysu/niche/niching/SequentialNiching2.java" />
+        <option value="$PROJECT_DIR$/src/main/java/net/sysu/niche/niching2/studygame/Tetris.java" />
+        <option value="$PROJECT_DIR$/src/main/java/net/sysu/niche/niching2/studygame/Tetris_bak.java" />
+        <option value="$PROJECT_DIR$/src/main/java/net/sysu/niche/niching/Main.java" />
+        <option value="$PROJECT_DIR$/src/main/java/net/sysu/niche/niching/Genetic.java" />
+        <option value="$PROJECT_DIR$/src/main/java/net/sysu/controller/SimpleProcess.java" />
+        <option value="$PROJECT_DIR$/src/main/java/net/sysu/utils/CommonsUtils.java" />
+        <option value="$PROJECT_DIR$/src/main/java/net/sysu/GA/GA.java" />
+        <option value="$PROJECT_DIR$/src/main/java/net/sysu/controller/testMath.java" />
+        <option value="$PROJECT_DIR$/src/main/java/net/sysu/pojo/Papers.java" />
+        <option value="$PROJECT_DIR$/src/main/java/net/sysu/adi/KL/src/Entity.java" />
+        <option value="$PROJECT_DIR$/src/main/java/net/sysu/adi/KL/src/calculateKL.java" />
+        <option value="$PROJECT_DIR$/src/main/java/net/sysu/utils/Entity.java" />
+        <option value="$PROJECT_DIR$/src/main/java/net/sysu/utils/KLUtils.java" />
+        <option value="$PROJECT_DIR$/src/main/java/net/sysu/adi/AttributeLevel.java" />
+        <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/src/main/java/net/sysu/adi/rum/RUM.java" />
+        <option value="$PROJECT_DIR$/src/main/java/net/sysu/adi/RUM.java" />
+        <option value="$PROJECT_DIR$/src/main/java/net/sysu/controller/Test.java" />
+        <option value="$PROJECT_DIR$/src/main/java/net/sysu/niche/Niche.java" />
+        <option value="$PROJECT_DIR$/src/main/java/net/sysu/controller/SimpleProcess2.java" />
+        <option value="$PROJECT_DIR$/src/main/java/net/sysu/adi/DINA.java" />
+        <option value="$PROJECT_DIR$/src/main/java/cn/edu/sysu/utils/KLUtils.java" />
+        <option value="$PROJECT_DIR$/src/main/java/cn/edu/sysu/utils/JDBCUtils.java" />
+        <option value="$PROJECT_DIR$/src/main/java/cn/edu/sysu/adi/RUM.java" />
+        <option value="$PROJECT_DIR$/src/main/java/cn/edu/sysu/controller/SimpleProcess2.java" />
+        <option value="$PROJECT_DIR$/src/main/java/cn/edu/sysu/adi/DINA.java" />
+      </list>
+    </option>
+  </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsFlowSettings">
+    <service-enabled>false</service-enabled>
+    <exe-path />
+    <annotation-enable>false</annotation-enable>
+    <other-services-enabled>false</other-services-enabled>
+  </component>
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <sorting>DEFINITION_ORDER</sorting>
+  </component>
+  <component name="LogFilters">
+    <option name="FILTER_ERRORS" value="false" />
+    <option name="FILTER_WARNINGS" value="false" />
+    <option name="FILTER_INFO" value="true" />
+    <option name="FILTER_DEBUG" value="true" />
+    <option name="CUSTOM_FILTER" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="localRepository" value="D:\repository" />
+        <option name="mavenHome" value="D:/apache-maven-3.3.9" />
+        <option name="userSettingsFile" value="D:\apache-maven-3.3.9\conf\settings.xml" />
+      </MavenGeneralSettings>
+    </option>
+    <option name="importingSettings">
+      <MavenImportingSettings>
+        <option name="importAutomatically" value="true" />
+      </MavenImportingSettings>
+    </option>
+  </component>
+  <component name="MavenProjectNavigator">
+    <treeState>
+      <expand>
+        <path>
+          <item name="" type="16c1761:MavenProjectsStructure$RootNode" />
+          <item name="ssm Maven Webapp" type="9519ce18:MavenProjectsStructure$ProjectNode" />
+        </path>
+        <path>
+          <item name="" type="16c1761:MavenProjectsStructure$RootNode" />
+          <item name="ssm Maven Webapp" type="9519ce18:MavenProjectsStructure$ProjectNode" />
+          <item name="Dependencies" type="f4be9f2a:MavenProjectsStructure$DependenciesNode" />
+        </path>
+      </expand>
+      <select />
+    </treeState>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="-10" />
+    <option name="width" value="1940" />
+    <option name="height" value="1040" />
+  </component>
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State />
+          <State>
+            <id>Ali-Check</id>
+          </State>
+          <State>
+            <id>Android</id>
+          </State>
+          <State>
+            <id>Bidirectional TextInternationalizationLintAndroid</id>
+          </State>
+          <State>
+            <id>Bitwise operation issuesJava</id>
+          </State>
+          <State>
+            <id>Bitwise operation issuesJavaScript</id>
+          </State>
+          <State>
+            <id>CDI (Contexts and Dependency Injection)</id>
+          </State>
+          <State>
+            <id>CSS</id>
+          </State>
+          <State>
+            <id>Class structureJava</id>
+          </State>
+          <State>
+            <id>Code style issuesCSS</id>
+          </State>
+          <State>
+            <id>Code style issuesJava</id>
+          </State>
+          <State>
+            <id>CollectionsScala</id>
+          </State>
+          <State>
+            <id>Control flow issuesJava</id>
+          </State>
+          <State>
+            <id>CorrectnessLintAndroid</id>
+          </State>
+          <State>
+            <id>FinalizationJava</id>
+          </State>
+          <State>
+            <id>GeneralJavaScript</id>
+          </State>
+          <State>
+            <id>Google Web Toolkit</id>
+          </State>
+          <State>
+            <id>Groovy</id>
+          </State>
+          <State>
+            <id>HTML</id>
+          </State>
+          <State>
+            <id>Hibernate</id>
+          </State>
+          <State>
+            <id>IconsUsabilityLintAndroid</id>
+          </State>
+          <State>
+            <id>IndicesCollectionsScala</id>
+          </State>
+          <State>
+            <id>InitializationJava</id>
+          </State>
+          <State>
+            <id>Internationalization</id>
+          </State>
+          <State>
+            <id>InternationalizationJava</id>
+          </State>
+          <State>
+            <id>InternationalizationLintAndroid</id>
+          </State>
+          <State>
+            <id>J2ME issuesJava</id>
+          </State>
+          <State>
+            <id>JUnitJava</id>
+          </State>
+          <State>
+            <id>Java</id>
+          </State>
+          <State>
+            <id>Java 5Java language level migration aidsJava</id>
+          </State>
+          <State>
+            <id>Java 7Java language level migration aidsJava</id>
+          </State>
+          <State>
+            <id>Java language level migration aidsJava</id>
+          </State>
+          <State>
+            <id>JavaScript</id>
+          </State>
+          <State>
+            <id>Kotlin</id>
+          </State>
+          <State>
+            <id>LintAndroid</id>
+          </State>
+          <State>
+            <id>LoggingJava</id>
+          </State>
+          <State>
+            <id>MemoryJava</id>
+          </State>
+          <State>
+            <id>MessagesCorrectnessLintAndroid</id>
+          </State>
+          <State>
+            <id>Modularization issuesJava</id>
+          </State>
+          <State>
+            <id>Numeric issuesJava</id>
+          </State>
+          <State>
+            <id>OtherGroovy</id>
+          </State>
+          <State>
+            <id>PerformanceJava</id>
+          </State>
+          <State>
+            <id>Potentially confusing code constructsGroovy</id>
+          </State>
+          <State>
+            <id>Potentially confusing code constructsJavaScript</id>
+          </State>
+          <State>
+            <id>Probable bugsGroovy</id>
+          </State>
+          <State>
+            <id>Probable bugsJava</id>
+          </State>
+          <State>
+            <id>Probable bugsJavaScript</id>
+          </State>
+          <State>
+            <id>Reactor</id>
+          </State>
+          <State>
+            <id>RegExp</id>
+          </State>
+          <State>
+            <id>Scala</id>
+          </State>
+          <State>
+            <id>SecurityJava</id>
+          </State>
+          <State>
+            <id>Serialization issuesJava</id>
+          </State>
+          <State>
+            <id>Simplifications: filter and existsCollectionsScala</id>
+          </State>
+          <State>
+            <id>SizeCollectionsScala</id>
+          </State>
+          <State>
+            <id>Style issuesKotlin</id>
+          </State>
+          <State>
+            <id>Syntactic ClarificationScala</id>
+          </State>
+          <State>
+            <id>Syntactic SimplificationScala</id>
+          </State>
+          <State>
+            <id>TestNGJava</id>
+          </State>
+          <State>
+            <id>Threading issuesGroovy</id>
+          </State>
+          <State>
+            <id>Threading issuesJava</id>
+          </State>
+          <State>
+            <id>UsabilityLintAndroid</id>
+          </State>
+          <State>
+            <id>WebSocket</id>
+          </State>
+          <State>
+            <id>XPath</id>
+          </State>
+        </expanded-state>
+        <selected-state>
+          <State>
+            <id>AlibabaEnumConstantsMustHaveComment</id>
+          </State>
+        </selected-state>
+      </profile-state>
+    </entry>
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="CatdeaLogs" />
+      <pane id="PackagesPane" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="multimodal_optimization" type="b2602c69:ProjectViewProjectNode" />
+              <item name="multimodal_optimization" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="multimodal_optimization" type="b2602c69:ProjectViewProjectNode" />
+              <item name="multimodal_optimization" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="multimodal_optimization" type="b2602c69:ProjectViewProjectNode" />
+              <item name="multimodal_optimization" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="multimodal_optimization" type="b2602c69:ProjectViewProjectNode" />
+              <item name="multimodal_optimization" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="multimodal_optimization" type="b2602c69:ProjectViewProjectNode" />
+              <item name="multimodal_optimization" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="sysu" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="multimodal_optimization" type="b2602c69:ProjectViewProjectNode" />
+              <item name="multimodal_optimization" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="sysu" type="462c0819:PsiDirectoryNode" />
+              <item name="adi" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="multimodal_optimization" type="b2602c69:ProjectViewProjectNode" />
+              <item name="multimodal_optimization" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="sysu" type="462c0819:PsiDirectoryNode" />
+              <item name="controller" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="multimodal_optimization" type="b2602c69:ProjectViewProjectNode" />
+              <item name="multimodal_optimization" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="sysu" type="462c0819:PsiDirectoryNode" />
+              <item name="utils" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1620373082157" />
+    <property name="full.screen.before.presentation.mode" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/libs/je-analysis-1.5.1.jar!/" />
+    <property name="project.structure.last.edited" value="SDKs" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="F:\song\SYSU\multimodal_optimization\src\main\java\net\sysu\adi\KL" />
+      <recent name="F:\song\SYSU\multimodal_optimization\src\main\java\net\sysu\adi" />
+      <recent name="F:\song\SYSU\multimodal_optimization\src\main\java\net\sysu\niche\niching2\studygame" />
+      <recent name="F:\song\five\day10\ssm2\src\main\webapp" />
+      <recent name="F:\song\five\day10\ssm2\src\main\webapp\resource" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="net.sysu.utils" />
+      <recent name="net.eyun.pojo" />
+      <recent name="net.eyun.controller" />
+      <recent name="net.eyun.GA" />
+      <recent name="net.wanho.pojo" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="F:\song\SYSU\multimodal_optimization\src\main\java\net\sysu\adi\KL" />
+      <recent name="D:\宋北昌\ssm\src\main\resources" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Application.SimpleProcess2 (1)">
+    <configuration default="true" type="AndroidTestRunConfigurationType" factoryName="Android Tests">
+      <module name="" />
+      <option name="TESTING_TYPE" value="0" />
+      <option name="INSTRUMENTATION_RUNNER_CLASS" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="EXTRA_OPTIONS" value="" />
+      <option name="TARGET_SELECTION_MODE" value="SHOW_DIALOG" />
+      <option name="PREFERRED_AVD" value="" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
+      <option name="SKIP_NOOP_APK_INSTALLATIONS" value="true" />
+      <option name="FORCE_STOP_RUNNING_APP" value="true" />
+      <option name="DEBUGGER_TYPE" value="Java" />
+      <option name="USE_LAST_SELECTED_DEVICE" value="false" />
+      <option name="PREFERRED_AVD" value="" />
+      <Java />
+      <Profilers>
+        <option name="ENABLE_ADVANCED_PROFILING" value="true" />
+        <option name="GAPID_ENABLED" value="false" />
+        <option name="GAPID_DISABLE_PCS" value="false" />
+        <option name="SUPPORT_LIB_ENABLED" value="true" />
+        <option name="INSTRUMENTATION_ENABLED" value="true" />
+      </Profilers>
+      <method />
+    </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="SimpleProcess" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="cn.edu.sysu.controller.SimpleProcess" />
+      <module name="ssm" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="cn.edu.sysu.controller.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="SimpleProcess2 (1)" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="cn.edu.sysu.controller.SimpleProcess2" />
+      <module name="ssm" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="cn.edu.sysu.controller.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="SimpleProcess2" type="Application" factoryName="Application" temporary="true">
+      <option name="MAIN_CLASS_NAME" value="cn.edu.sysu.controller.SimpleProcess2" />
+      <module name="ssm" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="cn.edu.sysu.controller.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="Application" factoryName="Application">
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
+      <option name="arquillianRunConfiguration">
+        <value>
+          <option name="containerStateName" value="" />
+        </value>
+      </option>
+      <option name="VM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="ArquillianTestNG" factoryName="">
+      <option name="arquillianRunConfiguration">
+        <value>
+          <option name="containerStateName" value="" />
+        </value>
+      </option>
+      <option name="VM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" />
+      <properties />
+      <listeners />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="GrailsRunConfigurationType" factoryName="Grails">
+      <setting name="vmparams" value="" />
+      <setting name="cmdLine" value="run-app" />
+      <setting name="passParentEnv" value="true" />
+      <setting name="launchBrowser" value="true" />
+      <setting name="launchBrowserUrl" value="" />
+      <setting name="depsClasspath" value="false" />
+      <method v="2" />
+    </configuration>
+    <configuration name="DINA.main1" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="ssm" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="cn.edu.sysu.adi.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="cn.edu.sysu.adi" />
+      <option name="MAIN_CLASS_NAME" value="cn.edu.sysu.adi.DINA" />
+      <option name="METHOD_NAME" value="main1" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="DINA.main2" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="ssm" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="cn.edu.sysu.adi.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="cn.edu.sysu.adi" />
+      <option name="MAIN_CLASS_NAME" value="cn.edu.sysu.adi.DINA" />
+      <option name="METHOD_NAME" value="main2" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="RUM.main3" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="ssm" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="cn.edu.sysu.adi.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="cn.edu.sysu.adi" />
+      <option name="MAIN_CLASS_NAME" value="cn.edu.sysu.adi.RUM" />
+      <option name="METHOD_NAME" value="main3" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="JUnit" factoryName="JUnit">
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType" factoryName="Kotlin script">
+      <option name="filePath" />
+      <option name="vmParameters" />
+      <option name="alternativeJrePath" />
+      <option name="programParameters" />
+      <option name="passParentEnvs" value="true" />
+      <option name="workingDirectory" />
+      <option name="isAlternativeJrePathEnabled" value="false" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="WORKING_DIRECTORY" />
+      <module name="" />
+      <option name="filePath" />
+      <option name="vmParameters" />
+      <option name="alternativeJrePath" />
+      <option name="programParameters" />
+      <option name="passParentEnvs" value="true" />
+      <option name="workingDirectory" />
+      <option name="isAlternativeJrePathEnabled" value="false" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="WORKING_DIRECTORY" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="TestNG" factoryName="TestNG">
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <properties />
+      <listeners />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="song" type="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory" factoryName="Local" APPLICATION_SERVER_NAME="Tomcat 8.0.50" ALTERNATIVE_JRE_ENABLED="false">
+      <option name="OPEN_IN_BROWSER_URL" value="http://localhost:8086/" />
+      <option name="BROWSER_ID" value="98ca6316-2f89-46d9-a9e5-fa9e2b0625b3" />
+      <option name="COMMON_VM_ARGUMENTS" value="-Dfile.encoding=UTF-8" />
+      <option name="UPDATING_POLICY" value="restart-server" />
+      <deployment>
+        <artifact name="ssm:war">
+          <settings>
+            <option name="CONTEXT_PATH" value="/" />
+          </settings>
+        </artifact>
+      </deployment>
+      <server-settings>
+        <option name="BASE_DIRECTORY_NAME" value="Unnamed_ssm" />
+        <option name="HTTP_PORT" value="8086" />
+        <option name="JNDI_PORT" value="1011" />
+      </server-settings>
+      <predefined_log_file id="Tomcat" enabled="true" />
+      <predefined_log_file id="Tomcat Catalina" enabled="true" />
+      <predefined_log_file id="Tomcat Manager" enabled="false" />
+      <predefined_log_file id="Tomcat Host Manager" enabled="false" />
+      <predefined_log_file id="Tomcat Localhost Access" enabled="false" />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="56657" />
+      </RunnerSettings>
+      <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Cover">
+        <option name="USE_ENV_VARIABLES" value="true" />
+        <STARTUP>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </STARTUP>
+        <SHUTDOWN>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </SHUTDOWN>
+      </ConfigurationWrapper>
+      <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Debug">
+        <option name="USE_ENV_VARIABLES" value="true" />
+        <STARTUP>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </STARTUP>
+        <SHUTDOWN>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </SHUTDOWN>
+      </ConfigurationWrapper>
+      <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Run">
+        <option name="USE_ENV_VARIABLES" value="true" />
+        <STARTUP>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </STARTUP>
+        <SHUTDOWN>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </SHUTDOWN>
+      </ConfigurationWrapper>
+      <method v="2">
+        <option name="Make" enabled="true" />
+        <option name="BuildArtifacts" enabled="true">
+          <artifact name="ssm:war" />
+        </option>
+      </method>
+    </configuration>
+    <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
+      <module name="" />
+      <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m -ea" />
+      <option name="PROGRAM_PARAMETERS" />
+      <predefined_log_file id="idea.log" enabled="true" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <gulpfile />
+      <tasks />
+      <arguments />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Tomcat Server.song" />
+      <item itemvalue="Application.SimpleProcess2" />
+      <item itemvalue="JUnit.DINA.main2" />
+      <item itemvalue="JUnit.RUM.main3" />
+      <item itemvalue="Application.SimpleProcess2 (1)" />
+      <item itemvalue="Application.SimpleProcess" />
+      <item itemvalue="JUnit.DINA.main1" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.SimpleProcess2 (1)" />
+        <item itemvalue="JUnit.DINA.main1" />
+        <item itemvalue="JUnit.DINA.main2" />
+        <item itemvalue="JUnit.RUM.main3" />
+        <item itemvalue="Application.SimpleProcess" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="ed8f7aed-469d-451d-9caf-210d14ebdd5a" name="Default" comment="" />
+      <created>1564374419417</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1564374419417</updated>
+      <workItem from="1564374420797" duration="17877000" />
+      <workItem from="1564400907245" duration="4726000" />
+      <workItem from="1564408844263" duration="5425000" />
+      <workItem from="1564583859435" duration="43000" />
+      <workItem from="1569247929662" duration="842000" />
+      <workItem from="1571934626858" duration="678000" />
+      <workItem from="1571961458429" duration="29000" />
+      <workItem from="1572013597689" duration="4821000" />
+      <workItem from="1572018497974" duration="3638000" />
+      <workItem from="1572096653447" duration="13179000" />
+      <workItem from="1572138727703" duration="27958000" />
+      <workItem from="1572181467316" duration="9850000" />
+      <workItem from="1572275936550" duration="6348000" />
+      <workItem from="1572283129698" duration="45000" />
+      <workItem from="1572307202651" duration="497000" />
+      <workItem from="1572362606415" duration="6017000" />
+      <workItem from="1572447338327" duration="9040000" />
+      <workItem from="1572529251176" duration="8025000" />
+      <workItem from="1572589436972" duration="907000" />
+      <workItem from="1572591471709" duration="1368000" />
+      <workItem from="1572607801249" duration="1490000" />
+      <workItem from="1572656612233" duration="837000" />
+      <workItem from="1572670819347" duration="5765000" />
+      <workItem from="1572680769420" duration="25144000" />
+      <workItem from="1572825839660" duration="503000" />
+      <workItem from="1573173243460" duration="926000" />
+      <workItem from="1573919230525" duration="5725000" />
+      <workItem from="1573992291068" duration="17725000" />
+      <workItem from="1574085103298" duration="6629000" />
+      <workItem from="1574395004319" duration="48000" />
+      <workItem from="1574405105371" duration="649000" />
+      <workItem from="1574414763101" duration="1057000" />
+      <workItem from="1595769586245" duration="2930000" />
+      <workItem from="1600095066189" duration="341000" />
+      <workItem from="1600095559390" duration="2917000" />
+      <workItem from="1600480532994" duration="885000" />
+      <workItem from="1602915828831" duration="2711000" />
+      <workItem from="1603894918729" duration="769000" />
+      <workItem from="1604274144783" duration="2286000" />
+      <workItem from="1604412077812" duration="715000" />
+      <workItem from="1604447903975" duration="677000" />
+      <workItem from="1604532954609" duration="1525000" />
+      <workItem from="1604582487534" duration="10049000" />
+      <workItem from="1604593406869" duration="8813000" />
+      <workItem from="1604620752110" duration="80000" />
+      <workItem from="1604620913614" duration="1102000" />
+      <workItem from="1604637633512" duration="2361000" />
+      <workItem from="1604649590256" duration="1026000" />
+      <workItem from="1604665152139" duration="2230000" />
+      <workItem from="1604828776474" duration="3247000" />
+      <workItem from="1605101433345" duration="337000" />
+      <workItem from="1605367265378" duration="596000" />
+      <workItem from="1605625106645" duration="567000" />
+      <workItem from="1606028179964" duration="2632000" />
+      <workItem from="1606030845746" duration="19824000" />
+      <workItem from="1606173696423" duration="1689000" />
+      <workItem from="1606477498565" duration="89000" />
+      <workItem from="1610725396256" duration="341000" />
+      <workItem from="1611500847201" duration="2825000" />
+      <workItem from="1611587049457" duration="337000" />
+      <workItem from="1611587440500" duration="4327000" />
+      <workItem from="1611673157996" duration="652000" />
+      <workItem from="1611673856884" duration="5823000" />
+      <workItem from="1612095560277" duration="5924000" />
+      <workItem from="1612194021150" duration="1916000" />
+      <workItem from="1612228109093" duration="1881000" />
+      <workItem from="1612786065397" duration="598000" />
+      <workItem from="1612858380796" duration="280000" />
+      <workItem from="1614816307260" duration="356000" />
+      <workItem from="1614821962693" duration="1502000" />
+      <workItem from="1614823513200" duration="313000" />
+      <workItem from="1614823881521" duration="32629000" />
+      <workItem from="1614901250458" duration="2184000" />
+      <workItem from="1614924917655" duration="1618000" />
+      <workItem from="1615090595945" duration="145000" />
+      <workItem from="1616298026200" duration="3657000" />
+      <workItem from="1616540726604" duration="624000" />
+      <workItem from="1616998196698" duration="18000" />
+      <workItem from="1620293853352" duration="19735000" />
+      <workItem from="1620342005799" duration="7864000" />
+      <workItem from="1620356871437" duration="9370000" />
+      <workItem from="1620378326000" duration="320000" />
+    </task>
+    <task id="LOCAL-00001" summary="version1.0">
+      <created>1604621789709</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1604621789709</updated>
+    </task>
+    <task id="LOCAL-00002" summary="version1.1">
+      <created>1606032988954</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1606032988954</updated>
+    </task>
+    <task id="LOCAL-00003" summary="idea 快捷键">
+      <created>1606034185637</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1606034185637</updated>
+    </task>
+    <task id="LOCAL-00004" summary="框架优化">
+      <created>1606173779083</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1606173779083</updated>
+    </task>
+    <task id="LOCAL-00005" summary="questions 新增字段：属性">
+      <created>1606173933662</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1606173933662</updated>
+    </task>
+    <task id="LOCAL-00006" summary="pom 提交">
+      <created>1606174122906</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1606174122906</updated>
+    </task>
+    <task id="LOCAL-00007" summary="注释优化">
+      <created>1606175387204</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1606175387204</updated>
+    </task>
+    <task id="LOCAL-00008" summary="junit">
+      <created>1611502901522</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1611502901522</updated>
+    </task>
+    <task id="LOCAL-00009" summary="eyun  --》  sysu">
+      <created>1611588698394</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1611588698394</updated>
+    </task>
+    <task id="LOCAL-00010" summary="eyun  --》  sysu">
+      <created>1611588994784</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1611588994784</updated>
+    </task>
+    <task id="LOCAL-00011" summary="niche">
+      <created>1611592567151</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1611592567151</updated>
+    </task>
+    <task id="LOCAL-00012" summary="niche">
+      <created>1611676466239</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1611676466239</updated>
+    </task>
+    <task id="LOCAL-00013" summary="niche2.0">
+      <created>1611679675456</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1611679675456</updated>
+    </task>
+    <task id="LOCAL-00014" summary="sga">
+      <created>1614827976090</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1614827976091</updated>
+    </task>
+    <task id="LOCAL-00015" summary="以试卷为遗传单位">
+      <created>1614873937796</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1614873937796</updated>
+    </task>
+    <task id="LOCAL-00016" summary="开始准备写小生境">
+      <created>1614879897702</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1614879897702</updated>
+    </task>
+    <task id="LOCAL-00017" summary="代码提交  研二下 第一次">
+      <created>1616298101279</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1616298101279</updated>
+    </task>
+    <task id="LOCAL-00018" summary="2021-05-06 深圳提交">
+      <created>1620294428018</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1620294428018</updated>
+    </task>
+    <task id="LOCAL-00019" summary="K_L information 公共方法的提交">
+      <created>1620300090786</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1620300090786</updated>
+    </task>
+    <task id="LOCAL-00020" summary="RUM 的计算（Cognitive Diagnostic Attribute-Level Discrimination Indices）">
+      <created>1620315882108</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1620315882108</updated>
+    </task>
+    <task id="LOCAL-00021" summary="镜像保存 20210507">
+      <created>1620317891213</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1620317891213</updated>
+    </task>
+    <task id="LOCAL-00022" summary="dir改变（net --&gt; cn.edu） 20210507">
+      <created>1620318149343</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1620318149343</updated>
+    </task>
+    <task id="LOCAL-00023" summary="dina 尝试">
+      <created>1620319627782</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1620319627782</updated>
+    </task>
+    <task id="LOCAL-00024" summary="验证git仓库位置">
+      <created>1620320026349</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1620320026349</updated>
+    </task>
+    <task id="LOCAL-00025" summary="JDBCUtils 的上传（select + insert）">
+      <created>1620346166351</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1620346166351</updated>
+    </task>
+    <task id="LOCAL-00026" summary="DINA 初步完成">
+      <created>1620349331819</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1620349331819</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
+    <servers />
+  </component>
+  <component name="TestHistory">
+    <history-entry file="DINA_main2 - 2021.05.07 at 12h 33m 22s.xml">
+      <configuration name="DINA.main2" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="DINA_main2 - 2021.05.07 at 12h 34m 42s.xml">
+      <configuration name="DINA.main2" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="DINA_main2 - 2021.05.07 at 13h 22m 02s.xml">
+      <configuration name="DINA.main2" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="DINA_main1 - 2021.05.07 at 13h 24m 21s.xml">
+      <configuration name="DINA.main1" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="DINA_main1 - 2021.05.07 at 13h 24m 44s.xml">
+      <configuration name="DINA.main1" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="DINA_main1 - 2021.05.07 at 13h 25m 18s.xml">
+      <configuration name="DINA.main1" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="DINA_main2 - 2021.05.07 at 13h 25m 36s.xml">
+      <configuration name="DINA.main2" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="DINA_main1 - 2021.05.07 at 13h 26m 08s.xml">
+      <configuration name="DINA.main1" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="DINA_main2 - 2021.05.07 at 13h 26m 14s.xml">
+      <configuration name="DINA.main2" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="DINA_main1 - 2021.05.07 at 13h 59m 03s.xml">
+      <configuration name="DINA.main1" configurationId="JUnit" />
+    </history-entry>
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="363448000" />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
+    <layout>
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.4968017" visible="true" weight="0.17828418" />
+      <window_info id="Structure" order="1" sideWeight="0.49785408" weight="0.25268096" />
+      <window_info id="Nl-Palette" order="2" />
+      <window_info id="Designer" order="3" />
+      <window_info id="UI Designer" order="4" />
+      <window_info id="Image Layers" order="5" />
+      <window_info id="Web" order="6" side_tool="true" />
+      <window_info id="Favorites" order="7" sideWeight="0.50214595" side_tool="true" weight="0.24966533" />
+      <window_info id="Capture Tool" order="8" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.30212766" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49785408" weight="0.30212766" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49933067" weight="0.23452769" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.32904148" />
+      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.50066936" side_tool="true" weight="0.32765958" />
+      <window_info anchor="bottom" id="Messages" order="8" weight="0.17730497" />
+      <window_info anchor="bottom" id="Java Enterprise" order="9" weight="0.32904148" />
+      <window_info anchor="bottom" id="Version Control" order="10" weight="0.28368795" />
+      <window_info anchor="bottom" id="Spring" order="11" weight="0.32904148" />
+      <window_info anchor="bottom" id="Terminal" order="12" weight="0.32904148" />
+      <window_info anchor="bottom" id="Application Servers" order="13" weight="0.29470673" />
+      <window_info anchor="bottom" id="Database Changes" order="14" show_stripe_button="false" />
+      <window_info anchor="bottom" id="MyBatis Log" order="15" />
+      <window_info anchor="bottom" id="Tail" order="16" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.24966533" />
+      <window_info anchor="right" id="Palette" order="3" />
+      <window_info anchor="right" id="Properties" order="4" />
+      <window_info anchor="right" id="Database" order="5" weight="0.3299356" />
+      <window_info anchor="right" id="Palette&#9;" order="6" />
+      <window_info anchor="right" id="Capture Analysis" order="7" />
+      <window_info anchor="right" id="Theme Preview" order="8" />
+      <window_info anchor="right" id="Maven Projects" order="9" weight="0.23190348" />
+    </layout>
+    <layout-to-restore>
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.4968017" visible="true" weight="0.21983914" />
+      <window_info id="Structure" order="1" sideWeight="0.49785408" weight="0.25301206" />
+      <window_info id="Nl-Palette" order="2" />
+      <window_info id="Designer" order="3" />
+      <window_info id="UI Designer" order="4" />
+      <window_info id="Image Layers" order="5" />
+      <window_info id="Web" order="6" side_tool="true" />
+      <window_info id="Favorites" order="7" sideWeight="0.50214595" side_tool="true" weight="0.24966533" />
+      <window_info id="Capture Tool" order="8" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.30212766" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49785408" weight="0.22269504" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49933067" weight="0.35602838" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.32904148" />
+      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.50066936" side_tool="true" weight="0.32765958" />
+      <window_info anchor="bottom" id="Messages" order="8" weight="0.17730497" />
+      <window_info anchor="bottom" id="Java Enterprise" order="9" weight="0.32904148" />
+      <window_info anchor="bottom" id="Version Control" order="10" visible="true" weight="0.1929078" />
+      <window_info anchor="bottom" id="Spring" order="11" weight="0.32904148" />
+      <window_info anchor="bottom" id="Terminal" order="12" weight="0.32904148" />
+      <window_info anchor="bottom" id="Application Servers" order="13" weight="0.29470673" />
+      <window_info anchor="bottom" id="Database Changes" order="14" show_stripe_button="false" />
+      <window_info anchor="bottom" id="MyBatis Log" order="15" />
+      <window_info anchor="bottom" id="Tail" order="16" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.24966533" />
+      <window_info anchor="right" id="Palette" order="3" />
+      <window_info anchor="right" id="Properties" order="4" />
+      <window_info anchor="right" id="Database" order="5" weight="0.3299356" />
+      <window_info anchor="right" id="Palette&#9;" order="6" />
+      <window_info anchor="right" id="Capture Analysis" order="7" />
+      <window_info anchor="right" id="Theme Preview" order="8" />
+      <window_info anchor="right" id="Maven Projects" order="9" weight="0.23190348" />
+    </layout-to-restore>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="RECENTLY_FILTERED_USER_GROUPS">
+                <collection />
+              </option>
+              <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+                <collection />
+              </option>
+              <option name="COLUMN_ORDER">
+                <list>
+                  <option value="0" />
+                  <option value="1" />
+                  <option value="2" />
+                  <option value="3" />
+                </list>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="version1.0" />
+    <MESSAGE value="version1.1" />
+    <MESSAGE value="idea 快捷键" />
+    <MESSAGE value="框架优化" />
+    <MESSAGE value="questions 新增字段：属性" />
+    <MESSAGE value="pom 提交" />
+    <MESSAGE value="注释优化" />
+    <MESSAGE value="junit" />
+    <MESSAGE value="eyun  --》  sysu" />
+    <MESSAGE value="niche" />
+    <MESSAGE value="niche2.0" />
+    <MESSAGE value="sga" />
+    <MESSAGE value="以试卷为遗传单位" />
+    <MESSAGE value="开始准备写小生境" />
+    <MESSAGE value="代码提交  研二下 第一次" />
+    <MESSAGE value="2021-05-06 深圳提交" />
+    <MESSAGE value="K_L information 公共方法的提交" />
+    <MESSAGE value="RUM 的计算（Cognitive Diagnostic Attribute-Level Discrimination Indices）" />
+    <MESSAGE value="镜像保存 20210507" />
+    <MESSAGE value="dir改变（net --&gt; cn.edu） 20210507" />
+    <MESSAGE value="dina 尝试" />
+    <MESSAGE value="验证git仓库位置" />
+    <MESSAGE value="JDBCUtils 的上传（select + insert）" />
+    <MESSAGE value="DINA 初步完成" />
+    <option name="LAST_COMMIT_MESSAGE" value="DINA 初步完成" />
+  </component>
+  <component name="XDebuggerManager">
+    <watches-manager>
+      <configuration name="Application">
+        <watch expression="questions[i].getAttributes()" language="JAVA" />
+        <watch expression="student_have_attribute.contains(attList.get(j))" language="JAVA" />
+        <watch expression="attList.get(j)" language="JAVA" />
+      </configuration>
+    </watches-manager>
+  </component>
+  <component name="antWorkspaceConfiguration">
+    <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
+    <option name="FILTER_TARGETS" value="false" />
+  </component>
+  <component name="debuggerHistoryManager">
+    <expressions id="watch">
+      <expression>
+        <expression-string>attList.get(j)</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>student_have_attribute.contains(attList.get(j))</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>questions[i].getAttributes()</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>integers</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>paper_genetic[i]</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>Math.pow((1-ps), p_temp)</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>Math.pow(pg,(1-p_temp))</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>tests.getPaperSize()</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+    </expressions>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/MO.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="527">
+          <caret line="54" column="75" selection-start-line="54" selection-start-column="75" selection-end-line="54" selection-end-column="75" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/net/sysu/niche/MultimodalGA-master/niching/GenerationData.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/net/sysu/niche/niching/SequentialNiching2.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/net/sysu/niche/niching2/studygame/SnakeGame.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/net/sysu/niche/niching2/gamestudy/Tetris.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/net/sysu/niche/niching2/studygame/Tetris_bak.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/net/sysu/niche/niching2/studygame/Tetris.java" />
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_152/javafx-src.zip!/com/sun/javafx/application/LauncherImpl.java" />
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_152/javafx-src.zip!/javafx/application/Application.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/resources/spring/application-dao.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="506">
+          <caret line="23" column="24" selection-start-line="23" selection-start-column="24" selection-end-line="23" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/mybatis/mybatis_config.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="594">
+          <caret line="27" lean-forward="true" selection-start-line="27" selection-end-line="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/resource/jdbc.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="44">
+          <caret line="2" column="18" selection-start-line="2" selection-start-column="18" selection-end-line="2" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/cn/edu/sysu/mapper/GAMapper.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="220">
+          <caret line="10" selection-start-line="10" selection-end-line="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/net/sysu/niche/niching/Individual.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/net/sysu/niche/niching/GenerationData.java" />
+    <entry file="file://$APPLICATION_CONFIG_DIR$/idea64.exe.vmoptions">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="264">
+          <caret line="12" column="21" selection-start-line="12" selection-start-column="21" selection-end-line="12" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/net/sysu/niche/niching/Main.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/net/sysu/niche/niching/Genetic.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/net/sysu/niche/niching2/gamestudy/SnakeGame.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/net/sysu/GA/GA.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/net/sysu/controller/GAController.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/net/sysu/adi/KL/bin/calculateKL.class" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/net/sysu/adi/KL/bin/Entity.class" />
+    <entry file="jar://$PROJECT_DIR$/libs/je-analysis-1.5.1.jar!/jeasy/analysis/MMAnalyzer.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="88">
+          <caret line="4" column="22" selection-start-line="4" selection-start-column="8" selection-end-line="4" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/net/sysu/adi/KL/maozedong.txt" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/net/sysu/adi/KL/a.txt" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/net/sysu/adi/KL/b.txt" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/net/sysu/adi/KL/c.txt" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/net/sysu/adi/KL/sb.txt" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/net/sysu/adi/KL/zhangailing2.txt" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/net/sysu/adi/KL/zhangailing.txt" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/net/sysu/adi/KL/src/1.txt.txt" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/net/sysu/adi/实验结果.txt" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/net/sysu/adi/KL/src/Entity.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/net/sysu/adi/KL/src/calculateKL.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/cn/edu/sysu/controller/Test.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="440">
+          <caret line="20" lean-forward="true" selection-start-line="20" selection-end-line="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/cn/edu/sysu/niche/Niche.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="264">
+          <caret line="24" column="130" selection-start-line="24" selection-start-column="130" selection-end-line="24" selection-end-column="130" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/cn/edu/sysu/adi/AttributeLevel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="293">
+          <caret line="22" lean-forward="true" selection-start-line="22" selection-end-line="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/cn/edu/sysu/short.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="FIRST">
+          <first_editor>
+            <caret line="101" selection-start-line="101" selection-end-line="101" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/log4j.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="176">
+          <caret line="8" column="28" selection-start-line="8" selection-start-column="26" selection-end-line="8" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/cn/edu/sysu/utils/CommonsUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="553">
+          <caret line="29" column="51" lean-forward="true" selection-start-line="29" selection-start-column="51" selection-end-line="29" selection-end-column="51" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/cn/edu/sysu/utils/Entity.java">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/cn/edu/sysu/pojo/Questions.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="101">
+          <caret line="12" column="13" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/cn/edu/sysu/pojo/Papers.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-8">
+          <caret line="10" selection-start-line="10" selection-end-line="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/cn/edu/sysu/controller/SimpleProcess.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1101">
+          <caret line="68" column="9" lean-forward="true" selection-start-line="68" selection-start-column="9" selection-end-line="68" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="22">
+          <caret line="37" column="38" selection-start-line="37" selection-start-column="38" selection-end-line="37" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/cn/edu/sysu/controller/SimpleProcess2.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="233">
+          <caret line="74" column="30" selection-start-line="74" selection-start-column="30" selection-end-line="74" selection-end-column="30" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/cn/edu/sysu/utils/JDBCUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1716">
+          <caret line="83" selection-start-line="83" selection-end-line="83" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/cn/edu/sysu/utils/KLUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3586">
+          <caret line="167" column="44" selection-start-line="167" selection-start-column="44" selection-end-line="167" selection-end-column="44" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/cn/edu/sysu/adi/RUM.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1320">
+          <caret line="65" column="20" selection-start-line="65" selection-start-column="20" selection-end-line="65" selection-end-column="20" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#312#313#0" expanded="true" />
+            <element signature="e#360#361#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/cn/edu/sysu/adi/DINA.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2112">
+          <caret line="101" column="40" selection-start-line="101" selection-start-column="30" selection-end-line="101" selection-end-column="40" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ArtifactsStructureConfigurable.UI">
+        <settings>
+          <artifact-editor />
+          <last-edited>ssm:war</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+                <option value="0.5" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="FacetStructureConfigurable.UI">
+        <settings>
+          <last-edited>Spring</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="GlobalLibrariesConfigurable.UI">
+        <settings>
+          <last-edited>scala-sdk-2.12.11</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="JdkListConfigurable.UI">
+        <settings>
+          <last-edited>1.8</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ModuleStructureConfigurable.UI">
+        <settings>
+          <last-edited>ssm</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+                <option value="0.6" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectJDKs.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectLibrariesConfigurable.UI">
+        <settings>
+          <last-edited>libs</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+  <component name="mavenExecuteGoalHistory">
+    <option value="$PROJECT_DIR$" />
+    <option value="tomcat7:run" />
+  </component>
+</project>
