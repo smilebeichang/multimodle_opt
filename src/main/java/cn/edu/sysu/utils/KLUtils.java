@@ -166,7 +166,7 @@ public class KLUtils {
     public   Double[][] foreach( ArrayList<Double> lists1,ArrayList<Double> lists2) {
 
         //计算 K_L
-        System.out.println();
+        //System.out.println();
         Double[][] klArray =new Double[lists1.size()][lists2.size()];
         for (int i = 0;i<lists1.size();i++){
             for (int j = 0; j < lists2.size(); j++) {
@@ -229,7 +229,7 @@ public class KLUtils {
             //a的ASCII码 将这个运算后的数字强制转换成字符,然后转pattern,通过这种方式,保证了每个pattern的概率
             //属性的去重操作
             while (fill_set.size() == j ){
-                String c = ((char) (Math.random() * 3 + 'a'))+"";
+                String c = ((char) (Math.random() * 5 + 'a'))+"";
                 fill_set.add(c);
             }
         }
@@ -237,10 +237,12 @@ public class KLUtils {
         int p1 = fill_set.contains("a")?1:0;
         int p2 = fill_set.contains("b")?1:0;
         int p3 = fill_set.contains("c")?1:0;
-        String ip = "("+p1+","+p2+","+p3+")";
-//        System.out.println("属性："+attributes);
-//        System.out.println("属性："+ip);
-
+        int p4 = fill_set.contains("d")?1:0;
+        int p5 = fill_set.contains("e")?1:0;
+        String ip = "("+p1+","+p2+","+p3+","+p4+","+p5+")";
+        System.out.println("=======================");
+        System.out.println("属性："+attributes);
+        System.out.println("属性："+ip);
         return ip;
 
     }
