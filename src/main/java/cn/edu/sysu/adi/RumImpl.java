@@ -18,22 +18,22 @@ import java.util.Map;
  * double que_fit = πj * ( (rjk* * γ * β) .... );
  *
  * p* 是正确应用第j项所有必要属性的概率，
- * πj* 为项目难度参数，表示被试i掌握item j 所需要的全部属性，正确作答item j的概率，其值越大（接近1）表示被试掌握了所需属性很可能成功应答。  每道题一个固定值
- * rjk*表示被试缺乏属性K,答对item j vs 被试掌握属性k答对j的概率比。其值越小（接近0）,表示掌握属性K很重要。rjk*也被称做属性K在itemj上的区分度参数。  每道题的一个考察属性的pattern
+ * πj* 为项目难度参数，正确作答item j的概率，其值越大（接近1）表示被试掌握了所需属性很可能成功应答。  每道题一个固定值
+ * rjk*表示被试缺乏属性K,其值越小（接近0）,表示属性K很重要。也被称做属性K在item上的区分度参数。  每道题的每个属性一个固定值
  * super high   high      low
  * [0.05,0.2]  [0.4,0.85] [0.6,0.92]
  *
  *
- *          *         (0,0,0)(0,0,1)(0,1,0)(1,0,0)(0,1,1)(1,0,1)(1,1,0)(1,1,1)
- *          * (0,0,0)
- *          * (0,0,1)
- *          * (0,1,0)
- *          * (1,0,0)
- *          * (0,1,1)
- *          * (1,0,1)
- *          * (1,1,0)
- *          * (1,1,1)
- *          *
+ *            (0,0,0)(0,0,1)(0,1,0)(1,0,0)(0,1,1)(1,0,1)(1,1,0)(1,1,1)
+ *    (0,0,0)
+ *    (0,0,1)
+ *    (0,1,0)
+ *    (1,0,0)
+ *    (0,1,1)
+ *    (1,0,1)
+ *    (1,1,0)
+ *    (1,1,1)
+ *
  *
  */
 public class RumImpl {
@@ -50,28 +50,21 @@ public class RumImpl {
 
 
 
-    //1. 实现一个方法 通过base 和 penalty来获取rum  否则题目太相似
+    //1. 实现一个方法 通过base 和 penalty来获取rum
     //2. 上层返回ArrayList<Double> lists
-    //3. 根据list=》获取klArray,map=》获取index,拿index和klArray获取对应的值,并计算出adi1 adi2 adi3
-    //4. 用list集合将上一步获取的adi1 adi2 adi3,保存到全局变量。  故一道试题pattern对应三个adi
-    //5. 生成单道题的属性值：id  base概率  pattern  penalty  adi   共9个字段
+    //3. 根据list=》获取klArray, map=》获取index, 拿index和klArray获取对应的值,并计算出adi1 adi2 adi3
+    //4. 用集合将adi1 adi2 adi3,保存到全局变量。    故一道试题pattern对应三个adi
+    //5. 生成单道题的属性值：id  pattern  base  penalty  adi   共9个字段
     //6. 生成题库 要求比例均衡
 
     //存在问题： 惩罚系数 目前未实现,系数比例精细化
-    //git push 保存成功
-    //5个属性
 
     @Test
-    public  void TestMath() throws InterruptedException {
+    public  void Init() throws InterruptedException {
 
         JDBCUtils jdbcUtils = new JDBCUtils();
-        //捋思路
-//        start(2);
-//        jdbcUtils.insert(id,pattern,base,penalty,adi1,adi2,adi3,adi4,adi5);
 
-
-
-//      5:10:10:5:1 假设题库62道题  则10:20:20:10:2
+        // 5:10:10:5:1 假设题库62道题  则10:20:20:10:2
         for (int i = 1; i <= 10; i++) {
             id = i;
             start(1);
@@ -101,20 +94,31 @@ public class RumImpl {
 
     }
 
+    /**
+     *  rum 的具体实现
+     *      1. 根据属性个数，生成试题pattern
+     *      2. 获取adi指标
+     *      3. 将上述信息，保存到全局变量
+     */
     public void start(int num) throws InterruptedException {
+
         pattern = new KLUtils().RandomInit(num);
+
         GetAdi(pattern);
 
         System.out.printf("id=%s \t pattern=%s \t base=%s \t penalty=%s \t adi1_r=%s \t adi2_r=%s \t adi3_r=%s \t adi4_r=%s \t adi5_r=%s \n", id, pattern, base,penalty,adi1_r,adi2_r,adi3_r,adi4_r,adi5_r);
+
         System.out.println();
+
     }
 
 
-
-
+    /**
+     * 以试题pattern(1,0,0)为单位,这样才能算出一个矩阵 rum，然后求出该试题的矩阵 k_L，
+     * 然后求出该试题的矩阵 Da，最后平均求出该试题的 adi
+     * 可以理解为一道试题下，所有考生的差异性
+     */
     public  void GetAdi(String ip) {
-
-//以试题pattern(1,0,0)为单位,这样才能算出一个矩阵 rum，然后求出该试题的矩阵 k_L，然后求出该试题的矩阵 Da，最后平均求出该试题的 adi   可以理解为一道试题下，所有考生的差异性
 
         //index map
         Map<String,Integer> map = new HashMap<>(32);
@@ -155,18 +159,17 @@ public class RumImpl {
         map.put("(1,1,1,1,1)",32);
 
 
-        //捋思路
-        //试题的pattern 和 penalty 个数相关   故先随机生成pattern,同时生成 penalty
-
+        //试题的pattern 和 penalty 个数相关   故随机生成pattern的同时生成penalty
+        //基线系数 和 惩罚系数 随机生成
         base = new KLUtils().makeRandom(0.95f, 0.75f, 2);
 
         ArrayList<Double> rumList = GetRumListsRandom(base,ip);
 
-        //基线系数 和 惩罚系数 随机生成,故 rumList 也将随机
+
         //根据 rumList 计算出K_L二维数组
         Double[][] klArray = new KLUtils().foreach(rumList, rumList);
         //打印
-//      new KLUtils().arrayPrint(klArray);
+        new KLUtils().arrayPrint(klArray);
 
 
         /*
@@ -174,7 +177,6 @@ public class RumImpl {
          * combineList 全局变量,保存另外几个属性的选取方案
          */
         ArrayList<String> combineList = new ArrayList<>();
-
         for(int X=0;X<2; X++){
             for(int Y=0;Y<2; Y++) {
                 for (int Z = 0; Z < 2; Z++) {
@@ -253,7 +255,7 @@ public class RumImpl {
         System.out.println("adi4个数: "+list4.size() +" 具体指标为:"+list4);
         System.out.println("adi5个数: "+list5.size() +" 具体指标为:"+list5);
 
-        System.out.println("list 遍历 ;拿list的值去Array中匹配寻找,然后输出其大小：");
+        System.out.println("list 遍历; 分别拿list的值去Array中匹配寻找：");
         List<Double> calAdiList = CalAdiImple(klArray, list1, list2, list3, list4, list5);
         System.out.println(calAdiList);
 
@@ -368,55 +370,40 @@ public class RumImpl {
         Double sum5 = 0.0;
 
         for(String data  :    list1)    {
-            //System.out.print(data);
             String[] spli = data.split("_");
-            //注意小数点的位置
             Double v  = klArray[Integer.parseInt(spli[0])-1][Integer.parseInt(spli[1])-1];
-            //System.out.println("  "+v);
             sum1+=v;
         }
         adi1_r=sum1/31;
         System.out.println("adi1: "+adi1_r);
 
         for(String data  :    list2)    {
-            //System.out.print(data);
             String[] spli = data.split("_");
-            //注意小数点的位置
             Double v  = klArray[Integer.parseInt(spli[0])-1][Integer.parseInt(spli[1])-1];
-            //System.out.println("  "+v);
             sum2+=v;
         }
         adi2_r=sum2/31;
         System.out.println("adi2: "+adi2_r);
 
         for(String data  :    list3)    {
-            //System.out.print(data);
             String[] spli = data.split("_");
-            //注意小数点的位置
             Double v  = klArray[Integer.parseInt(spli[0])-1][Integer.parseInt(spli[1])-1];
-            //System.out.println("  "+v);
             sum3+=v;
         }
         adi3_r=sum3/31;
         System.out.println("adi3: "+adi3_r);
 
         for(String data  :    list4)    {
-            //System.out.print(data);
             String[] spli = data.split("_");
-            //注意小数点的位置
             Double v  = klArray[Integer.parseInt(spli[0])-1][Integer.parseInt(spli[1])-1];
-            //System.out.println("  "+v);
             sum4+=v;
         }
         adi4_r=sum4/31;
         System.out.println("adi4: "+adi4_r);
 
         for(String data  :    list5)    {
-            //System.out.print(data);
             String[] spli = data.split("_");
-            //注意小数点的位置
             Double v  = klArray[Integer.parseInt(spli[0])-1][Integer.parseInt(spli[1])-1];
-            //System.out.println("  "+v);
             sum5+=v;
         }
         adi5_r=sum5/31;

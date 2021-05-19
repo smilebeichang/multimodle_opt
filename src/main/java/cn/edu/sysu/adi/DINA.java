@@ -25,26 +25,24 @@ import java.util.Map;
  *      αi      学生i的知识点掌握情况
  *      αik     学生i对知识点k的掌握情况
  *      ηij     学生i在试题j的潜在作答情况
+ *
+ *      在掌握了试题j所考察的所有知识点的情况下做错的概率 ps  也应该是每道试题,一个随机值
+ *      在并不完全掌握试题j所考察的所有知识点下猜对的概率 pg
+ *      容器：适应度值
  */
 public class DINA {
 
 
-    /**
-     * 定义一个student,其掌握的属性  (存在误差，因目前为止只是对一个学生进行测试的)
-     * 在掌握了试题j所考察的所有知识点的情况下做错的概率 ps  也应该是每道试题,一个随机值
-     * 在并不完全掌握试题j所考察的所有知识点下猜对的概率 pg
-     * 容器：适应度值
-     */
-      int id ;
-      String ip ;
-      double ps ;
-      double pg ;
-      double adi1_d ;
-      double adi2_d ;
-      double adi3_d ;
-      double adi4_d ;
-      double adi5_d ;
-      ADI adiBean = new ADI();
+      private int id ;
+      private String ip ;
+      private double ps ;
+      private double pg ;
+      private double adi1_d ;
+      private double adi2_d ;
+      private double adi3_d ;
+      private double adi4_d ;
+      private double adi5_d ;
+      private ADI adiBean = new ADI();
 
     private static HashMap<String,Integer> indexMap = new HashMap();
 
@@ -100,22 +98,22 @@ public class DINA {
      *       4.评价解的好坏--》试卷--》adi的avg/min
      *
      *       5.最直接的方式是 将计算方式    由 rum 换成 dina   存在问题在于: 同一道试题adi辨别指标一样,且偏小
-     *       6.实现最佳性能的所需测试数量，且诊断性能平衡，同时满足重要在测试长度，项目类型分布和重叠比例
+     *       6.实现最佳性能的所需测试数量，且同时满足重要在测试长度，项目类型分布和重叠比例
      *       7.evaluation  test quality: 1) index-oriented and 2) simulation-oriented.
      *       8.最大程度地提高整体测试质量，最小化测试之间的最大差异，或两者的加权组合。(基于ADI)
      *
-     *
      */
-
 
     @Test
     public void start()  {
+
         JDBCUtils jdbcUtils = new JDBCUtils();
         for (int i = 1; i <= 62; i++) {
-            System.out.println("============="+ i +"==============");
+            System.out.println("=============第"+ i +"套试卷的生成==============");
             GetAdi(i);
             jdbcUtils.updateDina(id,ps,pg,adi1_d,adi2_d,adi3_d,adi4_d,adi5_d);
         }
+
     }
 
 
@@ -125,7 +123,7 @@ public class DINA {
      */
     public void GetAdi(int i){
 
-        // 试题pattern ip
+        // 从数据库中获取出试题的 pattern ip
         ArrayList<String> db_list = new JDBCUtils().select();
 
         String[] split = db_list.get(i-1).split(":");
@@ -134,19 +132,17 @@ public class DINA {
         id = Integer.valueOf(split[0]) ;
         ip = split[1];
 
+        // 根据试题的 pattern ，计算出 dina 分数
         ArrayList<Double> dinaList = GetDinaListsRandom(ip);
         System.out.println("dinaList: "+dinaList);
-        //根据 dinaList 计算出K_L二维数组
+
+        // 根据 dinaList 计算出K_L二维数组
         Double[][] klArray = new KLUtils().foreach(dinaList, dinaList);
-        //打印
+        // 打印
         new KLUtils().arrayPrint(klArray);
 
-        /*
-         * 四个元素，遍历组合即可, 随机遍历顺序没影响
-         * combineList 全局变量,保存另外几个属性的选取方案
-         */
+        // 四个元素，遍历组合, 随机遍历顺序没影响  combineList 全局变量,保存另外几个属性的选取方案
         ArrayList<String> combineList = new ArrayList<>();
-
         for(int X=0;X<2; X++){
             for(int Y=0;Y<2; Y++) {
                 for (int Z = 0; Z < 2; Z++) {
@@ -165,7 +161,7 @@ public class DINA {
         ArrayList<String> list4 = new ArrayList();
         ArrayList<String> list5 = new ArrayList();
 
-
+        //遍历组合，获取相似元素的下标
         for (int X =0;X<combineList.size();X++){
             //adi1
             Integer index11 = indexMap.get("(1," + combineList.get(X) + ")");
@@ -224,11 +220,9 @@ public class DINA {
         System.out.println("adi4个数: "+list4.size() +" 具体指标为:"+list4);
         System.out.println("adi5个数: "+list5.size() +" 具体指标为:"+list5);
 
-        System.out.println("list 遍历 ;拿list的值去Array中匹配寻找,然后输出其大小：");
+        System.out.println("list 遍历; 分别拿list的值去Array中匹配寻找,并输出其大小：");
         List<Double> calAdiList = CalAdiImple(klArray, list1, list2, list3, list4, list5);
         System.out.println(calAdiList);
-
-
 
 
     }
@@ -242,7 +236,7 @@ public class DINA {
 
         ArrayList<Double> dinaList = new ArrayList<>();
 
-        //考生_pattern sps
+        //考生所有的可能的掌握模式 pattern sps
         ArrayList<String> sps = new ArrayList<String>(){{
 
             add("(0,0,0,0,0)");
@@ -316,7 +310,7 @@ public class DINA {
         }
         System.out.println( "ps: "+ps+" ,pg: "+pg);
 
-        //根据学生pattern vs 题目pattern 获取答对此题的rum
+        //根据学生pattern vs 题目pattern 获取答对此题的dina分数
         for (String p : sps) {
             //学生pattern
             int b1 = Integer.parseInt(p.substring(1, 2));
@@ -349,7 +343,7 @@ public class DINA {
 
 
     /**
-     * 计算adi具体实现
+     * 计算adi的具体实现
      */
     public List<Double> CalAdiImple(Double[][] klArray,ArrayList<String> list1,ArrayList<String> list2,ArrayList<String> list3,ArrayList<String> list4,ArrayList<String> list5){
         Double sum1 = 0.0;
@@ -359,11 +353,9 @@ public class DINA {
         Double sum5 = 0.0;
 
         for(String data  :    list1)    {
-            //System.out.print(data);
             String[] spli = data.split("_");
             //注意小数点的位置
             Double v  = klArray[Integer.parseInt(spli[0])-1][Integer.parseInt(spli[1])-1];
-            //System.out.println("  "+v);
             sum1+=v;
         }
         adiBean.setAdi1_d(NumCoversion(sum1/list1.size()));
@@ -371,11 +363,9 @@ public class DINA {
         System.out.println("adi1: "+adiBean.getAdi1_d());
 
         for(String data  :    list2)    {
-            //System.out.print(data);
             String[] spli = data.split("_");
             //注意小数点的位置
             Double v  = klArray[Integer.parseInt(spli[0])-1][Integer.parseInt(spli[1])-1];
-            //System.out.println("  "+v);
             sum2+=v;
         }
         adiBean.setAdi2_d(NumCoversion(sum2/list2.size()));
@@ -383,11 +373,9 @@ public class DINA {
         System.out.println("adi2: "+adiBean.getAdi2_d());
 
         for(String data  :    list3)    {
-            //System.out.print(data);
             String[] spli = data.split("_");
             //注意小数点的位置
             Double v  = klArray[Integer.parseInt(spli[0])-1][Integer.parseInt(spli[1])-1];
-            //System.out.println("  "+v);
             sum3+=v;
         }
         adiBean.setAdi3_d(NumCoversion(sum3/list3.size()));
@@ -395,11 +383,9 @@ public class DINA {
         System.out.println("adi3: "+adiBean.getAdi3_d());
 
         for(String data  :    list4)    {
-            //System.out.print(data);
             String[] spli = data.split("_");
             //注意小数点的位置
             Double v  = klArray[Integer.parseInt(spli[0])-1][Integer.parseInt(spli[1])-1];
-            //System.out.println("  "+v);
             sum4+=v;
         }
         adiBean.setAdi4_d(NumCoversion(sum4/list4.size()));
@@ -407,11 +393,9 @@ public class DINA {
         System.out.println("adi4: "+adiBean.getAdi4_d());
 
         for(String data  :    list5)    {
-            //System.out.print(data);
             String[] spli = data.split("_");
             //注意小数点的位置
             Double v  = klArray[Integer.parseInt(spli[0])-1][Integer.parseInt(spli[1])-1];
-            //System.out.println("  "+v);
             sum5+=v;
         }
         adiBean.setAdi5_d(NumCoversion(sum5/list5.size()));
@@ -430,6 +414,9 @@ public class DINA {
     }
 
 
+    /**
+     * 格式转换工具
+     */
     public Double NumCoversion(Double adi){
 
         return Double.valueOf(String.format("%.4f", adi));

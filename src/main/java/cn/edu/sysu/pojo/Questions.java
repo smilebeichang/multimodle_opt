@@ -22,7 +22,7 @@ public class Questions implements Serializable{
     /**
      * 章节
      */
-//	private int chapter;
+	private int chapter;
 
     /**
      * 难度
