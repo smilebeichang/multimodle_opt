@@ -114,9 +114,10 @@ public class RumImpl {
 
     public  void GetAdi(String ip) {
 
-//以试题pattern(1,0,0)为单位,这样才能算出一个矩阵 rum，然后求出该试题的矩阵 k_L，然后求出该试题的矩阵 Da，最后平均求出该试题的 adi
+//以试题pattern(1,0,0)为单位,这样才能算出一个矩阵 rum，然后求出该试题的矩阵 k_L，然后求出该试题的矩阵 Da，最后平均求出该试题的 adi   可以理解为一道试题下，所有考生的差异性
+
         //index map
-        Map<String,Integer> map = new HashMap<>(8);
+        Map<String,Integer> map = new HashMap<>(32);
         map.put("(0,0,0,0,0)",1);
         map.put("(0,0,0,0,1)",2);
         map.put("(0,0,0,1,0)",3);
@@ -154,12 +155,8 @@ public class RumImpl {
         map.put("(1,1,1,1,1)",32);
 
 
-        //试题pattern(1,0,0)
-        //为什么要获取 该题目各个pattern的8个rum （考虑全部的pattern,只是为了获取各个pattern的adi1 adi2 a）
-
         //捋思路
-        //试题的patern 和 penalty 个数相关   故先随机生成pattern,同时生成 penalty
-
+        //试题的pattern 和 penalty 个数相关   故先随机生成pattern,同时生成 penalty
 
         base = new KLUtils().makeRandom(0.95f, 0.75f, 2);
 
@@ -169,7 +166,7 @@ public class RumImpl {
         //根据 rumList 计算出K_L二维数组
         Double[][] klArray = new KLUtils().foreach(rumList, rumList);
         //打印
-//        new KLUtils().arrayPrint(klArray);
+//      new KLUtils().arrayPrint(klArray);
 
 
         /*
@@ -326,6 +323,7 @@ public class RumImpl {
         Double penalty4 = a4 == 1? new KLUtils().makeRandom(0.95f, 0.05f, 2):0;
         Double penalty5 = a5 == 1? new KLUtils().makeRandom(0.95f, 0.05f, 2):0;
         penalty = "("+penalty1+","+penalty2+","+penalty3+","+penalty4+","+penalty5+")";
+
         //根据学生pattern vs 题目pattern 获取答对此题的rum
         for (String ps : sps) {
             //学生pattern

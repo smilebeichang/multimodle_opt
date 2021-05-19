@@ -40,14 +40,14 @@ public class JDBCUtils {
                 conn =
                         DriverManager.getConnection("jdbc:mysql://localhost/sysu?"+"user=root&password=root");
                 System.out.println("数据库连接成功");
-                ps = conn.prepareStatement("select * from sysu.adi order by id  limit 4;");
+                ps = conn.prepareStatement("select * from sysu.adi order by id  limit 62;");
                 rs = ps.executeQuery();
-                System.out.println("id"+"\t\t"+"pattern");
+//                System.out.println("id"+"\t\t"+"pattern");
                 while(rs.next()) {
                     int id = rs.getInt("id");
                     String attributes = rs.getString("pattern");
-                    System.out.print(id+"\t\t"+attributes);
-                    System.out.println();
+//                    System.out.print(id+"\t\t"+attributes);
+//                    System.out.println();
                     list.add(id+":"+attributes);
                 }
 
@@ -87,6 +87,37 @@ public class JDBCUtils {
             e.printStackTrace();
         }
     }
+
+
+    /**
+     * 新增到数据库
+     */
+    public  void updateDina(int id,double ps1,double pg,double adi1_d,double adi2_d,double adi3_d,double adi4_d,double  adi5_d) {
+        Connection conn ;
+        PreparedStatement ps ;
+
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            conn =
+                    DriverManager.getConnection("jdbc:mysql://localhost/sysu?"+"user=root&password=root");
+            System.out.println("数据库连接成功");
+            String sql = "UPDATE sysu.adi \n" +
+                    "SET adi1_d="+adi1_d +", adi2_d=" +adi2_d+", " +
+                    "adi3_d="+ adi3_d+", adi4_d="+adi4_d+", adi5_d="+adi5_d+", " +
+                    "ps="+ps1+", pg="+pg+" where id="+id+" ;";
+            System.out.println(sql);
+            ps = conn.prepareStatement(sql);
+            ps.execute();
+
+        } catch (SQLException ex) {
+            System.out.println("SQLException: " + ex.getMessage());
+            System.out.println("SQLState: " + ex.getSQLState());
+            System.out.println("VendorError: " + ex.getErrorCode());
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 }
 
