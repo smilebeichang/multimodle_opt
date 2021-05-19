@@ -40,12 +40,12 @@ public class JDBCUtils {
                 conn =
                         DriverManager.getConnection("jdbc:mysql://localhost/sysu?"+"user=root&password=root");
                 System.out.println("数据库连接成功");
-                ps = conn.prepareStatement("select id,attributes from question order by id  limit 4;");
+                ps = conn.prepareStatement("select * from sysu.adi order by id  limit 4;");
                 rs = ps.executeQuery();
-                System.out.println("id"+"\t\t"+"attributes");
+                System.out.println("id"+"\t\t"+"pattern");
                 while(rs.next()) {
                     int id = rs.getInt("id");
-                    String attributes = rs.getString("attributes");
+                    String attributes = rs.getString("pattern");
                     System.out.print(id+"\t\t"+attributes);
                     System.out.println();
                     list.add(id+":"+attributes);
@@ -63,7 +63,7 @@ public class JDBCUtils {
     /**
      * 新增到数据库
      */
-    public  void insert(int id,String pattern,Double base,String penalty,Double adi1,Double adi2,Double adi3,Double adi4,Double adi5) {
+    public  void insert(int id,String pattern,Double base,String penalty,Double adi1_r,Double adi2_r,Double adi3_r,Double adi4_r,Double adi5_r) {
         Connection conn ;
         PreparedStatement ps ;
 
@@ -72,9 +72,9 @@ public class JDBCUtils {
             conn =
                     DriverManager.getConnection("jdbc:mysql://localhost/sysu?"+"user=root&password=root");
             System.out.println("数据库连接成功");
-            String sql = "INSERT INTO sysu.rum_adi \n" +
-                    "(id, pattern, base, penalty, adi1, adi2, adi3, adi4, adi5) \n" +
-                    "VALUES("+id+",\""+pattern+"\","+base+",\""+penalty+"\","+adi1+","+adi2+","+adi3+","+adi4+","+adi5+");";
+            String sql = "INSERT INTO sysu.adi \n" +
+                    "(id, pattern, base, penalty, adi1_r, adi2_r, adi3_r, adi4_r, adi5_r) \n" +
+                    "VALUES("+id+",\""+pattern+"\","+base+",\""+penalty+"\","+adi1_r+","+adi2_r+","+adi3_r+","+adi4_r+","+adi5_r+");";
             System.out.println(sql);
             ps = conn.prepareStatement(sql);
             ps.execute();

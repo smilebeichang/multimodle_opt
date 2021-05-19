@@ -13,9 +13,6 @@ import java.io.IOException;
  */
 public class AttributeLevel {
 
-    public static String PATH_ONE = "F:\\song\\SYSU\\multimodal_optimization\\src\\main\\java\\net\\sysu\\adi\\KL\\zhangailing.txt";
-
-    public static String PATH_TWO = "F:\\song\\SYSU\\multimodal_optimization\\src\\main\\java\\net\\sysu\\adi\\KL\\zhangailing2.txt";
 
     public static void main(String[] args) throws IOException {
         // 基于分词的K_L

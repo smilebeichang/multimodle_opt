@@ -36,33 +36,23 @@ public class DINA {
       double[] all_fitness =new double[4];
 
     /**
-     * 模仿RUM计算出概率
+     * 模仿RUM
+     *       rum -- kl -- adi
+     *       1.找相关文献，dina 如何定义 adi  ( 可能存在点难度，查找 + 翻阅 )
+     *       2.计算出adi
+     *       3.指标信息同步到同一套试卷上
+     *       4.评价解的好坏--》试卷--》adi的avg/min
+     *
+     *       5.最直接的方式是 将计算方式    由 rum 换成 dina
+     *       6.实现最佳性能的所需测试数量，且诊断性能平衡，同时满足重要在测试长度，项目类型分布和重叠比例
+     *       7.evaluation  test quality: 1) index-oriented and 2) simulation-oriented.
+     *       8.最大程度地提高整体测试质量，最小化测试之间的最大差异，或两者的加权组合。(基于ADI)
+     *
+     *
      */
     @Test
     public void main1(){
-        Questions question = new Questions();
-        question.setId(0);
-        question.setAttributes("[a, b, e]");
 
-        Questions question1 = new Questions();
-        question1.setId(1);
-        question1.setAttributes("[b,c,e]");
-
-        Questions question2 = new Questions();
-        question2.setId(2);
-        question2.setAttributes("[a]");
-
-        Questions question3 = new Questions();
-        question3.setId(3);
-        question3.setAttributes("[b,c]");
-
-
-        Questions[] questions = new Questions[4];
-        questions[0] = question;
-        questions[1] = question1;
-        questions[2] = question2;
-        questions[3] = question3;
-        calFitness(questions);
     }
 
     /**
@@ -85,7 +75,7 @@ public class DINA {
             String[] split = s.split(":");
             question.setId(Integer.valueOf(split[0]));
             question.setAttributes(split[1]);
-            questions[Integer.valueOf(split[0])]=question;
+            questions[Integer.valueOf(split[0])-1]=question;
         }
 
 

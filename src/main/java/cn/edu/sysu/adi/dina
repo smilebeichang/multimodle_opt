@@ -1,0 +1,10 @@
+1.D(A) 的计算方式：
+rum  --> K_L information --> D（A）j  --> 求平均 ADI
+
+2.D(B) 的计算方式:
+rum  --> K_L information --> D(B)j   --> 加权求平均 ADI
+
+3.D(S) 的计算方式:  S_MOPSO_D
+rum  --> K_L information --> D(S)j
+解的评价标准:min的ADI = F(sm)
+平行试卷：权衡 F(D) + F(S)

@@ -42,11 +42,11 @@ public class RumImpl {
     private String pattern ;
     private Double base ;
     private String penalty ;
-    private Double adi1;
-    private Double adi2;
-    private Double adi3;
-    private Double adi4;
-    private Double adi5;
+    private Double adi1_r;
+    private Double adi2_r;
+    private Double adi3_r;
+    private Double adi4_r;
+    private Double adi5_r;
 
 
 
@@ -75,27 +75,27 @@ public class RumImpl {
         for (int i = 1; i <= 10; i++) {
             id = i;
             start(1);
-            jdbcUtils.insert(id,pattern,base,penalty,adi1,adi2,adi3,adi4,adi5);
+            jdbcUtils.insert(id,pattern,base,penalty,adi1_r,adi2_r,adi3_r,adi4_r,adi5_r);
         }
         for (int i = 11; i <= 30; i++) {
             id = i;
             start(2);
-            jdbcUtils.insert(id,pattern,base,penalty,adi1,adi2,adi3,adi4,adi5);
+            jdbcUtils.insert(id,pattern,base,penalty,adi1_r,adi2_r,adi3_r,adi4_r,adi5_r);
         }
         for (int i = 31; i <= 50; i++) {
             id = i;
             start(3);
-            jdbcUtils.insert(id,pattern,base,penalty,adi1,adi2,adi3,adi4,adi5);
+            jdbcUtils.insert(id,pattern,base,penalty,adi1_r,adi2_r,adi3_r,adi4_r,adi5_r);
         }
         for (int i = 51; i <= 60; i++) {
             id = i;
             start(4);
-            jdbcUtils.insert(id,pattern,base,penalty,adi1,adi2,adi3,adi4,adi5);
+            jdbcUtils.insert(id,pattern,base,penalty,adi1_r,adi2_r,adi3_r,adi4_r,adi5_r);
         }
         for (int i = 61; i <= 62; i++) {
             id = i;
             start(5);
-            jdbcUtils.insert(id,pattern,base,penalty,adi1,adi2,adi3,adi4,adi5);
+            jdbcUtils.insert(id,pattern,base,penalty,adi1_r,adi2_r,adi3_r,adi4_r,adi5_r);
         }
 
 
@@ -105,7 +105,7 @@ public class RumImpl {
         pattern = new KLUtils().RandomInit(num);
         GetAdi(pattern);
 
-        System.out.printf("id=%s \t pattern=%s \t base=%s \t penalty=%s \t adi1=%s \t adi2=%s \t adi3=%s \t adi4=%s \t adi5=%s \n", id, pattern, base,penalty,adi1,adi2,adi3,adi4,adi5);
+        System.out.printf("id=%s \t pattern=%s \t base=%s \t penalty=%s \t adi1_r=%s \t adi2_r=%s \t adi3_r=%s \t adi4_r=%s \t adi5_r=%s \n", id, pattern, base,penalty,adi1_r,adi2_r,adi3_r,adi4_r,adi5_r);
         System.out.println();
     }
 
@@ -377,8 +377,8 @@ public class RumImpl {
             //System.out.println("  "+v);
             sum1+=v;
         }
-        adi1=sum1/31;
-        System.out.println("adi1: "+adi1);
+        adi1_r=sum1/31;
+        System.out.println("adi1: "+adi1_r);
 
         for(String data  :    list2)    {
             //System.out.print(data);
@@ -388,8 +388,8 @@ public class RumImpl {
             //System.out.println("  "+v);
             sum2+=v;
         }
-        adi2=sum2/31;
-        System.out.println("adi2: "+adi2);
+        adi2_r=sum2/31;
+        System.out.println("adi2: "+adi2_r);
 
         for(String data  :    list3)    {
             //System.out.print(data);
@@ -399,8 +399,8 @@ public class RumImpl {
             //System.out.println("  "+v);
             sum3+=v;
         }
-        adi3=sum3/31;
-        System.out.println("adi3: "+adi3);
+        adi3_r=sum3/31;
+        System.out.println("adi3: "+adi3_r);
 
         for(String data  :    list4)    {
             //System.out.print(data);
@@ -410,8 +410,8 @@ public class RumImpl {
             //System.out.println("  "+v);
             sum4+=v;
         }
-        adi4=sum4/31;
-        System.out.println("adi4: "+adi4);
+        adi4_r=sum4/31;
+        System.out.println("adi4: "+adi4_r);
 
         for(String data  :    list5)    {
             //System.out.print(data);
@@ -421,15 +421,15 @@ public class RumImpl {
             //System.out.println("  "+v);
             sum5+=v;
         }
-        adi5=sum5/31;
-        System.out.println("adi5: "+adi5);
+        adi5_r=sum5/31;
+        System.out.println("adi5: "+adi5_r);
 
         List<Double> adiList = new ArrayList<Double>(){{
-            add(adi1);
-            add(adi2);
-            add(adi3);
-            add(adi4);
-            add(adi5);
+            add(adi1_r);
+            add(adi2_r);
+            add(adi3_r);
+            add(adi4_r);
+            add(adi5_r);
         }};
         return adiList;
 
