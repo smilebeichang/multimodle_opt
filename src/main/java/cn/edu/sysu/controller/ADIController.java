@@ -384,6 +384,7 @@ public class ADIController {
             System.out.println();
 
             fitTmp[i] = minrum ;
+
             fitSum = fitSum + minrum ;
         }
 

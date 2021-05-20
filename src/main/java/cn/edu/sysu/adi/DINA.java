@@ -17,6 +17,8 @@ import java.util.Map;
  * @create 2021/5/1 23:28
  *
  *      DINA 模 型 ( Deterministic Inputs，Noisy“And”gate model)
+ *      通过的是 学生、试题、知识点 三者之间的关系 三个核心矩阵
+ *
  *      符号	     描述
  *      X 	    学生试题得分矩阵
  *      Xij     学生i在试题j上的得分
@@ -29,6 +31,13 @@ import java.util.Map;
  *      在掌握了试题j所考察的所有知识点的情况下做错的概率 ps  也应该是每道试题,一个随机值
  *      在并不完全掌握试题j所考察的所有知识点下猜对的概率 pg
  *      容器：适应度值
+ *
+ *
+ *
+ *
+ *      实现最佳性能的所需测试数量，且同时满足重要在测试长度，项目类型分布和重叠比例
+ *      evaluation  test quality: 1) index-oriented and 2) simulation-oriented.
+ *      最大程度地提高整体测试质量，最小化测试之间的最大差异，或两者的加权组合。(基于ADI)
  */
 public class DINA {
 
@@ -90,18 +99,16 @@ public class DINA {
 
 
     /**
-     * 模仿RUM
-     *       rum -- kl -- adi
+     * 模仿RUM,实现DINA
+     *       pattern -- rum -- kl -- adi
      *       1.找相关文献，dina 如何定义 adi  ( 可能存在点难度，查找 + 翻阅 )
+     *          1.1 最直接的方式是 将计算方式   由 rum 换成 dina
+     *              目前存在问题在于: 同一道试题adi辨别指标一样,且偏小
      *       2.计算出adi
      *       3.指标信息同步到同一套试卷上
-     *       4.评价解的好坏--》试卷--》adi的avg/min
      *
-     *       5.最直接的方式是 将计算方式    由 rum 换成 dina   存在问题在于: 同一道试题adi辨别指标一样,且偏小
-     *       6.实现最佳性能的所需测试数量，且同时满足重要在测试长度，项目类型分布和重叠比例
-     *       7.evaluation  test quality: 1) index-oriented and 2) simulation-oriented.
-     *       8.最大程度地提高整体测试质量，最小化测试之间的最大差异，或两者的加权组合。(基于ADI)
      *
+     *       4.评价解的好坏 -- 试卷 -- adi的avg/min
      */
 
     @Test
@@ -118,7 +125,8 @@ public class DINA {
 
 
     /**
-     * 根据dina 获取adi
+     * 1. 获取题目id 和 pattern
+     * 2. 使用dina  计算adi
      * @param
      */
     public void GetAdi(int i){
@@ -286,27 +294,27 @@ public class DINA {
 
         int sum = a1 + a2 + a3 + a4 + a5;
         if(sum == 5){
-            // 生成dinaList  猜对率和猜错率 分别是多少合适
+            // 生成dinaList  猜对率和猜错率
             // 辨别能力很小   [0.0, 0.0, 0.0175, 0.0175, 0.0175]
-            // ps[0.15,0.4]  pg[0.4,0.65]
+            // ps[0.15,0.4]  pg[0.2,0.3]
             ps = new KLUtils().makeRandom(0.20f, 0.15f, 2);
-            pg = new KLUtils().makeRandom(0.65f, 0.60f, 2);
+            pg = new KLUtils().makeRandom(0.30f, 0.25f, 2);
         }
         else if(sum == 4){
             ps = new KLUtils().makeRandom(0.25f, 0.20f, 2);
-            pg = new KLUtils().makeRandom(0.60f, 0.55f, 2);
+            pg = new KLUtils().makeRandom(0.30f, 0.25f, 2);
         }
         else if(sum == 3){
             ps = new KLUtils().makeRandom(0.30f, 0.25f, 2);
-            pg = new KLUtils().makeRandom(0.55f, 0.50f, 2);
+            pg = new KLUtils().makeRandom(0.25f, 0.20f, 2);
         }
         else if(sum == 2){
             ps = new KLUtils().makeRandom(0.35f, 0.30f, 2);
-            pg = new KLUtils().makeRandom(0.50f, 0.45f, 2);
+            pg = new KLUtils().makeRandom(0.25f, 0.20f, 2);
         }
         else if(sum == 1){
             ps = new KLUtils().makeRandom(0.40f, 0.35f, 2);
-            pg = new KLUtils().makeRandom(0.45f, 0.40f, 2);
+            pg = new KLUtils().makeRandom(0.25f, 0.20f, 2);
         }
         System.out.println( "ps: "+ps+" ,pg: "+pg);
 
@@ -364,7 +372,6 @@ public class DINA {
 
         for(String data  :    list2)    {
             String[] spli = data.split("_");
-            //注意小数点的位置
             Double v  = klArray[Integer.parseInt(spli[0])-1][Integer.parseInt(spli[1])-1];
             sum2+=v;
         }
@@ -374,7 +381,6 @@ public class DINA {
 
         for(String data  :    list3)    {
             String[] spli = data.split("_");
-            //注意小数点的位置
             Double v  = klArray[Integer.parseInt(spli[0])-1][Integer.parseInt(spli[1])-1];
             sum3+=v;
         }
@@ -384,7 +390,6 @@ public class DINA {
 
         for(String data  :    list4)    {
             String[] spli = data.split("_");
-            //注意小数点的位置
             Double v  = klArray[Integer.parseInt(spli[0])-1][Integer.parseInt(spli[1])-1];
             sum4+=v;
         }
@@ -394,7 +399,6 @@ public class DINA {
 
         for(String data  :    list5)    {
             String[] spli = data.split("_");
-            //注意小数点的位置
             Double v  = klArray[Integer.parseInt(spli[0])-1][Integer.parseInt(spli[1])-1];
             sum5+=v;
         }

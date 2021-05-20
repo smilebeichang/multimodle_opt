@@ -38,7 +38,7 @@ import java.util.Map;
  */
 public class RumImpl {
 
-    private int id =1;
+    private int id ;
     private String pattern ;
     private Double base ;
     private String penalty ;
@@ -50,14 +50,16 @@ public class RumImpl {
 
 
 
-    //1. 实现一个方法 通过base 和 penalty来获取rum
-    //2. 上层返回ArrayList<Double> lists
-    //3. 根据list=》获取klArray, map=》获取index, 拿index和klArray获取对应的值,并计算出adi1 adi2 adi3
-    //4. 用集合将adi1 adi2 adi3,保存到全局变量。    故一道试题pattern对应三个adi
-    //5. 生成单道题的属性值：id  pattern  base  penalty  adi   共9个字段
-    //6. 生成题库 要求比例均衡
+    //1. 生成题目的 pattern  5
+    //2. 生成 base 和 penalty; 生成rum
+    //3. 接收返回ArrayList<Double> rumLists
+    //4. 生成 K_L 矩阵
+    //5. 计算一道试题 pattern 对应五个adi (index vs klArray)
 
-    //存在问题： 惩罚系数 目前未实现,系数比例精细化
+    //6. 封装单道题的属性值(id  pattern  base  penalty  adi1_r adi2_r adi3_r adi4_r adi5_r)
+    //7. 生成题库 要求属性比例均衡
+
+
 
     @Test
     public  void Init() throws InterruptedException {
@@ -114,8 +116,8 @@ public class RumImpl {
 
 
     /**
-     * 以试题pattern(1,0,0)为单位,这样才能算出一个矩阵 rum，然后求出该试题的矩阵 k_L，
-     * 然后求出该试题的矩阵 Da，最后平均求出该试题的 adi
+     * 以试题pattern为单位,算出一个答题概率的集合 rum，然后求出该试题的矩阵 k_L，
+     * 求出该试题的矩阵 Da，最后平均求出该试题的 adi
      * 可以理解为一道试题下，所有考生的差异性
      */
     public  void GetAdi(String ip) {
@@ -255,7 +257,7 @@ public class RumImpl {
         System.out.println("adi4个数: "+list4.size() +" 具体指标为:"+list4);
         System.out.println("adi5个数: "+list5.size() +" 具体指标为:"+list5);
 
-        System.out.println("list 遍历; 分别拿list的值去Array中匹配寻找：");
+        System.out.println("list 遍历; 分别拿list的值去KLArray中匹配寻找：");
         List<Double> calAdiList = CalAdiImple(klArray, list1, list2, list3, list4, list5);
         System.out.println(calAdiList);
 
@@ -318,6 +320,7 @@ public class RumImpl {
         int a3 = Integer.parseInt(ip.substring(5, 6));
         int a4 = Integer.parseInt(ip.substring(7, 8));
         int a5 = Integer.parseInt(ip.substring(9, 10));
+        //0.65~0.92
 
         Double penalty1 = a1 == 1? new KLUtils().makeRandom(0.95f, 0.05f, 2):0;
         Double penalty2 = a2 == 1? new KLUtils().makeRandom(0.95f, 0.05f, 2):0;
