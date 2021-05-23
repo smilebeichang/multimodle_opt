@@ -4,6 +4,7 @@ import cn.edu.sysu.utils.JDBCUtils;
 import cn.edu.sysu.utils.KLUtils;
 import org.junit.Test;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +36,15 @@ import java.util.Map;
  *    (1,1,1)
  *
  *
+ *    TODO 1.精简 RUM 和 DINA 公共代码
+ *    TODO 2.DINA 属性值，ADI一致的校验
+ *    TODO 3.以 RUM 为主，进行扩充
+ *    TODO      1.题库数量
+ *    TODO      2.GA的实现（硬编码:长度   软编码:属性、题型  exp表达式）
+ *
+ *
+ *
+ *
  */
 public class RumImpl {
 
@@ -62,7 +72,7 @@ public class RumImpl {
 
 
     @Test
-    public  void Init() throws InterruptedException {
+    public  void Init() throws InterruptedException, SQLException {
 
         JDBCUtils jdbcUtils = new JDBCUtils();
 
@@ -169,7 +179,7 @@ public class RumImpl {
 
 
         //根据 rumList 计算出K_L二维数组
-        Double[][] klArray = new KLUtils().foreach(rumList, rumList);
+        Double[][] klArray = new KLUtils().foreach(rumList);
         //打印
         new KLUtils().arrayPrint(klArray);
 

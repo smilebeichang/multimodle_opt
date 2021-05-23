@@ -177,7 +177,7 @@ public class RUM {
             add(0.8);
         }};
 
-        Double[][] klArray = new KLUtils().foreach(lists1, lists2);
+        Double[][] klArray = new KLUtils().foreach(lists1);
 
         new KLUtils().arrayPrint(klArray);
 

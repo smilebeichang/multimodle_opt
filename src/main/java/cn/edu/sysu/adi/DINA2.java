@@ -1,16 +1,13 @@
 package cn.edu.sysu.adi;
 
 import cn.edu.sysu.pojo.ADI;
-import cn.edu.sysu.pojo.Questions;
 import cn.edu.sysu.utils.JDBCUtils;
 import cn.edu.sysu.utils.KLUtils;
 import org.junit.Test;
 
-import javax.sound.midi.Soundbank;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Author : song bei chang
@@ -39,7 +36,7 @@ import java.util.Map;
  *      evaluation  test quality: 1) index-oriented and 2) simulation-oriented.
  *      最大程度地提高整体测试质量，最小化测试之间的最大差异，或两者的加权组合。(基于ADI)
  */
-public class DINA {
+public class DINA2 {
 
 
       private int id ;
@@ -106,8 +103,6 @@ public class DINA {
      *              目前存在问题在于: 同一道试题adi辨别指标一样,且偏小
      *       2.计算出adi
      *       3.指标信息同步到同一套试卷上
-     *
-     *
      *       4.评价解的好坏 -- 试卷 -- adi的avg/min
      */
 
@@ -294,7 +289,7 @@ public class DINA {
 
         int sum = a1 + a2 + a3 + a4 + a5;
         if(sum == 5){
-            // 生成dinaList  猜对率和猜错率
+            // 生成dinaList  猜对率和猜错率    ps pg 是随机值，和pattern 无关
             // 辨别能力很小   [0.0, 0.0, 0.0175, 0.0175, 0.0175]
             // ps[0.15,0.4]  pg[0.2,0.3]
             ps = new KLUtils().makeRandom(0.20f, 0.15f, 2);

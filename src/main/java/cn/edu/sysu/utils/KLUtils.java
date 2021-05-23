@@ -20,19 +20,18 @@ public class KLUtils {
 
     /**
      * 计算K_L矩阵
-     * @param lists1 答对此题的概率集合  横向
-     * @param lists2 答对此题的概率集合  纵向
+     * @param rumList 答对此题的概率集合  横向 vs 纵向
      * @return  Double[][]
      */
-    public   Double[][] foreach( ArrayList<Double> lists1,ArrayList<Double> lists2) {
+    public   Double[][] foreach( ArrayList<Double> rumList) {
 
         //计算 K_L
-        Double[][] klArray =new Double[lists1.size()][lists2.size()];
-        for (int i = 0;i<lists1.size();i++){
-            for (int j = 0; j < lists2.size(); j++) {
-                //(0,0) vs (0,0)   K_L 的计算公式
-                double v = lists1.get(i) * Math.log(lists1.get(i) / lists2.get(j)) +
-                        (1 - lists1.get(i)) * Math.log((1 - lists1.get(i)) / (1 - lists2.get(j)));
+        Double[][] klArray =new Double[rumList.size()][rumList.size()];
+        for (int i = 0;i<rumList.size();i++){
+            for (int j = 0; j < rumList.size(); j++) {
+                //(0,0) vs (0,0)
+                double v = rumList.get(i) * Math.log(rumList.get(i) / rumList.get(j)) +
+                        (1 - rumList.get(i)) * Math.log((1 - rumList.get(i)) / (1 - rumList.get(j)));
 
                 v = Double.valueOf((v+"0000").substring(0,4));
                 klArray[i][j] = v;
@@ -88,19 +87,21 @@ public class KLUtils {
         if(num == 0 ){
             System.err.println("提示：属性不能全为空！！");
             Thread.sleep(2000);
+            //不知道直接 return 是否有效，待验证
+            return null;
         }
 
         //随机生成
-        String attributes ;
+        //String attributes ;
         Set<String> fill_set = new HashSet<>();
         for (int j = 0; j < num; j++) {
-            //a的ASCII码 数字强制转换成字符,然后转pattern,通过这种方式,保证了每个pattern的概率
+            //a的ASCII码 数字--字符--pattern
             while (fill_set.size() == j ){
                 String c = ((char) (Math.random() * 5 + 'a'))+"";
                 fill_set.add(c);
             }
         }
-        attributes = fill_set.toString();
+        //attributes = fill_set.toString();
         int p1 = fill_set.contains("a")?1:0;
         int p2 = fill_set.contains("b")?1:0;
         int p3 = fill_set.contains("c")?1:0;
@@ -108,7 +109,7 @@ public class KLUtils {
         int p5 = fill_set.contains("e")?1:0;
         System.out.println("=======================");
         String ip = "("+p1+","+p2+","+p3+","+p4+","+p5+")";
-        System.out.println("属性："+attributes);
+        //System.out.println("属性："+attributes);
         System.out.println("属性："+ip);
         return ip;
 

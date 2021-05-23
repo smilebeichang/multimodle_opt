@@ -63,9 +63,9 @@ public class JDBCUtils {
     /**
      * 新增到数据库
      */
-    public  void insert(int id,String pattern,Double base,String penalty,Double adi1_r,Double adi2_r,Double adi3_r,Double adi4_r,Double adi5_r) {
-        Connection conn ;
-        PreparedStatement ps ;
+    public  void insert(int id,String pattern,Double base,String penalty,Double adi1_r,Double adi2_r,Double adi3_r,Double adi4_r,Double adi5_r) throws SQLException {
+        Connection conn = null;
+        PreparedStatement ps = null;
 
         try {
             Class.forName("com.mysql.jdbc.Driver");
@@ -85,6 +85,13 @@ public class JDBCUtils {
             System.out.println("VendorError: " + ex.getErrorCode());
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
+        }finally {
+            if(ps!= null) {
+                ps.close();
+            }
+            if(conn!= null) {
+                conn.close();
+            }
         }
     }
 
