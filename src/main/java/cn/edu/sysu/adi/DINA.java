@@ -7,6 +7,7 @@ import cn.edu.sysu.utils.KLUtils;
 import org.junit.Test;
 
 import javax.sound.midi.Soundbank;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -112,7 +113,7 @@ public class DINA {
      */
 
     @Test
-    public void start()  {
+    public void start() throws SQLException {
 
         JDBCUtils jdbcUtils = new JDBCUtils();
         for (int i = 1; i <= 62; i++) {

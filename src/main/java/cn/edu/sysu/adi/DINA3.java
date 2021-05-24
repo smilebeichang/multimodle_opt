@@ -5,7 +5,6 @@ import cn.edu.sysu.utils.JDBCUtils;
 import cn.edu.sysu.utils.KLUtils;
 import org.junit.Test;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +36,7 @@ import java.util.List;
  *      evaluation  test quality: 1) index-oriented and 2) simulation-oriented.
  *      最大程度地提高整体测试质量，最小化测试之间的最大差异，或两者的加权组合。(基于ADI)
  */
-public class DINA2 {
+public class DINA3 {
 
 
       private int id ;
@@ -47,8 +46,6 @@ public class DINA2 {
       private double adi1_d ;
       private double adi2_d ;
       private double adi3_d ;
-      private double adi4_d ;
-      private double adi5_d ;
       private ADI adiBean = new ADI();
 
     /**
@@ -57,49 +54,22 @@ public class DINA2 {
     private ArrayList<String> adiIndexList1 = new ArrayList();
     private ArrayList<String> adiIndexList2 = new ArrayList();
     private ArrayList<String> adiIndexList3 = new ArrayList();
-    private ArrayList<String> adiIndexList4 = new ArrayList();
-    private ArrayList<String> adiIndexList5 = new ArrayList();
+
 
 
     private static HashMap<String,Integer> indexMap = new HashMap();
 
     static
     {
-        indexMap.put("(0,0,0,0,0)",1);
-        indexMap.put("(0,0,0,0,1)",2);
-        indexMap.put("(0,0,0,1,0)",3);
-        indexMap.put("(0,0,1,0,0)",4);
-        indexMap.put("(0,1,0,0,0)",5);
-        indexMap.put("(1,0,0,0,0)",6);
+        indexMap.put("(0,0,0)",1);
+        indexMap.put("(0,0,1)",2);
+        indexMap.put("(0,1,0)",3);
+        indexMap.put("(1,0,0)",4);
+        indexMap.put("(0,1,1)",5);
+        indexMap.put("(1,0,1)",6);
+        indexMap.put("(1,1,0)",7);
+        indexMap.put("(1,1,1)",8);
 
-        indexMap.put("(0,0,0,1,1)",7);
-        indexMap.put("(0,0,1,0,1)",8);
-        indexMap.put("(0,1,0,0,1)",9);
-        indexMap.put("(1,0,0,0,1)",10);
-        indexMap.put("(0,0,1,1,0)",11);
-        indexMap.put("(0,1,0,1,0)",12);
-        indexMap.put("(1,0,0,1,0)",13);
-        indexMap.put("(0,1,1,0,0)",14);
-        indexMap.put("(1,0,1,0,0)",15);
-        indexMap.put("(1,1,0,0,0)",16);
-
-        indexMap.put("(0,0,1,1,1)",17);
-        indexMap.put("(0,1,0,1,1)",18);
-        indexMap.put("(1,0,0,1,1)",19);
-        indexMap.put("(0,1,1,0,1)",20);
-        indexMap.put("(1,0,1,0,1)",21);
-        indexMap.put("(1,1,0,0,1)",22);
-        indexMap.put("(0,1,1,1,0)",23);
-        indexMap.put("(1,0,1,1,0)",24);
-        indexMap.put("(1,1,0,1,0)",25);
-        indexMap.put("(1,1,1,0,0)",26);
-
-        indexMap.put("(0,1,1,1,1)",27);
-        indexMap.put("(1,0,1,1,1)",28);
-        indexMap.put("(1,1,0,1,1)",29);
-        indexMap.put("(1,1,1,0,1)",30);
-        indexMap.put("(1,1,1,1,0)",31);
-        indexMap.put("(1,1,1,1,1)",32);
     }
 
 
@@ -108,44 +78,16 @@ public class DINA2 {
      */
     ArrayList<String> sps = new ArrayList<String>(){{
 
-        add("(0,0,0,0,0)");
-        add("(0,0,0,0,1)");
-        add("(0,0,0,1,0)");
-        add("(0,0,1,0,0)");
-        add("(0,1,0,0,0)");
-        add("(1,0,0,0,0)");
+        add("(0,0,0)");
+        add("(0,0,1)");
+        add("(0,1,0)");
+        add("(1,0,0)");
+        add("(0,1,1)");
+        add("(1,0,1)");
+        add("(1,1,0)");
+        add("(1,1,1)");
 
-        add("(0,0,0,1,1)");
-        add("(0,0,1,0,1)");
-        add("(0,1,0,0,1)");
-        add("(1,0,0,0,1)");
-        add("(0,0,1,1,0)");
-        add("(0,1,0,1,0)");
-        add("(1,0,0,1,0)");
-        add("(0,1,1,0,0)");
-        add("(1,0,1,0,0)");
-        add("(1,1,0,0,0)");
-
-        add("(0,0,1,1,1)");
-        add("(0,1,0,1,1)");
-        add("(1,0,0,1,1)");
-        add("(0,1,1,0,1)");
-        add("(1,0,1,0,1)");
-        add("(1,1,0,0,1)");
-        add("(0,1,1,1,0)");
-        add("(1,0,1,1,0)");
-        add("(1,1,0,1,0)");
-        add("(1,1,1,0,0)");
-
-        add("(0,1,1,1,1)");
-        add("(1,0,1,1,1)");
-        add("(1,1,0,1,1)");
-        add("(1,1,1,0,1)");
-        add("(1,1,1,1,0)");
-        add("(1,1,1,1,1)");
     }};
-
-
 
 
 
@@ -167,12 +109,9 @@ public class DINA2 {
         //初始化索引位置 adiIndexList
         getAdiIndex();
 
-        JDBCUtils jdbcUtils = new JDBCUtils();
-        for (int i = 1; i <= 310; i++) {
-            System.out.println("=============第"+ i +"套试卷的生成==============");
-            GetAdi(i);
-            jdbcUtils.updateDina(id,ps,pg,adi1_d,adi2_d,adi3_d,adi4_d,adi5_d);
-        }
+
+        GetAdi();
+
 
     }
 
@@ -182,17 +121,11 @@ public class DINA2 {
      * 2. 使用dina  计算adi
      * @param
      */
-    public void GetAdi(int i) throws Exception{
+    public void GetAdi() throws Exception{
 
         // 从数据库中获取出试题的 pattern ip
-        ArrayList<String> db_list = new JDBCUtils().select();
 
-        String[] split = db_list.get(i-1).split(":");
-        adiBean.setId(Integer.valueOf(split[0]));
-        adiBean.setPattern(split[1]);
-        id = Integer.valueOf(split[0]) ;
-        ip = split[1];
-
+        ip = "(1,1,1)";
         // 根据试题的 pattern ，计算出 dina 分数
         ArrayList<Double> dinaList = GetDinaListsRandom(ip);
         System.out.println("dinaList: "+dinaList);
@@ -204,7 +137,7 @@ public class DINA2 {
 
 
         System.out.println("list 遍历; 分别拿list的值去Array中匹配寻找,并输出其大小：");
-        List<Double> calAdiList = CalAdiImple(klArray, adiIndexList1, adiIndexList2, adiIndexList3, adiIndexList4, adiIndexList5);
+        List<Double> calAdiList = CalAdiImple(klArray, adiIndexList1, adiIndexList2, adiIndexList3);
         System.out.println(calAdiList);
 
 
@@ -225,8 +158,7 @@ public class DINA2 {
         int a1 = Integer.parseInt(ip.substring(1, 2));
         int a2 = Integer.parseInt(ip.substring(3, 4));
         int a3 = Integer.parseInt(ip.substring(5, 6));
-        int a4 = Integer.parseInt(ip.substring(7, 8));
-        int a5 = Integer.parseInt(ip.substring(9, 10));
+
 
 
         // 生成dinaList  猜对率和猜错率    ps pg 是随机值，和pattern 无关
@@ -243,18 +175,16 @@ public class DINA2 {
             int b1 = Integer.parseInt(p.substring(1, 2));
             int b2 = Integer.parseInt(p.substring(3, 4));
             int b3 = Integer.parseInt(p.substring(5, 6));
-            int b4 = Integer.parseInt(p.substring(7, 8));
-            int b5 = Integer.parseInt(p.substring(9, 10));
+
 
             //全部掌握所考的属性，则潜在答题概率为1，否则默认为0
             boolean ab1 = b1 >= a1;
             boolean ab2 = b2 >= a2;
             boolean ab3 = b3 >= a3;
-            boolean ab4 = b4 >= a4;
-            boolean ab5 = b5 >= a5;
+
 
             int potentResp = 0;
-            if(ab1 && ab2 && ab3 && ab4 && ab5 ){
+            if(ab1 && ab2 && ab3  ){
                 potentResp = 1;
             }
 
@@ -272,12 +202,11 @@ public class DINA2 {
     /**
      * 计算adi的具体实现
      */
-    public List<Double> CalAdiImple(Double[][] klArray,ArrayList<String> list1,ArrayList<String> list2,ArrayList<String> list3,ArrayList<String> list4,ArrayList<String> list5){
+    public List<Double> CalAdiImple(Double[][] klArray,ArrayList<String> list1,ArrayList<String> list2,ArrayList<String> list3){
         Double sum1 = 0.0;
         Double sum2 = 0.0;
         Double sum3 = 0.0;
-        Double sum4 = 0.0;
-        Double sum5 = 0.0;
+
 
         for(String data  :    list1)    {
             String[] spli = data.split("_");
@@ -307,30 +236,14 @@ public class DINA2 {
         adi3_d = NumCoversion(sum3/list3.size());
         System.out.println("adi3: "+adiBean.getAdi3_d());
 
-        for(String data  :    list4)    {
-            String[] spli = data.split("_");
-            Double v  = klArray[Integer.parseInt(spli[0])-1][Integer.parseInt(spli[1])-1];
-            sum4+=v;
-        }
-        adiBean.setAdi4_d(NumCoversion(sum4/list4.size()));
-        adi4_d = NumCoversion(sum4/list4.size());
-        System.out.println("adi4: "+adiBean.getAdi4_d());
 
-        for(String data  :    list5)    {
-            String[] spli = data.split("_");
-            Double v  = klArray[Integer.parseInt(spli[0])-1][Integer.parseInt(spli[1])-1];
-            sum5+=v;
-        }
-        adiBean.setAdi5_d(NumCoversion(sum5/list5.size()));
-        adi5_d = NumCoversion(sum5/list5.size());
-        System.out.println("adi5: "+adiBean.getAdi5_d());
+
 
         List<Double> adiList = new ArrayList<Double>(){{
             add(adiBean.getAdi1_d());
             add(adiBean.getAdi2_d());
             add(adiBean.getAdi3_d());
-            add(adiBean.getAdi4_d());
-            add(adiBean.getAdi5_d());
+
         }};
         return adiList;
 
@@ -359,12 +272,8 @@ public class DINA2 {
         int combineNum = 2;
         for(int x=0;x<combineNum; x++){
             for(int y=0;y<combineNum; y++) {
-                for (int z = 0; z < combineNum; z++) {
-                    for (int w = 0; w < combineNum; w++) {
-                        String value = x +","+ y +","+ z +","+ w;
-                        combineList.add(value);
-                    }
-                }
+                String value = x +","+ y ;
+                combineList.add(value);
             }
         }
 
@@ -379,44 +288,26 @@ public class DINA2 {
             adiIndexList1.add(""+index11+"_"+index12);
             adiIndexList1.add(""+index13+"_"+index14);
 
-            //adi2         1,0,1,0
-            Integer index21 = indexMap.get("(" +combineList.get(X).substring(0,1)+ ",1," +combineList.get(X).substring(2,7) + ")");
-            Integer index22 = indexMap.get("(" +combineList.get(X).substring(0,1)+ ",0," +combineList.get(X).substring(2,7) + ")");
-            Integer index23 = indexMap.get("(" +combineList.get(X).substring(0,1)+ ",0," +combineList.get(X).substring(2,7) + ")");
-            Integer index24 = indexMap.get("(" +combineList.get(X).substring(0,1)+ ",1," +combineList.get(X).substring(2,7) + ")");
+            //adi2         1,0
+            Integer index21 = indexMap.get("(" +combineList.get(X).substring(0,1)+ ",1," +combineList.get(X).substring(2,3) + ")");
+            Integer index22 = indexMap.get("(" +combineList.get(X).substring(0,1)+ ",0," +combineList.get(X).substring(2,3) + ")");
+            Integer index23 = indexMap.get("(" +combineList.get(X).substring(0,1)+ ",0," +combineList.get(X).substring(2,3) + ")");
+            Integer index24 = indexMap.get("(" +combineList.get(X).substring(0,1)+ ",1," +combineList.get(X).substring(2,3) + ")");
 
             adiIndexList2.add(""+index21+"_"+index22);
             adiIndexList2.add(""+index23+"_"+index24);
 
 
             //adi3
-            Integer index31 = indexMap.get("("+combineList.get(X).substring(0,3)+",1,"+combineList.get(X).substring(4,7)+ ")");
-            Integer index32 = indexMap.get("("+combineList.get(X).substring(0,3)+",0,"+combineList.get(X).substring(4,7)+ ")");
-            Integer index33 = indexMap.get("("+combineList.get(X).substring(0,3)+",0,"+combineList.get(X).substring(4,7)+ ")");
-            Integer index34 = indexMap.get("("+combineList.get(X).substring(0,3)+",1,"+combineList.get(X).substring(4,7)+ ")");
+            Integer index31 = indexMap.get("("+combineList.get(X).substring(0,3)+",1)");
+            Integer index32 = indexMap.get("("+combineList.get(X).substring(0,3)+",0)");
+            Integer index33 = indexMap.get("("+combineList.get(X).substring(0,3)+",0)");
+            Integer index34 = indexMap.get("("+combineList.get(X).substring(0,3)+",1)");
 
             adiIndexList3.add(""+index31+"_"+index32);
             adiIndexList3.add(""+index33+"_"+index34);
 
 
-            //adi4
-            Integer index41 = indexMap.get("("+combineList.get(X).substring(0,5)+",1,"+combineList.get(X).substring(6,7)+ ")");
-            Integer index42 = indexMap.get("("+combineList.get(X).substring(0,5)+",0,"+combineList.get(X).substring(6,7)+ ")");
-            Integer index43 = indexMap.get("("+combineList.get(X).substring(0,5)+",0,"+combineList.get(X).substring(6,7)+ ")");
-            Integer index44 = indexMap.get("("+combineList.get(X).substring(0,5)+",1,"+combineList.get(X).substring(6,7)+ ")");
-
-            adiIndexList4.add(""+index41+"_"+index42);
-            adiIndexList4.add(""+index43+"_"+index44);
-
-
-            //adi5
-            Integer index51 = indexMap.get("("+combineList.get(X)+",1)");
-            Integer index52 = indexMap.get("("+combineList.get(X)+",0)");
-            Integer index53 = indexMap.get("("+combineList.get(X)+",0)");
-            Integer index54 = indexMap.get("("+combineList.get(X)+",1)");
-
-            adiIndexList5.add(""+index51+"_"+index52);
-            adiIndexList5.add(""+index53+"_"+index54);
 
         }
 
@@ -425,15 +316,12 @@ public class DINA2 {
             adi1个数: 32 具体指标为:[6_1, 1_6, 10_2, 2_10...]
             adi2个数: 32 具体指标为:[5_1, 1_5, 9_2, 2_9...]
             adi3个数: 32 具体指标为:[4_1, 1_4, 8_2, 2_8...]
-            adi4个数: 32 具体指标为:[3_1, 1_3, 7_2, 2_7...]
-            adi5个数: 32 具体指标为:[2_1, 1_2, 7_3, 3_7...]
+
          */
         System.out.println("adi的计算指标：");
         System.out.println("adi1个数: "+adiIndexList1.size() +" 具体指标为:"+adiIndexList1);
         System.out.println("adi2个数: "+adiIndexList2.size() +" 具体指标为:"+adiIndexList2);
         System.out.println("adi3个数: "+adiIndexList3.size() +" 具体指标为:"+adiIndexList3);
-        System.out.println("adi4个数: "+adiIndexList4.size() +" 具体指标为:"+adiIndexList4);
-        System.out.println("adi5个数: "+adiIndexList5.size() +" 具体指标为:"+adiIndexList5);
 
     }
 

@@ -36,10 +36,13 @@ import java.util.Map;
  *    (1,1,1)
  *
  *
- *    TODO 1.精简 RUM 和 DINA 公共代码
- *    TODO 2.DINA 属性值，ADI一致的校验
+ *    TODO 1.精简 RUM 和 DINA 公共代码     ok
+ *    TODO 2.DINA 属性值，ADI一致的校验    5个属性 32*32 矩阵的计算  3个属性 8*8 矩阵的计算
+ *                               [0.0, 0.08937, 0.005, 0.08187, 0.04937.....]    属性：(0,1,1,0,1) 8种rum*4个 = 32或者 4n+2m=32
+ *                               [0.27, 0.8, 0.27, 0.27, 0.8, 0.8, 0.27, 0.8]   4dina*2=8  6+2=8 7+1=8
+ *                               eg以五个属性全部掌握 进行举例验证
  *    TODO 3.以 RUM 为主，进行扩充
- *    TODO      1.题库数量
+ *    TODO      1.题库数量               ok
  *    TODO      2.GA的实现（硬编码:长度   软编码:属性、题型  exp表达式）
  *
  *
@@ -52,11 +55,11 @@ public class RumImpl2 {
     private String pattern ;
     private Double base ;
     private String penalty ;
-    private Double adi1_r;
-    private Double adi2_r;
-    private Double adi3_r;
-    private Double adi4_r;
-    private Double adi5_r;
+    private Double adi1_r ;
+    private Double adi2_r ;
+    private Double adi3_r ;
+    private Double adi4_r ;
+    private Double adi5_r ;
 
     /**
      * 获取下标 adiIndex
@@ -236,6 +239,7 @@ public class RumImpl2 {
         base = new KLUtils().makeRandom(0.95f, 0.75f, 2);
 
         ArrayList<Double> rumList = GetRumListsRandom(base,ip);
+        System.out.println("rumList: " +rumList);
 
 
         //根据 rumList 计算出K_L二维数组
