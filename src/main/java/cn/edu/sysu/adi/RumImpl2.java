@@ -1,6 +1,6 @@
 package cn.edu.sysu.adi;
 
-import cn.edu.sysu.utils.JDBCUtils;
+import cn.edu.sysu.utils.JDBCUtils2;
 import cn.edu.sysu.utils.KLUtils;
 import org.junit.Test;
 
@@ -38,14 +38,19 @@ import java.util.Map;
  *
  *    TODO 1.精简 RUM 和 DINA 公共代码     ok
  *    TODO 2.DINA 属性值，ADI一致的校验    5个属性 32*32 矩阵的计算  3个属性 8*8 矩阵的计算
- *                               [0.0, 0.08937, 0.005, 0.08187, 0.04937.....]    属性：(0,1,1,0,1) 8种rum*4个 = 32或者 4n+2m=32
- *                               [0.27, 0.8, 0.27, 0.27, 0.8, 0.8, 0.27, 0.8]   4dina*2=8  6+2=8 7+1=8
+ *                 [0.0, 0.08937, 0.005, 0.08187, 0.04937.....]    属性：(0,1,1,0,1) 8种rum*4个 = 32或者 4n+2m=32
+ *                 [0.27, 0.8, 0.27, 0.27, 0.8, 0.8, 0.27, 0.8]    4dina*2=8  6+2=8 7+1=8
  *                               eg以五个属性全部掌握 进行举例验证
  *    TODO 3.以 RUM 为主，进行扩充
  *    TODO      1.题库数量               ok
  *    TODO      2.GA的实现（硬编码:长度   软编码:属性、题型  exp表达式）
  *
+ *    每测试必须完全包含L个项目，
+ *    每个项目类型t的比例必须满足预定义范围[Vt，Ut]，（t = 1，2，.... T）,
+ *    每两个测试之间的comm item不得超过预定义的阈值H。
  *
+ *    解决CDM-PTA问题是找到帕累托前沿面（PF）中的，即一组非支配解可以实现FD和FS之间的最佳权衡，同时满足测试长度，项目类型分布和重叠阈值。
+ *    Pareto解又称非支配解或不受支配解（nondominated solutions）：在有多个目标时，由于存在目标之间的冲突和无法比较的现象，一个解在某个目标上是最好的，在其他的目标上可能是最差的。这些在改进任何目标函数的同时，必然会削弱至少一个其他目标函数的解称为非支配解或Pareto解。
  *
  *
  */
@@ -168,15 +173,14 @@ public class RumImpl2 {
     //5. 计算试题 一个pattern 对应五个adi (index vs klArray)
     //6. 封装单道题的属性值(id  pattern  base  penalty  adi1_r adi2_r adi3_r adi4_r adi5_r)
     //7. 生成题库 要求属性比例均衡
-
-
+    
     @Test
     public  void Init() throws InterruptedException, SQLException {
 
         //初始化索引位置 adiIndexList
         getAdiIndex();
 
-        JDBCUtils jdbcUtils = new JDBCUtils();
+        JDBCUtils2 jdbcUtils = new JDBCUtils2();
 
         // 5:10:10:5:1 假设题库310道题  则50:100:100:50:10
         for (int i = 1; i <= 50; i++) {
