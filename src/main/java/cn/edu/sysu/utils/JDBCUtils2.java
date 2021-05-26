@@ -16,8 +16,8 @@ public class JDBCUtils2 {
     /**
      * 查询，并返回list
      */
-    public  ArrayList select() {
-            ArrayList list = new ArrayList();
+    public  ArrayList<String> select() {
+            ArrayList<String> list = new ArrayList<>();
             Connection conn ;
             PreparedStatement ps ;
             ResultSet rs ;
@@ -180,8 +180,8 @@ public class JDBCUtils2 {
     /**
      * 查询，并返回list
      */
-    public  ArrayList selectBachItem(String ids) throws SQLException {
-        ArrayList list = new ArrayList();
+    public  ArrayList<String> selectBachItem(String ids) throws SQLException {
+        ArrayList<String> list = new ArrayList<>();
         Connection conn  = null;
         PreparedStatement ps = null;
         ResultSet rs ;
@@ -198,6 +198,7 @@ public class JDBCUtils2 {
             ps = conn.prepareStatement("select * from sysu.adi20210523 where id in (" +
                     ids +  ");");
             rs = ps.executeQuery();
+            System.out.println("select * from sysu.adi20210523 where id in (" + ids +  ");");
 
             while(rs.next()) {
                 int id = rs.getInt("id");
@@ -237,7 +238,7 @@ public class JDBCUtils2 {
     /**
      *  初始化修补查询，并返回list
      */
-    public  ArrayList selectInitFixItem( ArrayList<Integer> bigIndex,ArrayList<Integer> overIndex) throws SQLException {
+    public  ArrayList<String> selectInitFixItem( ArrayList<Integer> bigIndex,ArrayList<Integer> overIndex) throws SQLException {
 
         //将bigIndex,overIndex拼接成sql
         StringBuffer sb = new StringBuffer();
@@ -254,7 +255,7 @@ public class JDBCUtils2 {
         sqlWhere = sqlWhere +");";
         System.out.println("sqlwhere :"+sqlWhere);
 
-        ArrayList list = new ArrayList();
+        ArrayList<String> list = new ArrayList<>();
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs ;
