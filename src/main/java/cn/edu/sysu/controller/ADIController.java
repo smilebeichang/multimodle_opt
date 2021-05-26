@@ -153,15 +153,14 @@ public class ADIController {
             ArrayList<String> bachItemList = jdbcUtils.selectBachItem(ids);
 
 
-//***************************************    BEGIN   ****************************************************************
-            //方案一 根据ab1的值得出一个误差标准,进行重新抽取题目
-            //TODO  待测试及优化 bachItemList = correctAttribute(bachItemList);
+//**************************    BEGIN   ************************************
+
+            //方案一 根据上下文以及现有结果得出一个误差标准,进行重新抽取题目
+            //TODO  待测试及优化  校验属性比例
+            bachItemList = correctAttribute(bachItemList);
 
 
-            //方案二 进行乘以一个底数e 来进行适应度值的降低
-            //TODO  待实现
-
-//****************************************    END    ****************************************************************
+//**************************    END    *************************************
 
 
 
@@ -180,25 +179,27 @@ public class ADIController {
 
 
     /**
-     * 方案一 根据ab1的值得出一个误差标准,进行重新抽取题目
+     * 方案一 根据上下文以及现有结果得出一个误差标准,进行重新抽取题目
      *
-     * 执行校验操作 <属性比例>
-     *     1.分别获取每个试题全部信息
+     *  <属性比例校验>
+     *     1.以试卷为单位,分别获取每个题目全部信息
      *     2.截取字段，变成id,pattern，并统计每个属性所占的比例
      *                  id,pattern,a1,a2,a3,a4,a5,判断指标（最好是完全吻合的）
      *     3.统计比例信息
-     *     4.校验，并重新选举
+     *     4.校验，并重新选取
      *     5.输出最后的方案
      **/
-    public ArrayList correctAttribute(ArrayList bachItemList) throws SQLException {
+    public ArrayList correctAttribute(ArrayList<String> bachItemList) throws SQLException {
 
+// ========================= 封装信息 ==========================
         //1.每道试题的全部信息
-        String it0 = bachItemList.get(0).toString();
-        String it1 = bachItemList.get(1).toString();
-        String it2 = bachItemList.get(2).toString();
-        String it3 = bachItemList.get(3).toString();
-        String it4 = bachItemList.get(4).toString();
-        String it5 = bachItemList.get(5).toString();
+        String it0 = bachItemList.get(0);
+        String it1 = bachItemList.get(1);
+        String it2 = bachItemList.get(2);
+        String it3 = bachItemList.get(3);
+        String it4 = bachItemList.get(4);
+        String it5 = bachItemList.get(5);
+
         //2.截取字段，是否需要封装成对象 or 直接统计判断
         //封装：便于后期直接进行筛选
         String[] sp1 = it0.split(":");
@@ -225,6 +226,8 @@ public class ADIController {
         String[] at6 = sp6[1].split(",");
         QuorumPeer quorumPeer6 = new QuorumPeer(sp6[0], at6[0], at6[1], at6[2], at6[3], at6[4]);
 
+
+// ========================= 统计指标信息  ==========================
         //统计校验 属性比例
         // 定义局部变量
         double as1  = 0 ;
@@ -234,79 +237,79 @@ public class ADIController {
         double as5  = 0 ;
 
         for (int i = 0; i < bachItemList.size(); i++) {
-            as1 = as1 +  Double.parseDouble(bachItemList.get(i).toString().split(":")[1].split(",")[0].substring(1,2));
-            as2 = as2 +  Double.parseDouble(bachItemList.get(i).toString().split(":")[1].split(",")[1]);
-            as3 = as3 +  Double.parseDouble(bachItemList.get(i).toString().split(":")[1].split(",")[2]);
-            as4 = as4 +  Double.parseDouble(bachItemList.get(i).toString().split(":")[1].split(",")[3]);
-            as5 = as5 +  Double.parseDouble(bachItemList.get(i).toString().split(":")[1].split(",")[4].substring(0,1));
 
-            System.out.println(as1 + " " + as2 + " " + as3 + " " + as4 + " " + as5 );
+            as1 = as1 +  Double.parseDouble(bachItemList.get(i).split(":")[1].split(",")[0].substring(1,2));
+            as2 = as2 +  Double.parseDouble(bachItemList.get(i).split(":")[1].split(",")[1]);
+            as3 = as3 +  Double.parseDouble(bachItemList.get(i).split(":")[1].split(",")[2]);
+            as4 = as4 +  Double.parseDouble(bachItemList.get(i).split(":")[1].split(",")[3]);
+            as5 = as5 +  Double.parseDouble(bachItemList.get(i).split(":")[1].split(",")[4].substring(0,1));
 
         }
+
+        System.out.println("目前属性数量情况： as1:"+as1+" as2:"+as2+" as3:"+as3+" as4:"+as4+" as5:"+as5);
+
         //需要判断 属性比例是多了还是少了
         //定义局部变量 ab1  (-1->少于,0->正常,1->大于)
-        int ab1 ;
-        int ab2 ;
-        int ab3 ;
-        int ab4 ;
-        int ab5 ;
         System.out.println("=========================================");
-        if(as1/10>=0.2){
-            if(as1/10<=0.5){
-                ab1 = 0 ;
-            }else{
-                ab1 = 1;
-            }
-        }else {
+        int ab1 ;
+        double edx1 = as1/15;
+        if(edx1>=0.2 && edx1<=0.34){
+            ab1 = 0;
+        }else if(edx1<0.2){
             ab1 = -1;
+        }else {
+            ab1 = 1;
         }
 
-        if(as2/10>=0.2){
-            if(as2/10<=0.5){
-                ab2 = 0 ;
-            }else{
-                ab2 = 1;
-            }
-        }else {
+        int ab2 ;
+        double edx2 = as2/15;
+        if(edx2>=0.2 && edx2<=0.34){
+            ab2 = 0;
+        }else if(edx2<0.2){
             ab2 = -1;
+        }else {
+            ab2 = 1;
         }
 
-
-        if(as3/10>=0.1){
-            if(as3/10<=0.4){
-                ab3 = 0 ;
-            }else{
-                ab3 = 1;
-            }
-        }else {
+        int ab3 ;
+        double edx3 = as3/15;
+        if(edx3>=0.1 && edx3<=0.27){
+            ab3 = 0;
+        }else if(edx2<0.1){
             ab3 = -1;
+        }else {
+            ab3 = 1;
         }
 
-        if(as4/10>=0.1){
-            if(as4/10<=0.4){
-                ab4 = 0 ;
-            }else{
-                ab4 = 1;
-            }
-        }else {
+        int ab4 ;
+        double edx4 = as4/15;
+        if(edx4>=0.1 && edx4<=0.27){
+            ab4 = 0;
+        }else if(edx4<0.1){
             ab4 = -1;
+        }else {
+            ab4 = 1;
         }
 
-        if(as5/10>=0.1){
-            if(as5/10<=0.4){
-                ab5 = 0 ;
-            }else{
-                ab5 = 1;
-            }
-        }else {
+        int ab5 ;
+        double edx5 = as5/15;
+        if(edx5>=0.1 && edx5<=0.27){
+            ab5 = 0;
+        }else if(edx5<0.1){
             ab5 = -1;
+        }else {
+            ab5 = 1;
         }
-        System.out.println("目前属性数量情况： as1:"+as1+" as2:"+as2+" as3:"+as3+" as4:"+as4+" as5:"+as5);
+
+        //是否要进一步考虑 具体多了多少数量的情况
         System.out.println("目前属性占比情况： ab1:"+ab1+"   ab2:"+ab2+"   ab3:"+ab3+"   ab4:"+ab4+"   ab5:"+ab5);
+
+
+//==================  校验完毕   =========================
 
         //根据ab1的值得出一个误差标准,进行删除题目 和 重新添加题目
         //拼接成一个flag
-        //多一个    先遍历匹配，再选取一个,带有这个属性的题目，然后move,add   导致的问题均是：属性题型发生变化
+        //多一个    先遍历匹配可选集合，再从中选取一个,带有这个属性的题目，然后move,add   导致的问题均是：属性题型发生变化
         //少一个    可以随机选取一个，不带有这个属性的题目，然后move，add
         //多两个    先遍历匹配(完全匹配)，若没有，则进行随机选取两次
         //少两个    随机选取一个,不带这两属性的题目
@@ -330,16 +333,10 @@ public class ADIController {
         Set<String> resultLess = new HashSet<>();
 
 
-        //取出属性比例过多的集合的交集
+        //取出属性比例过多的集合的交集（会不会存在以下情况: 两个单集合，各自多一个属性）
         if(ab1==1 || ab2==1 || ab3==1 || ab4==1 || ab5==1){
-            //完全匹配
-            for (int i = 0; i < bachItemList.size(); i++) {
-                if(flag.equals(bachItemList.get(i).toString().split(":")[1])){
-                    System.out.println("有完全匹配的值");
-                }
-            }
-            //表明属性1比例过多，用set集合接收 //需要判断 set 是否为空  把判断为空的逻辑 放在上面判断
 
+            //需要判断 set 是否为空  把判断为空的逻辑 放在上面判断
             resultMore.clear();
             HashSet<String> set1 = new HashSet<>();
             HashSet<String> set2 = new HashSet<>();
@@ -347,12 +344,11 @@ public class ADIController {
             HashSet<String> set4 = new HashSet<>();
             HashSet<String> set5 = new HashSet<>();
 
-
+            //表明属性1比例过多，用set集合接收   bachItemList为方法参数，即一套试卷
             if(ab1==1){
-
                 for (int i = 0; i < bachItemList.size(); i++) {
-                    if(bachItemList.get(i).toString().split(":")[1].split(",")[0].substring(1,2).equals("1")){
-                        set1.add(bachItemList.get(i).toString());
+                    if(bachItemList.get(i).split(":")[1].split(",")[0].substring(1,2).equals("1")){
+                        set1.add(bachItemList.get(i));
                     }
                 }
                 if (resultMore.size()==0){
@@ -361,10 +357,11 @@ public class ADIController {
                     resultMore.retainAll(set1);
                 }
             }
+
             if(ab2==1){
                 for (int i = 0; i < bachItemList.size(); i++) {
-                    if(bachItemList.get(i).toString().split(":")[1].split(",")[1].equals("1")){
-                        set2.add(bachItemList.get(i).toString());
+                    if(bachItemList.get(i).split(":")[1].split(",")[1].equals("1")){
+                        set2.add(bachItemList.get(i));
                     }
                 }
                 if (resultMore.size()==0){
@@ -373,10 +370,11 @@ public class ADIController {
                     resultMore.retainAll(set2);
                 }
             }
+
             if(ab3==1){
                 for (int i = 0; i < bachItemList.size(); i++) {
-                    if(bachItemList.get(i).toString().split(":")[1].split(",")[2].equals("1")){
-                        set3.add(bachItemList.get(i).toString());
+                    if(bachItemList.get(i).split(":")[1].split(",")[2].equals("1")){
+                        set3.add(bachItemList.get(i));
                     }
                 }
                 if (resultMore.size()==0){
@@ -385,10 +383,11 @@ public class ADIController {
                     resultMore.retainAll(set3);
                 }
             }
+
             if(ab4==1){
                 for (int i = 0; i < bachItemList.size(); i++) {
-                    if(bachItemList.get(i).toString().split(":")[1].split(",")[3].equals("1")){
-                        set4.add(bachItemList.get(i).toString());
+                    if(bachItemList.get(i).split(":")[1].split(",")[3].equals("1")){
+                        set4.add(bachItemList.get(i));
                     }
                 }
                 if (resultMore.size()==0){
@@ -397,10 +396,11 @@ public class ADIController {
                     resultMore.retainAll(set4);
                 }
             }
+
             if(ab5==1){
                 for (int i = 0; i < bachItemList.size(); i++) {
-                    if(bachItemList.get(i).toString().split(":")[1].split(",")[4].substring(0,1).equals("1")){
-                        set5.add(bachItemList.get(i).toString());
+                    if(bachItemList.get(i).split(":")[1].split(",")[4].substring(0,1).equals("1")){
+                        set5.add(bachItemList.get(i));
                     }
                 }
                 if (resultMore.size()==0){
@@ -409,6 +409,7 @@ public class ADIController {
                     resultMore.retainAll(set5);
                 }
             }
+
             //集合取交集 获取最接近的解
             System.out.println("属性比例过多的交集：" + resultMore);
 
@@ -421,10 +422,15 @@ public class ADIController {
 
         }
 
+
+
+
+
+
         //取出属性比例不足的集合的交集
         if(ab1==-1 || ab2==-1 || ab3==-1 || ab4==-1 || ab5==-1){
-            //表明属性1比例过多，用set集合接收 //需要判断 set 是否为空  把判断为空的逻辑 放在上面判断
 
+            //需要判断 set 是否为空  把判断为空的逻辑 放在上面判断
             resultLess.clear();
             HashSet<String> set1 = new HashSet<>();
             HashSet<String> set2 = new HashSet<>();
@@ -432,11 +438,12 @@ public class ADIController {
             HashSet<String> set4 = new HashSet<>();
             HashSet<String> set5 = new HashSet<>();
 
+            //表明属性1比例过少，用set集合接收
             if(ab1==-1){
 
                 for (int i = 0; i < bachItemList.size(); i++) {
-                    if(bachItemList.get(i).toString().split(":")[1].split(",")[0].substring(1,2).equals("0")){
-                        set1.add(bachItemList.get(i).toString());
+                    if(bachItemList.get(i).split(":")[1].split(",")[0].substring(1,2).equals("0")){
+                        set1.add(bachItemList.get(i));
                     }
                 }
                 if (resultLess.size()==0){
@@ -445,10 +452,11 @@ public class ADIController {
                     resultLess.retainAll(set1);
                 }
             }
+
             if(ab2==-1){
                 for (int i = 0; i < bachItemList.size(); i++) {
-                    if(bachItemList.get(i).toString().split(":")[1].split(",")[1].equals("0")){
-                        set2.add(bachItemList.get(i).toString());
+                    if(bachItemList.get(i).split(":")[1].split(",")[1].equals("0")){
+                        set2.add(bachItemList.get(i));
                     }
                 }
                 if (resultLess.size()==0){
@@ -457,10 +465,11 @@ public class ADIController {
                     resultLess.retainAll(set2);
                 }
             }
+
             if(ab3==-1){
                 for (int i = 0; i < bachItemList.size(); i++) {
-                    if(bachItemList.get(i).toString().split(":")[1].split(",")[2].equals("0")){
-                        set3.add(bachItemList.get(i).toString());
+                    if(bachItemList.get(i).split(":")[1].split(",")[2].equals("0")){
+                        set3.add(bachItemList.get(i));
                     }
                 }
                 if (resultLess.size()==0){
@@ -469,10 +478,11 @@ public class ADIController {
                     resultLess.retainAll(set3);
                 }
             }
+
             if(ab4==-1){
                 for (int i = 0; i < bachItemList.size(); i++) {
-                    if(bachItemList.get(i).toString().split(":")[1].split(",")[3].equals("0")){
-                        set4.add(bachItemList.get(i).toString());
+                    if(bachItemList.get(i).split(":")[1].split(",")[3].equals("0")){
+                        set4.add(bachItemList.get(i));
                     }
                 }
                 if (resultLess.size()==0){
@@ -481,10 +491,11 @@ public class ADIController {
                     resultLess.retainAll(set4);
                 }
             }
+
             if(ab5==-1){
                 for (int i = 0; i < bachItemList.size(); i++) {
-                    if(bachItemList.get(i).toString().split(":")[1].split(",")[4].substring(0,1).equals("0")){
-                        set5.add(bachItemList.get(i).toString());
+                    if(bachItemList.get(i).split(":")[1].split(",")[4].substring(0,1).equals("0")){
+                        set5.add(bachItemList.get(i));
                     }
                 }
                 if (resultLess.size()==0){
@@ -493,6 +504,7 @@ public class ADIController {
                     resultLess.retainAll(set5);
                 }
             }
+
             //集合取交集 获取最接近的解
             System.out.println("属性比例不足的交集：" + resultLess);
 
@@ -503,13 +515,92 @@ public class ADIController {
                 resultAll.addAll(resultLess);
             }
         }
-        // resultAll  resultMore resultLess
-        //1.三者都有值，则取resultAll
+
+        JDBCUtils2 jdbcUtils = new JDBCUtils2();
+        // resultAll  resultMore resultLess 的关系判断
+        //1.三者都有值，则取resultAll  （retainAll 是否存在空集合的情况）
         //2.resultAll  resultMore有值 则取 resultMore
         //3.resultAll  resultLess有值 则取 resultLess
         if(resultAll.size()>0 && resultMore.size()>0 && resultLess.size()>0){
             System.out.println("取resultAll，再次抽取");
             System.out.println(resultAll);
+
+            //这种情况可能是遇到最多的，也好，可以简单的将旧解找出来
+            //           将要退休的解：resultAll 其中的一个
+            //删除旧解的要求：（直接去题库中搜索，取出解集后，循环遍历，直到符合要求的解生成）
+            //           1.删除不影响其他属性
+            //           2.新增不影响其他属性
+            //将要新增的解：ab1:"+ab1+"   ab2:"+ab2+"   ab3:"+ab3+"   ab4:"+ab4+"   ab5:"+ab5);
+            //拼接SQL
+            StringBuilder sb = new StringBuilder();
+            if(ab1>0){
+                sb.append(" p1=0 and ");
+            }else if (ab1<0){
+                sb.append(" p1=1 and ");
+            }
+
+            if(ab2>0){
+                sb.append(" p2=0 and ");
+            }else if (ab2<0){
+                sb.append(" p2=1 and ");
+            }
+
+            if(ab3>0){
+                sb.append(" p3=0 and ");
+            }else if (ab3<0){
+                sb.append(" p3=1 and ");
+            }
+
+            if(ab4>0){
+                sb.append(" p4=0 and ");
+            }else if (ab4<0){
+                sb.append(" p4=1 and ");
+            }
+
+            if(ab5>0){
+                sb.append(" p5=0 and ");
+            }else if (ab4<0){
+                sb.append(" p5=1 and ");
+            }
+
+            String sql = sb.toString().substring(0, sb.toString().length() - 4);
+            //获取新解的集合
+            ArrayList<String> selectBySqlList = jdbcUtils.selectBySql(sql);
+
+            //原始解  退休解  替补解 的关系
+            //原始解 - 退休解 + 替补解 = 新解(拿新解去再次核对)
+            //循环的逻辑，应该是 外层退休解，内层替补解，不断的调用属性比例校验方法，如满足要求则退出，不满足则继续遍历。最后的终止条件是 遍历终止
+
+            List<String> resultAllList = new ArrayList<>(resultAll);
+            System.out.println("校验前的集合:"+bachItemList.toString());
+            Boolean b = false;
+            for (int i = 0; i < resultAllList.size(); i++) {
+                for (int j = 0; j < selectBySqlList.size(); j++) {
+                    //目前只适合单进单出
+                    //为什么会存在 138的解？
+                    b = propCheck(bachItemList,resultAllList.get(i),selectBySqlList.get(j));
+                    if(b){
+                        // 刪除元素s，添加元素s1
+                        for (int k = 0; k < bachItemList.size(); k++) {
+                            if (bachItemList.get(i).equals(resultAllList.get(i))){
+                                bachItemList.set(i,selectBySqlList.get(j));
+                            }
+                        }
+                        // 输出
+                        System.out.println(bachItemList.toString());
+                        break;
+                    }
+                }
+                if (b){
+                    break;
+                }
+            }
+            System.out.println("校验后的集合:"+bachItemList.toString());
+
+
+
+
+
         }
 
 
@@ -522,8 +613,9 @@ public class ADIController {
             System.out.println("取resultMore，再次抽取");
             System.out.println(resultMore);
 
-            // 替换的标准是什么，是替换有，还是替换无==》需要拿上下文进行判断
-            // as max 为最佳，as min 为最low  差值计算
+            // 替换目的:将有替换为无
+            // 替换标准:需要拿上下文进行判断  有点复杂，需要回过头来继续考虑
+            // 差额计算  b1 = 5 - as1, max 为最佳
             // 第1属性[0.2,0.5]   第2属性[0.2,0.5]   第3属性[0.1,0.4]  第4属性[0.1,0.4]  第5属性[0.1,0.4]
             //目前属性数量情况： as1:3.0 as2:2.0 as3:5.0 as4:2.0 as5:3.0
             //目前属性占比情况： ab1:0   ab2:0   ab3:1   ab4:0   ab5:0
@@ -543,18 +635,10 @@ public class ADIController {
                 //逻辑为：如果条件表达式成立则执行result，否则执行arr[i]
                 res = (arr[i] < res ? res : arr[i]);
             }
-            System.out.println("最大值为：" + res);
+            System.out.println("最大差额为：" + res);
 
-            //取出最大值 和 已超出 对应的属性
-            //取出最大值对应的属性
-
-            ArrayList<Integer> bigIndex = new ArrayList<>();
-            for (int i = 0; i < arr.length; i++){
-                if (arr[i]==res){
-                    bigIndex.add(i+1);
-                }
-            }
-            //已超出 对应的属性
+            //遍历获取 已超出和最大差额  这两种类型属性的下标 , 便于在数据库中查找优质解  p1=0,p2=1
+            //已超出属性下标
             ArrayList<Integer> overIndex = new ArrayList<>();
             if(ab1==1){overIndex.add(1);}
             if(ab2==1){overIndex.add(2);}
@@ -562,46 +646,167 @@ public class ADIController {
             if(ab4==1){overIndex.add(4);}
             if(ab5==1){overIndex.add(5);}
 
-            //bigIndex(1,2)   overIndex(5)
-            JDBCUtils2 jdbcUtils = new JDBCUtils2();
-            ArrayList<String> initFixItem = jdbcUtils.selectInitFixItem(bigIndex,overIndex);
-            System.out.println(initFixItem);
+            //最大值属性下标
+            ArrayList<Integer> bigIndex = new ArrayList<>();
+            for (int i = 0; i < arr.length; i++){
+                if (arr[i]==res){
+                    bigIndex.add(i+1);
+                }
+            }
 
-            //从返回的结果当中ArrayList<String> 随机选一条替换掉原有的那条数据，然后验证是否符合要求
+
+            //overIndex(5) bigIndex(1,2)
+
+            ArrayList<String> initFixItem = jdbcUtils.selectInitFixItem(overIndex,bigIndex);
+            System.out.println("优质解集: "+initFixItem);
+
+// ======================  替换的过程可能要多次遍历执行 begin ==========================================
+            //从initFixItem 随机选一条替换掉原有的那条数据，然后验证是否符合要求
             //①保证选的题目和之前没重复 ②最好属性题型一致 ③满足属性比例要求
             Integer key =new Random().nextInt(initFixItem.size());
-            String newItem = (String) initFixItem.get(key);
-            System.out.println(newItem);
+            String newItem = initFixItem.get(key);
+            System.out.println("将要替补的新解: "+newItem);
 
 
+            //获取将要退休的旧解
+            //这段代码逻辑好像有问题，均拿数组的最后一个值赋予给 oi bi
+            //overIndex 长度最少是1  最多的3
             int oi = 0;
             for (int i = 0; i < overIndex.size(); i++) {
                 oi = overIndex.get(i);
             }
-
+            //bigIndex 长度最少是1  最多的3
             int bi = 0;
             for (int i = 0; i < bigIndex.size(); i++) {
                 bi = bigIndex.get(i);
             }
 
 
+            //1. 完全匹配 2.匹配oi
             int lastIndex = 0;
             for (int i = 0; i < bachItemList.size(); i++) {
                 // (1,0,1,1,1)
-                String pattern = bachItemList.get(i).toString().split(":")[1];
+                String pattern = bachItemList.get(i).split(":")[1];
                 if (pattern.substring(oi*2-2,oi*2-1).equals("1") &&  pattern.substring(bi*2-2,bi*2-1).equals("0")){
+                    lastIndex = i;
+                }else if(pattern.substring(oi*2-2,oi*2-1).equals("1")){
                     lastIndex = i;
                 }
             }
+
             //修改Arraylist
             bachItemList.set(lastIndex, newItem);
+            //计算新解是否符合要求
 
+// ======================  替换的过程可能要多次遍历执行 begin ==========================================
 
         }
 
         return bachItemList;
     }
 
+
+
+
+    /**
+     * 根据原集合 旧解 新解 三者的关系进行，属性比例要求判断
+     * 目前只适合单进单出
+     *
+     */
+    private Boolean propCheck(ArrayList<String> bachItemList,String s, String s1) {
+
+        // 刪除元素s，添加元素s1
+        for (int i = 0; i < bachItemList.size(); i++) {
+           if (bachItemList.get(i).equals(s)){
+               bachItemList.set(i,s1);
+           }
+        }
+        // 输出
+        System.out.println(bachItemList.toString());
+
+        //开始校验是否符合属性比例要求
+        // ========================= 统计指标信息  ==========================
+        //统计校验 属性比例
+        // 定义局部变量
+        double as1  = 0 ;
+        double as2  = 0 ;
+        double as3  = 0 ;
+        double as4  = 0 ;
+        double as5  = 0 ;
+
+        for (int i = 0; i < bachItemList.size(); i++) {
+
+            as1 = as1 +  Double.parseDouble(bachItemList.get(i).split(":")[1].split(",")[0].substring(1,2));
+            as2 = as2 +  Double.parseDouble(bachItemList.get(i).split(":")[1].split(",")[1]);
+            as3 = as3 +  Double.parseDouble(bachItemList.get(i).split(":")[1].split(",")[2]);
+            as4 = as4 +  Double.parseDouble(bachItemList.get(i).split(":")[1].split(",")[3]);
+            as5 = as5 +  Double.parseDouble(bachItemList.get(i).split(":")[1].split(",")[4].substring(0,1));
+
+        }
+
+        System.out.println("目前属性数量情况： as1:"+as1+" as2:"+as2+" as3:"+as3+" as4:"+as4+" as5:"+as5);
+
+        //需要判断 属性比例是多了还是少了
+        //定义局部变量 ab1  (-1->少于,0->正常,1->大于)
+        System.out.println("=========================================");
+        int ab1 ;
+        double edx1 = as1/15;
+        if(edx1>=0.2 && edx1<=0.34){
+            ab1 = 0;
+        }else if(edx1<0.2){
+            ab1 = -1;
+        }else {
+            ab1 = 1;
+        }
+
+        int ab2 ;
+        double edx2 = as2/15;
+        if(edx2>=0.2 && edx2<=0.34){
+            ab2 = 0;
+        }else if(edx2<0.2){
+            ab2 = -1;
+        }else {
+            ab2 = 1;
+        }
+
+        int ab3 ;
+        double edx3 = as3/15;
+        if(edx3>=0.1 && edx3<=0.27){
+            ab3 = 0;
+        }else if(edx2<0.1){
+            ab3 = -1;
+        }else {
+            ab3 = 1;
+        }
+
+        int ab4 ;
+        double edx4 = as4/15;
+        if(edx4>=0.1 && edx4<=0.27){
+            ab4 = 0;
+        }else if(edx4<0.1){
+            ab4 = -1;
+        }else {
+            ab4 = 1;
+        }
+
+        int ab5 ;
+        double edx5 = as5/15;
+        if(edx5>=0.1 && edx5<=0.27){
+            ab5 = 0;
+        }else if(edx5<0.1){
+            ab5 = -1;
+        }else {
+            ab5 = 1;
+        }
+
+        //是否要进一步考虑 具体多了多少数量的情况
+        System.out.println("目前属性占比情况： ab1:"+ab1+"   ab2:"+ab2+"   ab3:"+ab3+"   ab4:"+ab4+"   ab5:"+ab5);
+        if(ab1 == 0 && ab2 == 0 && ab3 == 0 && ab4 == 0 && ab5 == 0 ){
+            return true;
+        }
+
+        return false;
+    }
 
 
     /**
@@ -842,7 +1047,7 @@ public class ADIController {
     /**
      *
      * 排序修补
-     *      1.获取id,排序，map映射  
+     *      1.获取id,排序，map映射
      *      2.获取id,重新重数据库查询一遍  返回的Array[]
      */
     private String[] sortPatch(String[] temp1) {
