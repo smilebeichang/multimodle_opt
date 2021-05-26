@@ -16,10 +16,10 @@ public class JDBCUtils2 {
     /**
      * 查询，并返回list
      */
-    public  ArrayList<String> select() {
+    public  ArrayList<String> select() throws SQLException {
             ArrayList<String> list = new ArrayList<>();
-            Connection conn ;
-            PreparedStatement ps ;
+            Connection conn = null;
+            PreparedStatement ps = null;
             ResultSet rs ;
             try {
                 Class.forName("com.mysql.jdbc.Driver");
@@ -43,6 +43,13 @@ public class JDBCUtils2 {
                 System.out.println("SQLException: " + ex.getMessage());
                 System.out.println("SQLState: " + ex.getSQLState());
                 System.out.println("VendorError: " + ex.getErrorCode());
+            }finally {
+                if(ps!= null) {
+                    ps.close();
+                }
+                if(conn!= null) {
+                    conn.close();
+                }
             }
             System.out.println();
             return list;
@@ -129,7 +136,7 @@ public class JDBCUtils2 {
 
 
     /**
-     * 查询，并返回list
+     * 查询，并返回id
      */
     public  int selectItem(String sql) throws SQLException {
 

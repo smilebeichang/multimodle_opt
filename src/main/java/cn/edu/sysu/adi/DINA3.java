@@ -125,7 +125,7 @@ public class DINA3 {
 
         // 从数据库中获取出试题的 pattern ip
 
-        ip = "(1,1,1)";
+        ip = "(0,1,0)";
         // 根据试题的 pattern ，计算出 dina 分数
         ArrayList<Double> dinaList = GetDinaListsRandom(ip);
         System.out.println("dinaList: "+dinaList);

@@ -16,7 +16,7 @@ import java.util.List;
  *
  * Reduce-RUM 统一参数化模型  的实现
  *
- * double que_fit = πj * ( (rjk* * γ * β) .... );
+ * p  = πj * ( (rjk* * γ * β) .... );
  *
  * p* 是正确应用第j项所有必要属性的概率，
  * πj* 为项目难度参数，正确作答item j的概率，其值越大（接近1）表示被试掌握了所需属性很可能成功应答。  每道题一个固定值
@@ -37,13 +37,17 @@ import java.util.List;
  *
  *
  *    TODO 1.精简 RUM 和 DINA 公共代码     ok
- *    TODO 2.DINA 属性值，ADI一致的校验    5个属性 32*32 矩阵的计算  3个属性 8*8 矩阵的计算
+ *
+ *    TODO 2.DINA 属性值，ADI一致的校验    5个属性32*32矩阵 和3个属性8*8矩阵的计算  ok
+ *                  adi --> k_L --> adiList p --> ps + pg -->
  *                 [0.0, 0.08937, 0.005, 0.08187, 0.04937.....]    属性：(0,1,1,0,1) 8种rum*4个 = 32或者 4n+2m=32
- *                 [0.27, 0.8, 0.27, 0.27, 0.8, 0.8, 0.27, 0.8]    4dina*2=8  6+2=8 7+1=8
+ *                 [0.27, 0.8, 0.27, 0.27, 0.8, 0.8, 0.27, 0.8]    4+4=8  6+2=8 7+1=8  需要和pattern做比较
  *                               eg以五个属性全部掌握 进行举例验证
+ *                  顺便比较一下 dina vs rum 计算概率值公式的参数
+ *
  *    TODO 3.以 RUM 为主，进行扩充
- *    TODO      1.题库数量               ok
- *    TODO      2.GA的实现（硬编码:长度   软编码:属性、题型  exp表达式）
+ *    TODO      1.题库数量  + 惩罚概率值和pattern无关/概率范围的设置      ok
+ *    TODO      2.GA的实现（硬编码:长度   软编码:属性、题型  exp表达式）  ok  属性比例占时未完成
  *
  *    每测试必须完全包含L个项目，
  *    每个项目类型t的比例必须满足预定义范围[Vt，Ut]，（t = 1，2，.... T）,
@@ -52,6 +56,10 @@ import java.util.List;
  *    解决CDM-PTA问题是找到帕累托前沿面（PF）中的，即一组非支配解可以实现FD和FS之间的最佳权衡，同时满足测试长度，项目类型分布和重叠阈值。
  *    Pareto解又称非支配解或不受支配解（nondominated solutions）：在有多个目标时，由于存在目标之间的冲突和无法比较的现象，一个解在某个目标上是最好的，在其他的目标上可能是最差的。这些在改进任何目标函数的同时，必然会削弱至少一个其他目标函数的解称为非支配解或Pareto解。
  *
+ *
+ *    今晚任务：
+ *          1.梳理一下 流程
+ *          2.完成属性比例的剩下部分
  *
  */
 public class RumImpl2 {
@@ -122,9 +130,9 @@ public class RumImpl2 {
 
 
     /**
-     * 考生_pattern sps
+     * 考生pattern sps
      */
-    ArrayList<String> sps = new ArrayList<String>(){{
+    private ArrayList<String> sps = new ArrayList<String>(){{
 
         add("(0,0,0,0,0)");
         add("(0,0,0,0,1)");
@@ -166,23 +174,22 @@ public class RumImpl2 {
 
 
 
-    //1. 生成题目的 pattern  5
-    //2. 生成 base 和 penalty; 生成 rum
-    //3. 接收返回ArrayList<Double> rumLists
-    //4. 生成 K_L 矩阵
-    //5. 计算试题 一个pattern 对应五个adi (index vs klArray)
-    //6. 封装单道题的属性值(id  pattern  base  penalty  adi1_r adi2_r adi3_r adi4_r adi5_r)
-    //7. 生成题库 要求属性比例均衡
+    //1. 生成题目的 pattern  5个属性，要求属性比例均衡
+    //2. 生成 base 和 penalty; 计算 ArrayList<Double> rumLists
+    //3. 生成 K_L 矩阵
+    //4. 计算试题 一个pattern 对应五个adi (index vs klArray)
+    //5. 封装单道题的属性值(id  pattern  base  penalty  adi1_r adi2_r adi3_r adi4_r adi5_r)
+    //6. 保存到题库
     
     @Test
-    public  void Init() throws InterruptedException, SQLException {
+    public  void init() throws InterruptedException, SQLException {
 
         //初始化索引位置 adiIndexList
         getAdiIndex();
 
         JDBCUtils2 jdbcUtils = new JDBCUtils2();
 
-        // 5:10:10:5:1 假设题库310道题  则50:100:100:50:10
+        // 50:100:100:50:10  生成310道题的题库
         for (int i = 1; i <= 50; i++) {
             id = i;
             start(1);
@@ -220,9 +227,9 @@ public class RumImpl2 {
      */
     public void start(int num) throws InterruptedException {
 
-        pattern = new KLUtils().RandomInit(num);
+        pattern = new KLUtils().randomInit(num);
 
-        GetAdi(pattern);
+        getAdi(pattern);
 
         System.out.printf("id=%s \t pattern=%s \t base=%s \t penalty=%s \t adi1_r=%s \t adi2_r=%s \t adi3_r=%s \t adi4_r=%s \t adi5_r=%s \n", id, pattern, base,penalty,adi1_r,adi2_r,adi3_r,adi4_r,adi5_r);
 
@@ -233,16 +240,16 @@ public class RumImpl2 {
 
     /**
      * 以试题pattern为单位,算出一个答题概率的集合 rum，然后求出该试题的矩阵 k_L，
-     * 求出该试题的矩阵 Da，最后平均求出该试题的 adi
+     * 求出该试题的列表 Da，最后平均求出该试题的 adi
      * 可以理解为一道试题下，所有考生的差异性
      */
-    public  void GetAdi(String ip) {
+    public  void getAdi(String ip) {
 
 
         //试题的pattern 和 base/penalty 个数无关   基线系数/惩罚系数 随机生成
         base = new KLUtils().makeRandom(0.95f, 0.75f, 2);
 
-        ArrayList<Double> rumList = GetRumListsRandom(base,ip);
+        ArrayList<Double> rumList = getRumListsRandom(base,ip);
         System.out.println("rumList: " +rumList);
 
 
@@ -253,7 +260,7 @@ public class RumImpl2 {
 
 
         System.out.println("list 遍历; 分别拿list的值去KLArray中匹配寻找：");
-        List<Double> calAdiList = CalAdiImple(klArray, adiIndexList1, adiIndexList2, adiIndexList3, adiIndexList4, adiIndexList5);
+        List<Double> calAdiList = calAdiImple(klArray, adiIndexList1, adiIndexList2, adiIndexList3, adiIndexList4, adiIndexList5);
         //打印
         System.out.println(calAdiList);
 
@@ -267,7 +274,7 @@ public class RumImpl2 {
      * @param base  基线系数
      * @param ip 题目的属性pattern
      */
-    public ArrayList<Double> GetRumListsRandom(Double base,String ip){
+    public ArrayList<Double> getRumListsRandom(Double base,String ip){
 
         ArrayList<Double> rumLists = new ArrayList<>();
 
@@ -280,11 +287,11 @@ public class RumImpl2 {
         int a5 = Integer.parseInt(ip.substring(9, 10));
 
         //0.65~0.92   由0.05~0.95 改成0.65~0.92
-        Double penalty1 = a1 == 1? new KLUtils().makeRandom(0.92f, 0.65f, 2):0;
-        Double penalty2 = a2 == 1? new KLUtils().makeRandom(0.92f, 0.65f, 2):0;
-        Double penalty3 = a3 == 1? new KLUtils().makeRandom(0.92f, 0.65f, 2):0;
-        Double penalty4 = a4 == 1? new KLUtils().makeRandom(0.92f, 0.65f, 2):0;
-        Double penalty5 = a5 == 1? new KLUtils().makeRandom(0.92f, 0.65f, 2):0;
+        double penalty1 = a1 == 1? new KLUtils().makeRandom(0.92f, 0.65f, 2):0;
+        double penalty2 = a2 == 1? new KLUtils().makeRandom(0.92f, 0.65f, 2):0;
+        double penalty3 = a3 == 1? new KLUtils().makeRandom(0.92f, 0.65f, 2):0;
+        double penalty4 = a4 == 1? new KLUtils().makeRandom(0.92f, 0.65f, 2):0;
+        double penalty5 = a5 == 1? new KLUtils().makeRandom(0.92f, 0.65f, 2):0;
         penalty = "("+penalty1+","+penalty2+","+penalty3+","+penalty4+","+penalty5+")";
 
         //根据学生pattern vs 题目pattern 获取答对此题的rum
@@ -318,7 +325,7 @@ public class RumImpl2 {
     /**
      * 计算adi具体实现
      */
-    public List<Double> CalAdiImple(Double[][] klArray,ArrayList<String> list1,ArrayList<String> list2,ArrayList<String> list3,ArrayList<String> list4,ArrayList<String> list5){
+    private List<Double> calAdiImple(Double[][] klArray, ArrayList<String> list1, ArrayList<String> list2, ArrayList<String> list3, ArrayList<String> list4, ArrayList<String> list5){
         Double sum1 = 0.0;
         Double sum2 = 0.0;
         Double sum3 = 0.0;
@@ -374,26 +381,6 @@ public class RumImpl2 {
             add(adi5_r);
         }};
 
-        //修改部分
-//        ArrayList<ArrayList<String>> allList = new ArrayList<ArrayList<String>>(){{
-//            add(list1);
-//            add(list2);
-//            add(list3);
-//            add(list4);
-//            add(list5);
-//        }};
-//        for (int i = 0; i < allList.size(); i++) {
-//            Double sumTmp = 0.0;
-//            String adiTmp = "adi"+i+"_r";
-//            for(String data  :    allList.get(i))    {
-//                String[] spli = data.split("_");
-//                Double v  = klArray[Integer.parseInt(spli[0])-1][Integer.parseInt(spli[1])-1];
-//                sumTmp+=v;
-//            }
-//            adiTmp=(sumTmp/allList.get(i).size())+"";
-//            System.out.println("adiTmp: "+adiTmp);
-//        }
-
 
         return adiList;
 
@@ -422,7 +409,7 @@ public class RumImpl2 {
 
 
         for (int X =0;X<combineList.size();X++){
-            //adi1
+            //adi1 计算所需要考虑的 pattern
             Integer index11 = indexMap.get("(1," + combineList.get(X) + ")");
             Integer index12 = indexMap.get("(0," + combineList.get(X) + ")");
             Integer index13 = indexMap.get("(0," + combineList.get(X) + ")");
@@ -431,7 +418,7 @@ public class RumImpl2 {
             adiIndexList1.add(""+index11+"_"+index12);
             adiIndexList1.add(""+index13+"_"+index14);
 
-            //adi2         1,0,1,0
+            //adi2 计算所需要考虑的 pattern        1,0,1,0
             Integer index21 = indexMap.get("(" +combineList.get(X).substring(0,1)+ ",1," +combineList.get(X).substring(2,7) + ")");
             Integer index22 = indexMap.get("(" +combineList.get(X).substring(0,1)+ ",0," +combineList.get(X).substring(2,7) + ")");
             Integer index23 = indexMap.get("(" +combineList.get(X).substring(0,1)+ ",0," +combineList.get(X).substring(2,7) + ")");
@@ -441,7 +428,7 @@ public class RumImpl2 {
             adiIndexList2.add(""+index23+"_"+index24);
 
 
-            //adi3
+            //adi3 计算所需要考虑的 pattern
             Integer index31 = indexMap.get("("+combineList.get(X).substring(0,3)+",1,"+combineList.get(X).substring(4,7)+ ")");
             Integer index32 = indexMap.get("("+combineList.get(X).substring(0,3)+",0,"+combineList.get(X).substring(4,7)+ ")");
             Integer index33 = indexMap.get("("+combineList.get(X).substring(0,3)+",0,"+combineList.get(X).substring(4,7)+ ")");
@@ -451,7 +438,7 @@ public class RumImpl2 {
             adiIndexList3.add(""+index33+"_"+index34);
 
 
-            //adi4
+            //adi4 计算所需要考虑的 pattern
             Integer index41 = indexMap.get("("+combineList.get(X).substring(0,5)+",1,"+combineList.get(X).substring(6,7)+ ")");
             Integer index42 = indexMap.get("("+combineList.get(X).substring(0,5)+",0,"+combineList.get(X).substring(6,7)+ ")");
             Integer index43 = indexMap.get("("+combineList.get(X).substring(0,5)+",0,"+combineList.get(X).substring(6,7)+ ")");
@@ -461,7 +448,7 @@ public class RumImpl2 {
             adiIndexList4.add(""+index43+"_"+index44);
 
 
-            //adi5
+            //adi5 计算所需要考虑的 pattern
             Integer index51 = indexMap.get("("+combineList.get(X)+",1)");
             Integer index52 = indexMap.get("("+combineList.get(X)+",0)");
             Integer index53 = indexMap.get("("+combineList.get(X)+",0)");

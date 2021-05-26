@@ -12,7 +12,7 @@ import java.util.*;
 /**
  * Created by IntelliJ IDEA.
  *
- * @Author : songbeichang
+ * @Author : song bei chang
  * @create 2021/05/18 0:17
  */
 public class ADIController {
@@ -30,8 +30,6 @@ public class ADIController {
 
 
 
-
-
     @Test
     public  void ori() throws SQLException {
 
@@ -45,16 +43,16 @@ public class ADIController {
         initItemBank();
 
         //计算适应度值  ①计算时机 轮盘赌
-        //            ②计算单位（单套试卷）  适应度值、交叉变异都以试卷为单位
-        //            取平均值，是按adi属性取列值的平均（横坐标代表pattern  纵坐标代表适应度值）
-        //getPaperFitness();
+        //            ②计算单位（单套试卷）
+        //            取min，按adi属性取整套试卷的最小值
+
 
         // i 迭代次数
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 1550; i++) {
             selection();
             crossCover(papers);
             mutate(papers);
-            // TODO  小生境环境的搭建
+            // TODO  待实现 小生境环境的搭建
             elitistStrategy();
         }
     }
@@ -63,19 +61,21 @@ public class ADIController {
 
     /**
      *
-     * 生成题库(以试卷为单位：id   长度，属性类型，属性比例)
-     * 5+10+10+5+1 = 31
+     * 生成题库(以试卷为单位：id  长度，属性类型，属性比例)
+     * 原始比例： 5+10+10+5+1 = 31
      * 属性类型 和 属性比例 最好不要取固定值（除初始化外），将会导致所能修补算子执行时选取的题目有限
      * 属性类型：1个属性的1题[1,50]  2个属性的2题[51,150]  3个属性的2题[151,250] 4个属性的1题[251,300]
      *
-     * 因为一共有5个属性，选取了6道题，15次选择
-     * 属性比例：1+2*2+3*2+4 = 共选取了15个属性（可重复的前提下）
-     * ①比例是否需要为同一值，还是每个属性有各自的比例  后者显然更贴近现实生活
-     * ②比例的范围如何确定，按照权重吗？   假设第1、2个属性重要，
-     * 第1属性[0.2,0.5]   第2属性[0.2,0.5]   第3属性[0.1,0.4]  第4属性[0.1,0.4]  第5属性[0.1,0.4]
+     * 属性比例
+     * 因为有5个属性，6道题，所以共15次选择
+     *             1+2*2+3*2+4 = 共选取了15个属性（可重复的前提下）
+     * ①每个属性有各自的比例
+     * ②比例的范围和权重如何确定   假设第1、2个属性重要，
+     * 第1属性[3,5]        第2属性[3,5]        第3属性[2,4]       第4属性[2,4]       第5属性[2,4]
+     * 第1属性[0.2,0.34]   第2属性[0.2,0.34]   第3属性[0.1,0.27]  第4属性[0.1,0.27]  第5属性[0.1,0.27]
      *
      *
-     * 方案一 根据ab1的值得出一个误差标准,进行重新抽取题目
+     * 方案一 根据上下文的现有结果得出一个误差标准,进行重新抽取题目
      * 方案二 进行乘以一个底数e 来进行适应度值的降低
      *
      */
@@ -92,18 +92,19 @@ public class ADIController {
 
         JDBCUtils2 jdbcUtils = new JDBCUtils2();
 
-        // 题库310道题  则50:100:100:50:10   长度，属性类型，属性比例
-        String sql1 = "SELECT CEILING( RAND () * 50 ) + 1  AS id" ;
-        String sql2 = "SELECT CEILING( RAND () * 100 ) + 50 AS id" ;
-        String sql3 = "SELECT CEILING( RAND () * 100 ) + 150 AS id" ;
-        String sql4 = "SELECT CEILING( RAND () * 50 ) + 250 AS id" ;
+        // 题库310道题  50:100:100:50:10   长度，属性类型，属性比例
+        String sql1 = "SELECT CEILING( RAND () * 49 ) + 1  AS id" ;
+        String sql2 = "SELECT CEILING( RAND () * 99 ) + 51 AS id" ;
+        String sql3 = "SELECT CEILING( RAND () * 99 ) + 151 AS id" ;
+        String sql4 = "SELECT CEILING( RAND () * 49 ) + 251 AS id" ;
 
         System.out.println("====== 开始选题,构成试卷  ======");
 
-        /*  j 选取的试卷数  */
+        /*  生成的平行试卷个数  */
         for (int j = 0; j < paperNum; j++) {
             ArrayList<Integer> idList = new ArrayList<>();
             int id ;
+
             //随机抽取1个属性的1题
             for (int i = 0; i < oneAttNum; i++) {
                 id = jdbcUtils.selectItem(sql1);
@@ -164,14 +165,14 @@ public class ADIController {
 
 
 
-            //把题库提升为全局变量，方便整体调用 容器：二维数组
-            //交叉变异的对象是 试题的题目   即试卷=个体  题目=基因
-            // private static String[][] paperGenetic =new String[10][5];
+            // 把题库提升为全局变量，方便整体调用 容器：二维数组
+            // 交叉变异的对象是 试题的题目   即试卷=个体  题目=基因
+            // private static String[][] paperGenetic =new String[10][6];
             String[] itemArray = new String[bachItemList.size()];
             for (int i = 0; i < bachItemList.size(); i++) {
-                itemArray[i] = bachItemList.get(i).toString();
+                itemArray[i] = bachItemList.get(i);
             }
-            // 疑问：为什么不直接将 bachItemList(ArrayList) 赋值给  paperGenetic[i]([])
+            // 赋值
             paperGenetic[j] = itemArray;
         }
 
@@ -632,11 +633,13 @@ public class ADIController {
                 }
                 // 放在内存执行，考虑的是空指针，只有发生交叉后，才需要校验
                 // 判断size，执行修补算子  只改变了tem1 每执行一次pc 则校验一次
-                System.out.println("==== 校验temp1的长度 ======"+temp1.length);
+                System.out.println("==== 校验temp1的长度 ======"+temp1.length+ " "+ Arrays.asList(temp1).toString());
                 correct(i,temp1);
             }
         }
     }
+
+
 
     /**
      * 判断size，执行修补操作  前提是基于交叉后,只有数量减少，不会出现多个属性类型出现问题
@@ -657,7 +660,6 @@ public class ADIController {
         int one = 1;
         int two = 2;
 
-        int size = setBegin.size();
         int oneAttNum = 0;
         int twoAttNum = 0;
         int threeAttNum = 0;
@@ -698,28 +700,28 @@ public class ADIController {
             //1个属性的校验
             if(oneAttNum<one){
                 while(oneSet.size() != one){
-                    Integer key = new Random().nextInt(50);
+                    Integer key = new Random().nextInt(51);
                     oneSet.add(key);
                 }
             }
             //2个属性的校验
             if(twoAttNum<two){
                 while(twoSet.size() != two){
-                    Integer key = Math.abs(new Random().nextInt()) % 100 + 50;
+                    Integer key = Math.abs(new Random().nextInt()) % 100 + 51;
                     twoSet.add(key);
                 }
             }
             //3个属性的校验
             if(threeAttNum<two){
                 while(threeSet.size() != two){
-                    Integer key = Math.abs(new Random().nextInt()) % 100 + 150;
+                    Integer key = Math.abs(new Random().nextInt()) % 100 + 151;
                     threeSet.add(key);
                 }
             }
             //4个属性的校验
             if(fourAttNum<one){
                 while(fourSet.size() != one){
-                    Integer key = Math.abs(new Random().nextInt()) % 50 + 250;
+                    Integer key = Math.abs(new Random().nextInt()) % 50 + 251;
                     fourSet.add(key);
                 }
             }
@@ -740,7 +742,7 @@ public class ADIController {
             temp1 =  bachItemList.toArray(new String[temp1.length]);
 
             temp1 = sortPatch(temp1);
-            Arrays.sort(temp1);
+            //Arrays.sort(temp1);
             paperGenetic[i]=temp1;
             //打印选取的题目，打印的结果 应该是内存地址
             System.out.println("最终修补后的结果如下："+Arrays.toString(paperGenetic[i]));
@@ -787,7 +789,7 @@ public class ADIController {
                 //if (mutatePoint==0){
                 if (removeId<=50){
                     while (set.size() != paperGenetic[i].length ){
-                        key = random.nextInt(50)+1+"";
+                        key = random.nextInt(49)+1+"";
                         if (!key.equals(removeId)){
                             ArrayList<String> list = jdbcUtils.selectBachItem(key);
                             set.add(list.get(0)+"");
@@ -796,7 +798,7 @@ public class ADIController {
                 //}else if(mutatePoint<3){
                 }else if(removeId<=150){
                     while (set.size() != paperGenetic[i].length ){
-                        key = new Random().nextInt(100) + 51+"";
+                        key = new Random().nextInt(99) + 51+"";
                         if (!key.equals(removeId)){
                             ArrayList<String> list = jdbcUtils.selectBachItem(key);
                             set.add(list.get(0)+"");
@@ -805,7 +807,7 @@ public class ADIController {
                 //}else if(mutatePoint<5){
                 }else if(removeId<=250){
                     while (set.size() != paperGenetic[i].length ){
-                        key = new Random().nextInt(100) + 151+"";
+                        key = new Random().nextInt(99) + 151+"";
                         if (!key.equals(removeId)){
                             ArrayList<String> list = jdbcUtils.selectBachItem(key);
                             set.add(list.get(0)+"");
@@ -814,7 +816,7 @@ public class ADIController {
                 //}else if(mutatePoint==5){
                 }else if(mutatePoint<=301){
                     while (set.size() != paperGenetic[i].length ){
-                        key = new Random().nextInt(50) + 251+"";
+                        key = new Random().nextInt(49) + 251+"";
                         if (!key.equals(removeId)){
                             ArrayList<String> list = jdbcUtils.selectBachItem(key);
                             set.add(list.get(0)+"");
@@ -824,7 +826,7 @@ public class ADIController {
                 set.toArray(temp1);
                 //原排序方式  21 68 102 163 239 294
                 //默认字典序  102 163 239 294 34 68   是否会有影响，对交叉和变异均有影响，故需进行排序修补
-                Arrays.sort(temp1);
+                //Arrays.sort(temp1);
                 //排序修补 sortPatch
                 temp1 =  sortPatch(temp1);
 
@@ -875,15 +877,16 @@ public class ADIController {
 
     /**
      * 选择: 根据轮盘赌选择适应度高的个体
-     * 可以把适应度值打印出来看一下，方便后续比较
-     *     ①适应度：如何去计算呢？选取的是试卷，然后重新计算一遍min即可
-     *     ②或者直接从数据库中获取，初始化的时候直接将适应度值计算出来，并更新在数据库中  这种方式是最快的，但 试题选取构成试卷是随机的，且包括交叉变异，故不适合建立临时表
+     * 将适应度值打印出来看一下，方便后续比较
+     *     ①如何去计算适应度：以试卷为单位，min*exp^1
+     *     ②初始化时直接将适应度值计算，并保存在数据库中  这种方式是最快的，但试题的选取及构成试卷是随机的，且包括交叉变异，故不适合
      *     如果需要可以，将最终的结果的汇总到数据库。
      *
      *     仅仅依靠选择和轮盘赌，其变化是很小的，故需要更大的外部作用(交叉+变异）
      *
      */
     public    void selection( ){
+
         System.out.println("====================== select ======================");
         //10套试卷   6道题目
         int paperSize = paperGenetic.length;
@@ -891,13 +894,13 @@ public class ADIController {
         //轮盘赌 累加百分比
         double[] fitPie = new double[paperSize];
 
-        //执行计算适应度的操作   方案二 进行乘以一个底数e 来进行适应度值的降低
+        //执行计算适应度的操作   min*exp^1
         ArrayList fitnessArray = getFitness(paperSize);
 
         //每套试卷的适应度占比
         double[] fitPro = (double[]) fitnessArray.get(2);
 
-        //越大的适应度，其叠加时增长越快，即有更大的概率被选中   轮盘赌
+        //累加初始值
         double accumulate = 0;
 
         //试卷占总试卷的适应度累加百分比
@@ -910,7 +913,7 @@ public class ADIController {
         //累加的概率为1   数组下标从0开始
         fitPie[paperSize-1] = 1;
 
-        //初始化容器
+        //初始化容器 随机生成的random概率值
         double[] randomId = new double[paperSize];
 
         //不需要去重
@@ -922,17 +925,9 @@ public class ADIController {
         Arrays.sort(randomId);
 
         //打印出随机抽取的random概率值
-        //把基本数据类型转化为列表 double[]转Double[]
-        int num = randomId.length;
-        Double [] arrDouble=new Double[num];
-        for(int i=0;i<num;i++){
-            arrDouble[i]=randomId[i];
-        }
-        //Double[]转List
-        List<Double> list = Arrays.asList(arrDouble);
-        //System.out.println("随机抽取的random概率值："+list);
+        printDoubleArray(randomId);
 
-        //轮盘赌
+        //轮盘赌 越大的适应度，其叠加时增长越快，即有更大的概率被选中
         String[][] newPaperGenetic =new String[paperSize][];
         int newSelectId = 0;
         for (int i = 0; i < paperSize; i++) {
@@ -944,14 +939,29 @@ public class ADIController {
         }
         //输出老种群的适应度值
         //System.out.print("老种群");
-        //getPaperFitness();
+
 
         //重新赋值种群的编码
         paperGenetic=newPaperGenetic;
 
         //输出新种群的适应度值
         //System.out.print("新种群");
-        //getPaperFitness();
+
+    }
+
+    private void printDoubleArray( double[] randomId) {
+
+        //把基本数据类型转化为列表 double[]转Double[]
+        int num = randomId.length;
+        Double [] arrDouble=new Double[num];
+        for(int i=0;i<num;i++){
+            arrDouble[i]=randomId[i];
+        }
+
+        //Double[]转List
+        List<Double> list = Arrays.asList(arrDouble);
+        System.out.println("随机抽取的random概率值："+list);
+
     }
 
 
@@ -960,13 +970,13 @@ public class ADIController {
      * 2.elitistStrategy 保存全局变量(全局最优  局部最优  局部最差)
      *
      */
-    public ArrayList getFitness(int paperSize){
+    private ArrayList getFitness(int paperSize){
 
-        //所有试卷的适应度总和
+        // 所有试卷的适应度总和
         double fitSum = 0.0;
-        //每套试卷的适应度值
+        // 每套试卷的适应度值
         double[] fitTmp = new double[paperSize];
-        //每套试卷的适应度占比
+        // 每套试卷的适应度占比
         double[] fitPro = new double[paperSize];
 
         // 计算试卷的适应度值，即衡量试卷的指标之一 Fs
@@ -1003,22 +1013,23 @@ public class ADIController {
 
             }
 
-            // 方案二 进行乘以一个底数e 来进行适应度值的降低   exp，高等数学里以自然常数e为底的指数函数
-            // 参数,需要考虑到属性比例
+            // 方案二 进行乘以一个exp 来进行适应度值的降低    高等数学里以自然常数e为底的指数函数
+            //       System.out.printf("exp(%.3f) 为 %.3f%n", -2.7183, Math.exp(-2.7183));
             //       - 表示取倒数  1/(2.7183 * 2.7183)  =  0.135
-            //       System.out.printf("exp(%.3f) 为 %.3f%n", -2.0, Math.exp(-2.0));
-            // 原有的minrum 小于1是否有影响（没影响，只是额外新增一个惩罚参数） 但因为实在太小了，所以*100
+            // 参数,需要考虑到属性比例
+            // 原有的adi min小于1是否有影响（没影响，只是额外新增一个惩罚参数） 但因为实在太小了，所以*100
             // 计算每套试卷的惩罚系数  实际比例 vs 期望比例
             // 5个属性，6个题目，15次选择  1+2*2+3*2+4 = 15
             // 第1属性[3,5]        第2属性[3,5]        第3属性[2,4]       第4属性[2,4]       第5属性[2,4]
             // 第1属性[0.2,0.34]   第2属性[0.2,0.34]   第3属性[0.1,0.27]  第4属性[0.1,0.27]  第5属性[0.1,0.27]
-            // 按照比例 可以减少后续的修改
+            // 按照比例计算 可以减少后续的修改
             String [] expList = paperGenetic[i];
             int exp1 = 0;
             int exp2 = 0;
             int exp3 = 0;
             int exp4 = 0;
             int exp5 = 0;
+
             for (int j = 0; j < expList.length; j++) {
                 String[] splits = expList[j].split(":");
                 exp1 = exp1 + Integer.parseInt(splits[1].split(",")[0].substring(1,2));
@@ -1028,8 +1039,9 @@ public class ADIController {
                 exp5 = exp5 + Integer.parseInt(splits[1].split(",")[4].substring(0,1));
             }
             System.out.println("目前属性数量情况： exp1:"+exp1+" exp2:"+exp2+" exp3:"+exp3+" exp4:"+exp4+" exp5:"+exp5);
+
             // 第1属性[0.2,0.34]   第2属性[0.2,0.34]   第3属性[0.1,0.27]  第4属性[0.1,0.27]  第5属性[0.1,0.27]
-            //先判断是否在范围内，在的话，为0，不在的话，然后分别和上下限取差值，取绝对值，然后取小值
+            //先判断是否在范围内，在的话，为0，不在的话，然后进一步和上下限取差值，绝对值
             double ed1 ;
             double edx1 = exp1/15.0;
             if(edx1>=0.2 && edx1<0.34){
@@ -1081,12 +1093,8 @@ public class ADIController {
             }
 
             double expNum = -(ed1 + ed2 + ed3 + ed4 + ed5);
-            // -2 表示取倒数  1/(2.7183 * 2.7183)  =  0.135
-            // exp(-0.263) 为 0.768
 
             //System.out.printf("exp(%.3f) 为 %.3f%n", expNum, Math.exp(expNum));
-            //System.out.println("====================");
-
 
 
             //均值 和 最小值
@@ -1097,7 +1105,7 @@ public class ADIController {
 
             //System.out.printf("avgrum=%s \t minrum=%s \t avgdina=%s \t mindina=%s \n", avgrum, minrum, avgdina,mindina);
 
-            //0.0225  0.0394  0.0494  均小于0.02 是否需要*100
+
             //System.out.println("minrum: "+minrum);
             //新增 惩罚系数
             minrum = minrum * Math.exp(expNum);
@@ -1106,32 +1114,29 @@ public class ADIController {
             fitSum = fitSum + minrum ;
 
 // ==================== elitistStrategy  ====================
-            //  全局最优肯定是一个解   局部最优如何理解(每套试卷一个局部最优)
-            //  导致的影响是什么： ①如果全局最优只有一个值,那么是否会导致过于相似
+            //  全局最优 和 局部最优 的个数关系
+            //  导致的影响是什么： ①如果全局最优只有一个值,那么是否会导致过于相似  only 6道题
             //                  ②如果全局最优只有多个值,复杂性增大
-            //此处使用全局最优一个解
+            //  此处使用全局最优一个解
 
-            //tmp > 局部最优，则替换局部最优
+            //  tmp > 局部最优，则替换局部最优
             if(minrum > LocalOptimal[i]){
                 LocalOptimal[i] = minrum;
             }
             System.out.println("局部最优："+LocalOptimal[i]);
 
-            //全局最优，从局部最优中取值  local > global,则替换全局最优
+            //  全局最优，从局部最优中取值  local > global,则替换全局最优
             for (double local : LocalOptimal) {
                 if(local > GlobalOptimal){
                     GlobalOptimal = local;
                 }
                 System.out.println("全局最优："+GlobalOptimal);
             }
-
         }
 
 
-
-
         for (int i = 0; i < paperSize; i++) {
-            //各自的比例
+            //  各自的比例
             fitPro[i] = fitTmp[i] / fitSum;
         }
 
@@ -1141,149 +1146,6 @@ public class ADIController {
         arrayList.add(fitPro);
 
         return  arrayList;
-    }
-
-
-
-    /**
-     * 打印：计算每道试卷的适应度值
-     *      遍历二维数组,根据第二维度来计算适应度值
-     */
-    public void getPaperFitness(){
-
-        //遍历输出 试卷的适应度 矩阵
-        System.out.println("试卷的适应度信息如下: ");
-
-        // 计算试卷的适应度值，即衡量试卷的指标之一 Fs
-        for (int i = 0; i < paperGenetic.length; i++) {
-
-            double adi1r = 0;
-            double adi2r = 0;
-            double adi3r = 0;
-            double adi4r = 0;
-            double adi5r = 0;
-
-            double adi1d = 0;
-            double adi2d = 0;
-            double adi3d = 0;
-            double adi4d = 0;
-            double adi5d = 0;
-
-            //ArrayList -> []
-            String[] itemList = paperGenetic[i];
-            for (int j = 0; j < itemList.length; j++) {
-
-                String[] splits = itemList[j].split(":");
-                adi1r = adi1r + Double.parseDouble(splits[2]);
-                adi2r = adi2r + Double.parseDouble(splits[3]);
-                adi3r = adi3r + Double.parseDouble(splits[4]);
-                adi4r = adi4r + Double.parseDouble(splits[5]);
-                adi5r = adi5r + Double.parseDouble(splits[6]);
-
-                adi1d = adi1d + Double.parseDouble(splits[7]);
-                adi2d = adi2d + Double.parseDouble(splits[8]);
-                adi3d = adi3d + Double.parseDouble(splits[9]);
-                adi4d = adi4d + Double.parseDouble(splits[10]);
-                adi5d = adi5d + Double.parseDouble(splits[11]);
-
-            }
-
-            // 方案二 进行乘以一个底数e 来进行适应度值的降低   exp，高等数学里以自然常数e为底的指数函数
-            // 参数,需要考虑到属性比例
-            //       - 表示取倒数  1/(2.7183 * 2.7183)  =  0.135
-            //       System.out.printf("exp(%.3f) 为 %.3f%n", -2.0, Math.exp(-2.0));
-            // 原有的minrum 小于1是否有影响（没影响，只是额外新增一个惩罚参数） 但因为实在太小了，所以*100
-            // 计算每套试卷的惩罚系数  实际比例 vs 期望比例
-            // 5个属性，6个题目，15次选择  1+2*2+3*2+4 = 15
-            // 第1属性[3,5]        第2属性[3,5]        第3属性[2,4]       第4属性[2,4]       第5属性[2,4]
-            // 第1属性[0.2,0.34]   第2属性[0.2,0.34]   第3属性[0.1,0.27]  第4属性[0.1,0.27]  第5属性[0.1,0.27]
-            // 按照比例 可以减少后续的修改
-            String [] expList = paperGenetic[i];
-            int exp1 = 0;
-            int exp2 = 0;
-            int exp3 = 0;
-            int exp4 = 0;
-            int exp5 = 0;
-            for (int j = 0; j < expList.length; j++) {
-                String[] splits = expList[j].split(":");
-                exp1 = exp1 + Integer.parseInt(splits[1].split(",")[0].substring(1,2));
-                exp2 = exp2 + Integer.parseInt(splits[1].split(",")[1]);
-                exp3 = exp3 + Integer.parseInt(splits[1].split(",")[2]);
-                exp4 = exp4 + Integer.parseInt(splits[1].split(",")[3]);
-                exp5 = exp5 + Integer.parseInt(splits[1].split(",")[4].substring(0,1));
-            }
-            //System.out.println("目前属性数量情况： exp1:"+exp1+" exp2:"+exp2+" exp3:"+exp3+" exp4:"+exp4+" exp5:"+exp5);
-            // 第1属性[0.2,0.34]   第2属性[0.2,0.34]   第3属性[0.1,0.27]  第4属性[0.1,0.27]  第5属性[0.1,0.27]
-            //先判断是否在范围内，在的话，为0，不在的话，然后分别和上下限取差值，取绝对值，然后取小值
-            double ed1 ;
-            double edx1 = exp1/15.0;
-            if(edx1>=0.2 && edx1<0.34){
-                ed1 = 0;
-            }else if(edx1<0.2){
-                ed1 =  Math.abs(0.2 - edx1);
-            }else {
-                ed1 =  Math.abs(edx1 - 0.34);
-            }
-
-            double ed2 ;
-            double edx2 = exp2/15.0;
-            if(edx2>=0.2 && edx2<0.34){
-                ed2 = 0;
-            }else if(edx2<0.2){
-                ed2 =  Math.abs(0.2 - edx2);
-            }else {
-                ed2 =  Math.abs(edx2 - 0.34);
-            }
-
-            double ed3 ;
-            double edx3 = exp3/15.0;
-            if(edx3>=0.1 && edx3<0.27){
-                ed3 = 0;
-            }else if(edx3<0.1){
-                ed3 =  Math.abs(0.1 - edx3);
-            }else {
-                ed3 =  Math.abs(edx3 - 0.27);
-            }
-
-            double ed4 ;
-            double edx4 = exp4/15.0;
-            if(edx4>=0.1 && edx4<0.27){
-                ed4 = 0;
-            }else if(edx4<0.1){
-                ed4 =  Math.abs(0.1 - edx4);
-            }else {
-                ed4 =  Math.abs(edx4 - 0.27);
-            }
-
-            double ed5 ;
-            double edx5 = exp5/15.0;
-            if(edx5>=0.1 && edx5<0.27){
-                ed5 = 0;
-            }else if(edx5<0.1){
-                ed5 =  Math.abs(0.1 - edx5);
-            }else {
-                ed5 =  Math.abs(edx5 - 0.27);
-            }
-
-            double expNum = -(ed1 + ed2 + ed3 + ed4 + ed5);
-            // -2 表示取倒数  1/(2.7183 * 2.7183)  =  0.135
-            // exp(-0.263) 为 0.768
-            System.out.println("====================");
-            System.out.printf("exp(%.3f) 为 %.3f%n", expNum, Math.exp(expNum));
-
-
-            //均值 和 最小值
-            double avgrum = (adi1r + adi2r + adi3r + adi4r + adi5r) / 5;
-            double minrum = Math.min(Math.min(Math.min(Math.min(adi1r, adi2r), adi3r), adi4r), adi5r) * 100;
-            double avgdina = (adi1d + adi2d + adi3d + adi4d + adi5d) / 5;
-            double mindina = Math.min(Math.min(Math.min(Math.min(adi1d, adi2d), adi3d), adi4d), adi5d);
-
-
-            //部分试卷适应度变小，大部分适应度变大
-            System.out.printf("试卷%s \tminrum=%s \t", i, numbCohesion(minrum ));
-            System.out.printf("试卷%s \tminrum*Math.exp(expNum)=%s \t", i, numbCohesion(minrum * Math.exp(expNum)));
-        }
-        System.out.println();
     }
 
 
@@ -1303,6 +1165,7 @@ public class ADIController {
      *      2.用全局最优替换掉局部最优
      */
     public  void  elitistStrategy(){
+
         System.out.println("================== elitistStrategy ==================");
         //getFitness(paperGenetic.length);
 

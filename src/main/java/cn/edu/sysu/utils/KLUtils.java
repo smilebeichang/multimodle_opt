@@ -82,12 +82,12 @@ public class KLUtils {
      * @return
      * @throws InterruptedException
      */
-    public String RandomInit(int num ) throws InterruptedException {
+    public String randomInit(int num ) throws InterruptedException {
 
         if(num == 0 ){
             System.err.println("提示：属性不能全为空！！");
             Thread.sleep(2000);
-            //不知道直接 return 是否有效，待验证
+            //直接 return 是否有效，待验证
             return null;
         }
 

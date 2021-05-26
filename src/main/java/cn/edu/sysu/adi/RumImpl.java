@@ -114,7 +114,7 @@ public class RumImpl {
      */
     public void start(int num) throws InterruptedException {
 
-        pattern = new KLUtils().RandomInit(num);
+        pattern = new KLUtils().randomInit(num);
 
         GetAdi(pattern);
 
