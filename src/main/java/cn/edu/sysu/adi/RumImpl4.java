@@ -68,7 +68,7 @@ import java.util.List;
  *
  *
  */
-public class RumImpl2 {
+public class RumImpl4 {
 
     private int id ;
     private String pattern ;
@@ -195,28 +195,30 @@ public class RumImpl2 {
 
         JDBCUtils2 jdbcUtils = new JDBCUtils2();
 
-        // 50:100:100:50:10  生成310道题的题库
-        for (int i = 1; i <= 50; i++) {
+        //生成题库的试题数  310道  比值:5:10:10:5:1
+        int num = 310 ;
+
+        for (int i = 1; i <= num/31*5; i++) {
             id = i;
             start(1);
             jdbcUtils.insert(id,pattern,base,penalty,adi1_r,adi2_r,adi3_r,adi4_r,adi5_r);
         }
-        for (int i = 51; i <= 150; i++) {
+        for (int i =  num/31*5 + 1 ; i <= num/31*15; i++) {
             id = i;
             start(2);
             jdbcUtils.insert(id,pattern,base,penalty,adi1_r,adi2_r,adi3_r,adi4_r,adi5_r);
         }
-        for (int i = 151; i <= 250; i++) {
+        for (int i = num/31*15 + 1; i <= num/31*25; i++) {
             id = i;
             start(3);
             jdbcUtils.insert(id,pattern,base,penalty,adi1_r,adi2_r,adi3_r,adi4_r,adi5_r);
         }
-        for (int i = 251; i <= 300; i++) {
+        for (int i = num/31*25 + 1; i <= num/31*30; i++) {
             id = i;
             start(4);
             jdbcUtils.insert(id,pattern,base,penalty,adi1_r,adi2_r,adi3_r,adi4_r,adi5_r);
         }
-        for (int i = 301; i <= 310; i++) {
+        for (int i = num/31*30 + 1; i <= num/31*31; i++) {
             id = i;
             start(5);
             jdbcUtils.insert(id,pattern,base,penalty,adi1_r,adi2_r,adi3_r,adi4_r,adi5_r);
@@ -249,7 +251,7 @@ public class RumImpl2 {
      * 求出该试题的列表 Da，最后平均求出该试题的 adi
      * 可以理解为一道试题下，所有考生的差异性
      */
-    public  void getAdi(String ip) {
+    private void getAdi(String ip) {
 
 
         //试题的pattern 和 base/penalty 个数无关   基线系数/惩罚系数 随机生成
@@ -280,7 +282,7 @@ public class RumImpl2 {
      * @param base  基线系数
      * @param ip 题目的属性pattern
      */
-    public ArrayList<Double> getRumListsRandom(Double base,String ip){
+    private ArrayList<Double> getRumListsRandom(Double base, String ip){
 
         ArrayList<Double> rumLists = new ArrayList<>();
 
@@ -379,7 +381,8 @@ public class RumImpl2 {
         adi5_r=sum5/list5.size();
         System.out.println("adi5: "+adi5_r);
 
-        List<Double> adiList = new ArrayList<Double>(){{
+
+        return new ArrayList<Double>(){{
             add(adi1_r);
             add(adi2_r);
             add(adi3_r);
@@ -387,13 +390,10 @@ public class RumImpl2 {
             add(adi5_r);
         }};
 
-
-        return adiList;
-
     }
 
 
-    public void getAdiIndex(){
+    private void getAdiIndex(){
 
         /*
          * 四个元素，遍历组合即可, 随机遍历顺序没影响

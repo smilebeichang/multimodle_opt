@@ -3,16 +3,53 @@ package cn.edu.sysu.adi;
 import cn.edu.sysu.controller.ADIController;
 
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @Author : song bei chang
  * @create 2021/5/26 0:18
  */
 public class Test {
+
+
+    @org.junit.Test
+    public void stringBuilder(){
+        StringBuilder sb = new StringBuilder();
+        int ab2 = -1;
+        if(ab2>0){
+            sb.append(" p2=0 and ");
+        }else if (ab2<0){
+            sb.append(" p2=1 and ");
+        }
+        System.out.println( sb.toString());
+    }
+
+    @org.junit.Test
+    public void remove(){
+        /**
+         * 根据原集合 旧解 新解 三者的关系进行，属性比例要求判断
+         *
+         */
+        ArrayList<String> bachItemList = new ArrayList<>();
+        bachItemList.add("w");
+        bachItemList.add("s");
+        bachItemList.add("x");
+        String s  = "s";
+        String s1 = "s1";
+
+
+        // 刪除元素s
+        for (int i = 0; i < bachItemList.size(); i++) {
+            if (bachItemList.get(i).equals(s)){
+                bachItemList.set(i,s1);
+            }
+        }
+        System.out.println(bachItemList.toString());
+        // 输出 [0, 1, 2, 3, 4, 5, 6, 7, 9]，
+
+
+
+    }
 
 
     @org.junit.Test

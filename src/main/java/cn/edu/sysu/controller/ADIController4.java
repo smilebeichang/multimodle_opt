@@ -15,7 +15,7 @@ import java.util.*;
  * @Author : song bei chang
  * @create 2021/05/18 0:17
  */
-public class ADIController {
+public class ADIController4 {
 
 
     /*  容器 全局最优 局部最优  */
@@ -86,8 +86,12 @@ public class ADIController {
      * TODO        4.停止规则
      *
      *
+     * TODO  本周任务  1.通过构造的方法初始化题目 (轮盘赌  + 锦标赛)
+     * TODO          2.将属性类型个数改为题型，以及比例
+     * TODO          3.交叉变异后 校验比例（题型+属性） 直接替换  （迭代一百次以后，没有就直接退出）
+     *
+     *
      */
-    @Test
     public  void initItemBank() throws SQLException {
 
         System.out.println("====== 开始选题,构成试卷  ======");
