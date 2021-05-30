@@ -1,8 +1,9 @@
 package cn.edu.sysu.controller;
 
+import cn.edu.sysu.adi.TYPE;
 import cn.edu.sysu.pojo.Papers;
 import cn.edu.sysu.pojo.QuorumPeer;
-import cn.edu.sysu.utils.JDBCUtils2;
+import cn.edu.sysu.utils.JDBCUtils4;
 import org.junit.Test;
 
 import java.sql.SQLException;
@@ -22,11 +23,17 @@ public class ADIController4 {
 
     private static double GlobalOptimal = 0;
     private static double[] LocalOptimal = new double[10];
+    private static ArrayList<String> bankList = new ArrayList();
 
 
     /* 10套试卷 6道题  */
 
-    private static String[][] paperGenetic =new String[10][6];
+    private static String[][] paperGenetic =new String[10][10];
+
+
+    private  JDBCUtils4 jdbcUtils = new JDBCUtils4();
+
+
 
 
 
@@ -39,8 +46,9 @@ public class ADIController4 {
         papers.setPc(0.5);
         papers.setPm(0.5);
 
-        //初始化试卷   从题库中选取题目构成试卷  长度，属性类型，属性比例   （题型）
-        initItemBank();
+        //初始化试卷   从题库中选取题目构成试卷  长度，题型，属性比例
+        //initItemBank();
+        initItemBank4();
 
         //计算适应度值  ①计算时机 轮盘赌
         //            ②计算单位（单套试卷）
@@ -49,12 +57,79 @@ public class ADIController4 {
 
         // i 迭代次数
         for (int i = 0; i < 1550; i++) {
-            selection();
-            crossCover(papers);
-            mutate(papers);
+            //selection();
+            //crossCover(papers);
+            //mutate(papers);
             // TODO  待实现 小生境环境的搭建
-            elitistStrategy();
+            //elitistStrategy();
         }
+    }
+
+
+    /**
+     *      TODO  本周任务  1.通过构造的方法初始化题目 (轮盘赌  + 锦标赛)
+     *      TODO          2.将属性类型个数改为题型，以及比例
+     *      TODO          3.交叉变异后 校验比例（题型+属性） 直接替换  （迭代一百次以后，没有就直接退出）
+     *
+     *
+     *
+     * FIXME 使用构造法选取题目
+     *          1.题型轮盘赌解决
+     *          2.oneAttNum  sql 可能需要重写
+     *          3.
+     *          4.先选取第一道题，然后按照轮盘赌递归构建
+     *
+     *
+     *
+     */
+    private void initItemBank4() throws SQLException {
+
+        System.out.println("====== 开始选题,构成试卷  ======");
+
+        // 试卷大小
+        int  paperNum = 10 ;
+        // 试题大小
+        int questionsNum = 10 ;
+
+        // 全部试卷的集合
+        ArrayList<List<String>> itemList = new ArrayList<>();
+        // 单套试卷的集合
+        HashSet<String> itemSet = new HashSet<>();
+
+        // 题库310道题  50:100:100:50:10   硬性约束：长度   软性约束：题型，属性比例
+        // 获取全局解
+        bankList = getBank();
+
+        //逻辑判断 + 轮盘赌
+        //   1.id不能重复
+        //   2.题型比例 + 属性比例   构造是否会导致那些具有多个属性值的试题  适应度急剧下降
+        //   3.使用轮盘赌
+        //   [8:CHOSE:(1,0,0,0,0), 3:CHOSE:(0,0,0,1,0)]
+        for (int j = 0; j < paperNum; j++) {
+            //清空上一次迭代的数据
+            itemSet.clear();
+
+            for (int i = 0; i < questionsNum; i++) {
+                String item ;
+                //去重操作
+                while (itemSet.size() == i) {
+                    //获取试题id
+                    int sqlId = roulette(itemSet);
+                    item = jdbcUtils.selectOneItem(sqlId);
+                    itemSet.add(item);
+                }
+            }
+            // Creating a List of HashSet elements
+            List<String> list = new ArrayList<>(itemSet);
+            Collections.sort(list);
+            itemList.add(list);
+        }
+
+
+        System.out.println(itemList.toString());
+
+
+
     }
 
 
@@ -92,25 +167,26 @@ public class ADIController4 {
      *
      *
      */
-    public  void initItemBank() throws SQLException {
+    private void initItemBank() throws SQLException {
 
         System.out.println("====== 开始选题,构成试卷  ======");
 
         /*  试卷数 */
         int paperNum = 10 ;
-        /* 单张试卷每种属性的题目数量 6 */
+        /* 单张试卷每种题型的题目数量 6 */
         int oneAttNum = 1;
         int twoAttNum = 2;
         int threeAttNum = 2;
         int fourAttNum = 1;
 
-        JDBCUtils2 jdbcUtils = new JDBCUtils2();
+        //JDBCUtils4 jdbcUtils = new JDBCUtils4();
 
-        // 题库310道题  50:100:100:50:10   长度，属性类型，属性比例
+        // 题库310道题  50:100:100:50:10   长度，题型，属性比例
         String sql1 = "SELECT CEILING( RAND () * 49 ) + 1  AS id" ;
         String sql2 = "SELECT CEILING( RAND () * 99 ) + 51 AS id" ;
         String sql3 = "SELECT CEILING( RAND () * 99 ) + 151 AS id" ;
-        String sql4 = "SELECT CEILING( RAND () * 49 ) + 251 AS id" ;
+        String sql4 = "SELECT CEILING( RAND () * 59 ) + 251 AS id" ;
+
 
 
         /*  生成的平行试卷个数  */
@@ -538,7 +614,7 @@ public class ADIController4 {
         //1.三者都有值，则取resultAll  （retainAll 是否存在空集合的情况）
         //2.resultLess无  resultMore有值 则取 resultMore
         //3.resultMore无  resultLess有值 则取 resultLess
-        JDBCUtils2 jdbcUtils = new JDBCUtils2();
+        //JDBCUtils4 jdbcUtils = new JDBCUtils4();
         if(resultAll.size()>0 && resultMore.size()>0 && resultLess.size()>0){
             System.out.println("本套试卷 既有属性比例过多，又有属性比例不足的。");
             System.out.println(resultAll);
@@ -961,7 +1037,7 @@ public class ADIController4 {
             //用新的数组 替换掉 原有数组
             //setEnd.toArray(temp1);
             String ids = Arrays.asList(setEnd).toString().substring(2, Arrays.asList(setEnd).toString().length() - 2);
-            JDBCUtils2 jdbcUtils = new JDBCUtils2();
+            //JDBCUtils4 jdbcUtils = new JDBCUtils4();
             ArrayList<String> bachItemList = jdbcUtils.selectBachItem(ids);
             //ArrayList to String[]
             temp1 =  bachItemList.toArray(new String[temp1.length]);
@@ -986,7 +1062,7 @@ public class ADIController4 {
     public  void mutate(Papers papers) throws SQLException {
 
         System.out.println("================== mutate ==================");
-        JDBCUtils2 jdbcUtils = new JDBCUtils2();
+        //JDBCUtils4 jdbcUtils = new JDBCUtils4();
         String key  ="";
 
         for (int i = 0; i < paperGenetic.length; i++) {
@@ -1404,6 +1480,191 @@ public class ADIController4 {
         }
 
     }
+
+
+    /**
+     *
+     *   逻辑判断 + 轮盘赌
+     *        1.id不能重复
+     *        2.题型比例 + 属性比例   构造是否会导致那些具有多个属性值的试题  适应度急剧下降
+     *        3.使用轮盘赌
+     *        [8:CHOSE:(1,0,0,0,0), 3:CHOSE:(0,0,0,1,0)]
+     */
+    private int roulette(HashSet<String> itemSet) throws SQLException {
+
+        System.out.println("====================== 构造选题 ======================");
+
+        //轮盘赌 累加百分比
+        double[] fitPie = new double[310];
+
+        //计算每道试题的适应度占比   min*0.5*0.8
+        double[] fitnessArray = getRouletteFitness(itemSet);
+
+        //id去重操作
+        HashSet<Integer> idSet = new HashSet<>();
+
+        //通过迭代器遍历HashSet
+        Iterator<String> it = itemSet.iterator();
+        while(it.hasNext()) {
+
+            idSet.add(Integer.valueOf(it.next().split(":")[0]));
+        }
+
+        //累加初始值
+        double accumulate = 0;
+
+        //试题占总试题的适应度累加百分比
+        for (int i = 0; i < bankList.size(); i++) {
+            fitPie[i] = accumulate + fitnessArray[i];
+            accumulate += fitnessArray[i];
+            System.out.println("试题"+ i+"占目前总试题的适应度累加百分比： "+fitPie[i]);
+        }
+
+        //累加的概率为1   数组下标从0开始
+        fitPie[310-1] = 1;
+
+        //随机生成的random概率值  [0,1)
+        double randomProbability = Math.random();
+
+        //打印出random概率值
+        System.out.println(randomProbability);
+
+        //轮盘赌 越大的适应度，其叠加时增长越快，即有更大的概率被选中
+        int answerSelectId = 0;
+        int i = 0;
+
+        while (i < bankList.size() && randomProbability > fitPie[i]){
+            //id 去重
+            if(idSet.contains(i)){
+                i += 1;
+            }else{
+                i ++;
+                answerSelectId   = i;
+            }
+        }
+
+        //输出
+        System.out.print("轮盘赌选取的ID:"+ answerSelectId);
+
+        return answerSelectId;
+
+    }
+
+
+
+
+    /**
+     * 1.selection 计算每道试题的适应度值比例
+     * 2.每道题的概率为1*penalty^n,总概率为310道题叠加
+     *      2.1  初始化的时候将全局的310题查询出来,（id,type,pattern）
+     *      2.2  求出每道试题的概率 1 * 惩罚系数
+     *      2.3  求出每道试题的适应度比值
+     *
+     */
+    private double[] getRouletteFitness(HashSet<String> itemSet) throws SQLException {
+
+
+
+        // 所有试题的适应度总和
+        double fitSum = 0.0;
+
+        // 每道试题的适应度值
+        double[] fitTmp = new double[bankList.size()];
+
+        // 每道试题的适应度占比   疑问:1/310 会很小,random() 这样产生的值是否符合要去
+        double[] fitPro = new double[bankList.size()];
+
+        // 计算试卷的题型和属性比例 衡量指标   应该不需要循环
+        // 将题型 和 属性 比例分别求出来      应该不需要求题型和属性的比例
+
+            //先只考虑 题型比例
+            int typeChose  = 0;
+            int typeFill   = 0;
+            int typeShort  = 0;
+            int typeCompre = 0;
+
+
+            //题型数目总和
+            for (String s:itemSet) {
+                System.out.println(s);
+
+                //计算每种题型个数
+                if(TYPE.CHOSE.toString().equals(s.split(":")[1])){
+                    typeChose += 1;
+                }
+                if(TYPE.FILL.toString().equals(s.split(":")[1])){
+                    typeFill += 1;
+                }
+                if(TYPE.SHORT.toString().equals(s.split(":")[1])){
+                    typeShort += 1;
+                }
+                if(TYPE.COMPREHENSIVE.toString().equals(s.split(":")[1])){
+                    typeCompre += 1;
+                }
+            }
+
+            // 题型比例 选择[0.2,0.4]  填空[0.2,0.4]  简答[0.1,0.3] 应用[0.1,0.3]
+            // 第1属性[0.2,0.4]   第2属性[0.2,0.4]   第3属性[0.1,0.3]  第4属性[0.1,0.3]  第5属性[0.1,0.3]
+            //      判断逻辑：1.比值是否在范围内，在的话，为1，不在的话，取0.5
+            //              2.含有的个数，每多含有一个则，属性比例叠乘 （不会存在潜在影响，因为每道题只会属于一种type）
+
+            // 以数据的310套试题为范围，求出每道试题的选取概率
+            // 抽取属性和比例搭建关系：
+            //      全局310道题如何和已抽取的题目建立联系呢？  已抽取的属性个数越多，则惩罚系数越大 且各个属性是累乘关系
+
+
+            for (int j = 0; j < bankList.size(); j++) {
+                double penalty = 1;
+
+                String[] splits = bankList.get(j).split(":");
+                if(splits[1].contains(TYPE.CHOSE+"")){
+                    penalty = penalty * Math.pow(0.5,typeChose);
+                }
+                if(splits[1].contains(TYPE.FILL+"")){
+                    penalty = penalty * Math.pow(0.5,typeFill);
+                }
+                if(splits[1].contains(TYPE.SHORT+"")){
+                    penalty = penalty * Math.pow(0.5,typeShort);
+                }
+                if(splits[1].contains(TYPE.COMPREHENSIVE+"")){
+                    penalty = penalty * Math.pow(0.5,typeCompre);
+                }
+
+                //个体值 和 总和
+                fitTmp[j] = penalty ;
+                fitSum = fitSum + penalty ;
+
+            }
+
+            //System.out.println("目前题库属性概率情况： bankProbab:"+Arrays.asList(fitTmp).toString());
+
+
+
+        for (int i = 0; i < bankList.size(); i++) {
+            //  各自的比例
+            fitPro[i] = fitTmp[i] / fitSum;
+        }
+
+        //返回类型为 double[]
+        ArrayList<Double> arrayList = new ArrayList<>(fitPro.length);
+
+        for (double anArr : fitPro) {
+            arrayList.add(anArr);
+        }
+        System.out.println(arrayList.toString());
+
+
+        return  fitPro;
+    }
+
+
+
+    private ArrayList<String> getBank() throws SQLException {
+
+        return jdbcUtils.select();
+
+    }
+
 
 }
 

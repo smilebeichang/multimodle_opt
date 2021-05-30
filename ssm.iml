@@ -91,5 +91,6 @@
     <orderEntry type="library" name="Maven: com.google.j2objc:j2objc-annotations:1.1" level="project" />
     <orderEntry type="library" name="Maven: org.codehaus.mojo:animal-sniffer-annotations:1.17" level="project" />
     <orderEntry type="library" name="Maven: org.datanucleus:datanucleus-core:4.1.17" level="project" />
+    <orderEntry type="library" name="scala-sdk-2.12.11" level="application" />
   </component>
 </module>

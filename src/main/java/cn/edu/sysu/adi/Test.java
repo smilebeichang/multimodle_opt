@@ -13,6 +13,41 @@ public class Test {
 
 
     @org.junit.Test
+    public void random(){
+
+        for (int i = 0; i < 10; i++) {
+
+            double randomId = Math.random();
+            //打印出随机抽取的random概率值
+            System.out.println(randomId);
+        }
+
+    }
+
+
+
+    @org.junit.Test
+    public void arrAsList(){
+        int[] arr = new int[4];
+        arr[0] = 0;
+        arr[1] = 1;
+        arr[2] = 2;
+        arr[3] = 3;
+
+        ArrayList< String> arrayList = new ArrayList<String>(arr.length);
+
+        for (int anArr : arr) {
+            arrayList.add(anArr + "");
+        }
+        System.out.println(arrayList.toString());
+
+    }
+
+
+
+
+
+    @org.junit.Test
     public void stringBuilder(){
         StringBuilder sb = new StringBuilder();
         int ab2 = -1;

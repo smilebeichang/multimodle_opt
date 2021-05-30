@@ -1,6 +1,6 @@
 package cn.edu.sysu.adi;
 
-import cn.edu.sysu.utils.JDBCUtils2;
+import cn.edu.sysu.utils.JDBCUtils4;
 import cn.edu.sysu.utils.KLUtils;
 import org.junit.Test;
 
@@ -88,6 +88,14 @@ public class RumImpl4 {
     private ArrayList<String> adiIndexList3 = new ArrayList();
     private ArrayList<String> adiIndexList4 = new ArrayList();
     private ArrayList<String> adiIndexList5 = new ArrayList();
+
+    private static HashMap<String,String>  typeMap = new HashMap<>();
+    static {
+        typeMap.put("CHOSE","choice");
+        typeMap.put("FILL","Fill");
+        typeMap.put("SHORT","Short");
+        typeMap.put("COMPREHENSIVE","Comprehensive");
+    }
 
 
     /**
@@ -193,7 +201,7 @@ public class RumImpl4 {
         //初始化索引位置 adiIndexList
         getAdiIndex();
 
-        JDBCUtils2 jdbcUtils = new JDBCUtils2();
+        JDBCUtils4 jdbcUtils = new JDBCUtils4();
 
         //生成题库的试题数  310道  比值:5:10:10:5:1
         int num = 310 ;
@@ -201,27 +209,27 @@ public class RumImpl4 {
         for (int i = 1; i <= num/31*5; i++) {
             id = i;
             start(1);
-            jdbcUtils.insert(id,pattern,base,penalty,adi1_r,adi2_r,adi3_r,adi4_r,adi5_r);
+            jdbcUtils.insert(id,TYPE.CHOSE,pattern,base,penalty,adi1_r,adi2_r,adi3_r,adi4_r,adi5_r);
         }
         for (int i =  num/31*5 + 1 ; i <= num/31*15; i++) {
             id = i;
             start(2);
-            jdbcUtils.insert(id,pattern,base,penalty,adi1_r,adi2_r,adi3_r,adi4_r,adi5_r);
+            jdbcUtils.insert(id,TYPE.FILL,pattern,base,penalty,adi1_r,adi2_r,adi3_r,adi4_r,adi5_r);
         }
         for (int i = num/31*15 + 1; i <= num/31*25; i++) {
             id = i;
             start(3);
-            jdbcUtils.insert(id,pattern,base,penalty,adi1_r,adi2_r,adi3_r,adi4_r,adi5_r);
+            jdbcUtils.insert(id,TYPE.SHORT,pattern,base,penalty,adi1_r,adi2_r,adi3_r,adi4_r,adi5_r);
         }
         for (int i = num/31*25 + 1; i <= num/31*30; i++) {
             id = i;
             start(4);
-            jdbcUtils.insert(id,pattern,base,penalty,adi1_r,adi2_r,adi3_r,adi4_r,adi5_r);
+            jdbcUtils.insert(id,TYPE.COMPREHENSIVE,pattern,base,penalty,adi1_r,adi2_r,adi3_r,adi4_r,adi5_r);
         }
         for (int i = num/31*30 + 1; i <= num/31*31; i++) {
             id = i;
             start(5);
-            jdbcUtils.insert(id,pattern,base,penalty,adi1_r,adi2_r,adi3_r,adi4_r,adi5_r);
+            jdbcUtils.insert(id,TYPE.COMPREHENSIVE,pattern,base,penalty,adi1_r,adi2_r,adi3_r,adi4_r,adi5_r);
         }
 
 
