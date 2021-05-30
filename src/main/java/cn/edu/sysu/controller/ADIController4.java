@@ -74,10 +74,9 @@ public class ADIController4 {
      *
      *
      * FIXME 使用构造法选取题目
-     *          1.题型轮盘赌解决
-     *          2.oneAttNum  sql 可能需要重写
-     *          3.
-     *          4.先选取第一道题，然后按照轮盘赌递归构建
+     *          1.题型构造解决
+     *          2.属性构造解决
+     *
      *
      *
      *
@@ -1517,7 +1516,7 @@ public class ADIController4 {
         for (int i = 0; i < bankList.size(); i++) {
             fitPie[i] = accumulate + fitnessArray[i];
             accumulate += fitnessArray[i];
-            System.out.println("试题"+ i+"占目前总试题的适应度累加百分比： "+fitPie[i]);
+            //System.out.println("试题"+ i+"占目前总试题的适应度累加百分比： "+fitPie[i]);
         }
 
         //累加的概率为1   数组下标从0开始
@@ -1563,21 +1562,22 @@ public class ADIController4 {
      */
     private double[] getRouletteFitness(HashSet<String> itemSet) throws SQLException {
 
-
-
         // 所有试题的适应度总和
         double fitSum = 0.0;
 
         // 每道试题的适应度值
         double[] fitTmp = new double[bankList.size()];
 
-        // 每道试题的适应度占比   疑问:1/310 会很小,random() 这样产生的值是否符合要去
+        // 每道试题的适应度占比   疑问:1/310 会很小,random() 这样产生的值是否符合要求
         double[] fitPro = new double[bankList.size()];
 
         // 计算试卷的题型和属性比例 衡量指标   应该不需要循环
         // 将题型 和 属性 比例分别求出来      应该不需要求题型和属性的比例
+        // 是否会因为数据库属性排列的规则，导致随机选取的题目不具有代表性  50~150均为填空题,这样的话，题目就算概率受到惩罚系数的影响，因为基数大导致影响波动变小
+        //          解决方案:题目顺序打乱（数据库、bankList）
 
-            //先只考虑 题型比例
+
+            //题型比例
             int typeChose  = 0;
             int typeFill   = 0;
             int typeShort  = 0;
@@ -1603,8 +1603,42 @@ public class ADIController4 {
                 }
             }
 
+
+            //属性比例
+            int AttributeRatio1  = 0;
+            int AttributeRatio2  = 0;
+            int AttributeRatio3  = 0;
+            int AttributeRatio4  = 0;
+            int AttributeRatio5  = 0;
+
+            //属性数目总和
+            for (String s:itemSet) {
+                System.out.println(s);
+
+                //计算每种题型个数
+                if("1".equals(s.split(":")[2].substring(1,2))){
+                    AttributeRatio1 += 1;
+                }
+                if("1".equals(s.split(":")[2].substring(3,4))){
+                    AttributeRatio2 += 1;
+                }
+                if("1".equals(s.split(":")[2].substring(5,6))){
+                    AttributeRatio3 += 1;
+                }
+                if("1".equals(s.split(":")[2].substring(7,8))){
+                    AttributeRatio4 += 1;
+                }
+                if("1".equals(s.split(":")[2].substring(9,10))){
+                    AttributeRatio5 += 1;
+                }
+            }
+        System.out.println("AttributeRatio1: "+AttributeRatio1+"\tAttributeRatio2: "+AttributeRatio2+"\tAttributeRatio3: "+AttributeRatio3+"\tAttributeRatio4: "+AttributeRatio4+"\tAttributeRatio5: "+AttributeRatio5);
+
+
+
             // 题型比例 选择[0.2,0.4]  填空[0.2,0.4]  简答[0.1,0.3] 应用[0.1,0.3]
             // 第1属性[0.2,0.4]   第2属性[0.2,0.4]   第3属性[0.1,0.3]  第4属性[0.1,0.3]  第5属性[0.1,0.3]
+
             //      判断逻辑：1.比值是否在范围内，在的话，为1，不在的话，取0.5
             //              2.含有的个数，每多含有一个则，属性比例叠乘 （不会存在潜在影响，因为每道题只会属于一种type）
 
@@ -1617,6 +1651,7 @@ public class ADIController4 {
                 double penalty = 1;
 
                 String[] splits = bankList.get(j).split(":");
+                //题型比例
                 if(splits[1].contains(TYPE.CHOSE+"")){
                     penalty = penalty * Math.pow(0.5,typeChose);
                 }
@@ -1629,6 +1664,24 @@ public class ADIController4 {
                 if(splits[1].contains(TYPE.COMPREHENSIVE+"")){
                     penalty = penalty * Math.pow(0.5,typeCompre);
                 }
+
+                //属性比例
+                if("1".equals(splits[2].substring(1,2))){
+                    penalty = penalty * Math.pow(0.8,AttributeRatio1);
+                }
+                if("1".equals(splits[2].substring(3,4))){
+                    penalty = penalty * Math.pow(0.8,AttributeRatio2);
+                }
+                if("1".equals(splits[2].substring(5,6))){
+                    penalty = penalty * Math.pow(0.8,AttributeRatio3);
+                }
+                if("1".equals(splits[2].substring(7,8))){
+                    penalty = penalty * Math.pow(0.8,AttributeRatio4);
+                }
+                if("1".equals(splits[2].substring(9,10))){
+                    penalty = penalty * Math.pow(0.8,AttributeRatio5);
+                }
+
 
                 //个体值 和 总和
                 fitTmp[j] = penalty ;
