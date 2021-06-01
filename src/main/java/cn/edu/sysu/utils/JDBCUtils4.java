@@ -418,6 +418,52 @@ public class JDBCUtils4 {
 
 
 
+    /**
+     * 锦标赛查询，并返回list
+     */
+    public  ArrayList<String> selectChampionship(int num) throws SQLException {
+        ArrayList<String> list = new ArrayList<>();
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs ;
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (Exception ex) {
+            System.out.println("驱动加载失败");
+            ex.printStackTrace();
+        }
+
+        try {
+            conn =
+                    DriverManager.getConnection("jdbc:mysql://localhost/sysu?"+"user=root&password=root&useSSL=false");
+            ps = conn.prepareStatement("SELECT * FROM adi20210528 ORDER BY RAND() LIMIT "+ num+" ;");
+            rs = ps.executeQuery();
+            while(rs.next()) {
+                int id = rs.getInt("id");
+                String type = rs.getString("type");
+                String attributes = rs.getString("pattern");
+                list.add(id+":"+type+":"+attributes);
+            }
+
+        } catch (SQLException ex) {
+            System.out.println("SQLException: " + ex.getMessage());
+            System.out.println("SQLState: " + ex.getSQLState());
+            System.out.println("VendorError: " + ex.getErrorCode());
+        }finally {
+            if(ps!= null) {
+                ps.close();
+            }
+            if(conn!= null) {
+                conn.close();
+            }
+        }
+        System.out.println();
+        return list;
+    }
+
+
+
+
 
 }
 

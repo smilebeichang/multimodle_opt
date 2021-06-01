@@ -89,12 +89,12 @@ public class RumImpl4 {
     private ArrayList<String> adiIndexList4 = new ArrayList();
     private ArrayList<String> adiIndexList5 = new ArrayList();
 
-    private static HashMap<String,String>  typeMap = new HashMap<>();
+    private static HashMap<Integer,TYPE>  typeMap = new HashMap<>();
     static {
-        typeMap.put("CHOSE","choice");
-        typeMap.put("FILL","Fill");
-        typeMap.put("SHORT","Short");
-        typeMap.put("COMPREHENSIVE","Comprehensive");
+        typeMap.put(0,TYPE.CHOSE);
+        typeMap.put(1,TYPE.FILL);
+        typeMap.put(2,TYPE.SHORT);
+        typeMap.put(3,TYPE.COMPREHENSIVE);
     }
 
 
@@ -188,6 +188,7 @@ public class RumImpl4 {
 
 
 
+
     //1. 生成题目的 pattern  5个属性，要求属性比例均衡
     //2. 生成 base 和 penalty; 计算 ArrayList<Double> rumLists
     //3. 生成 K_L 矩阵
@@ -209,27 +210,29 @@ public class RumImpl4 {
         for (int i = 1; i <= num/31*5; i++) {
             id = i;
             start(1);
-            jdbcUtils.insert(id,TYPE.CHOSE,pattern,base,penalty,adi1_r,adi2_r,adi3_r,adi4_r,adi5_r);
+            //防止题型顺序，导致轮盘赌概率失效问题
+            //   解决方案：①类型随机（1/4）  ②hashCode取模
+            jdbcUtils.insert(id,typeMap.get(Math.floorMod(id,4)),pattern,base,penalty,adi1_r,adi2_r,adi3_r,adi4_r,adi5_r);
         }
         for (int i =  num/31*5 + 1 ; i <= num/31*15; i++) {
             id = i;
             start(2);
-            jdbcUtils.insert(id,TYPE.FILL,pattern,base,penalty,adi1_r,adi2_r,adi3_r,adi4_r,adi5_r);
+            jdbcUtils.insert(id,typeMap.get(Math.floorMod(id,4)),pattern,base,penalty,adi1_r,adi2_r,adi3_r,adi4_r,adi5_r);
         }
         for (int i = num/31*15 + 1; i <= num/31*25; i++) {
             id = i;
             start(3);
-            jdbcUtils.insert(id,TYPE.SHORT,pattern,base,penalty,adi1_r,adi2_r,adi3_r,adi4_r,adi5_r);
+            jdbcUtils.insert(id,typeMap.get(Math.floorMod(id,4)),pattern,base,penalty,adi1_r,adi2_r,adi3_r,adi4_r,adi5_r);
         }
         for (int i = num/31*25 + 1; i <= num/31*30; i++) {
             id = i;
             start(4);
-            jdbcUtils.insert(id,TYPE.COMPREHENSIVE,pattern,base,penalty,adi1_r,adi2_r,adi3_r,adi4_r,adi5_r);
+            jdbcUtils.insert(id,typeMap.get(Math.floorMod(id,4)),pattern,base,penalty,adi1_r,adi2_r,adi3_r,adi4_r,adi5_r);
         }
         for (int i = num/31*30 + 1; i <= num/31*31; i++) {
             id = i;
             start(5);
-            jdbcUtils.insert(id,TYPE.COMPREHENSIVE,pattern,base,penalty,adi1_r,adi2_r,adi3_r,adi4_r,adi5_r);
+            jdbcUtils.insert(id,typeMap.get(Math.floorMod(id,4)),pattern,base,penalty,adi1_r,adi2_r,adi3_r,adi4_r,adi5_r);
         }
 
 

@@ -11,6 +11,17 @@ import java.util.*;
  */
 public class Test {
 
+    @org.junit.Test
+    public void mod(){
+        System.out.println("4,4取模"+Math.floorMod(4,4));
+        System.out.println("5,4取模"+Math.floorMod(5,4));
+        System.out.println("6,4取模"+Math.floorMod(6,4));
+        System.out.println("7,4取模"+Math.floorMod(7,4));
+        System.out.println("8,4取模"+Math.floorMod(8,4));
+
+
+        System.out.println(5/10.0);
+    }
 
     @org.junit.Test
     public void random(){
