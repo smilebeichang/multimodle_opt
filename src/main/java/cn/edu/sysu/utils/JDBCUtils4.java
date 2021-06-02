@@ -206,27 +206,22 @@ public class JDBCUtils4 {
         try {
             conn =
                     DriverManager.getConnection("jdbc:mysql://localhost/sysu?"+"user=root&password=root");
-            ps = conn.prepareStatement("select * from sysu.adi20210523 where id in (" +
+            ps = conn.prepareStatement("select * from sysu.adi20210528 where id in (" +
                     ids +  ");");
             rs = ps.executeQuery();
-            System.out.println("select * from sysu.adi20210523 where id in (" + ids +  ");");
+            System.out.println("select * from sysu.adi20210528 where id in (" + ids +  ");");
 
             while(rs.next()) {
                 int id = rs.getInt("id");
-                String attributes = rs.getString("pattern");
+                String type = rs.getString("type");
+                String pattern = rs.getString("pattern");
                 double adi1_r = rs.getDouble("adi1_r");
                 double adi2_r = rs.getDouble("adi2_r");
                 double adi3_r = rs.getDouble("adi3_r");
                 double adi4_r = rs.getDouble("adi4_r");
                 double adi5_r = rs.getDouble("adi5_r");
 
-                double adi1_d = rs.getDouble("adi1_d");
-                double adi2_d = rs.getDouble("adi2_d");
-                double adi3_d = rs.getDouble("adi3_d");
-                double adi4_d = rs.getDouble("adi4_d");
-                double adi5_d = rs.getDouble("adi5_d");
-
-                list.add(id+":"+attributes+":"+adi1_r+":"+adi2_r+":"+adi3_r+":"+adi4_r+":"+adi5_r+":"+adi1_d+":"+adi2_d+":"+adi3_d+":"+adi4_d+":"+adi5_d);
+                list.add(id+":"+type+":"+pattern+":"+adi1_r+":"+adi2_r+":"+adi3_r+":"+adi4_r+":"+adi5_r);
             }
 
         } catch (SQLException ex) {
@@ -339,11 +334,12 @@ public class JDBCUtils4 {
         try {
             conn =
                     DriverManager.getConnection("jdbc:mysql://localhost/sysu?"+"user=root&password=root&useSSL=false");
-            ps = conn.prepareStatement("select * from sysu.adi20210523 where " + sqlWhere );
+            ps = conn.prepareStatement("select * from sysu.adi20210528 where " + sqlWhere );
             rs = ps.executeQuery();
 
             while(rs.next()) {
                 int id = rs.getInt("id");
+                String type = rs.getString("type");
                 String attributes = rs.getString("pattern");
                 double adi1_r = rs.getDouble("adi1_r");
                 double adi2_r = rs.getDouble("adi2_r");
@@ -351,13 +347,8 @@ public class JDBCUtils4 {
                 double adi4_r = rs.getDouble("adi4_r");
                 double adi5_r = rs.getDouble("adi5_r");
 
-                double adi1_d = rs.getDouble("adi1_d");
-                double adi2_d = rs.getDouble("adi2_d");
-                double adi3_d = rs.getDouble("adi3_d");
-                double adi4_d = rs.getDouble("adi4_d");
-                double adi5_d = rs.getDouble("adi5_d");
 
-                list.add(id+":"+attributes+":"+adi1_r+":"+adi2_r+":"+adi3_r+":"+adi4_r+":"+adi5_r+":"+adi1_d+":"+adi2_d+":"+adi3_d+":"+adi4_d+":"+adi5_d);
+                list.add(id+":"+type+":"+attributes+":"+adi1_r+":"+adi2_r+":"+adi3_r+":"+adi4_r+":"+adi5_r);
             }
 
         } catch (SQLException ex) {
@@ -400,7 +391,6 @@ public class JDBCUtils4 {
             rs = ps.executeQuery();
             while(rs.next()){
                 int id = rs.getInt("id");
-
                 String type = rs.getString("type");
                 String attributes = rs.getString("pattern");
                 item = id + ":" + type + ":" + attributes;

@@ -11,6 +11,96 @@ import java.util.*;
  */
 public class Test {
 
+
+    @org.junit.Test
+    public  void sonList() {
+        String[] arr = {"p1", "p2","p3"};
+        Set<Set<String>> f = f(arr.length, arr);
+        System.out.println(f);
+        for (Set<String> tmp : f) {
+            System.out.println(tmp);
+        }
+
+    }
+
+    public  Set<Set<String>> f(int k, String[] arr) {
+        if (k == 0) {
+            Set<Set<String>> set = new HashSet<>();
+            //添加一个空集合
+            set.add(new HashSet<>());
+            return set;
+        }
+
+        Set<Set<String>> set = f(k - 1, arr);
+        Set<Set<String>> resultSet = new HashSet<>();
+
+        //扫描上一层的集合
+        for (Set<String> integerSet : set) {
+
+            //上一层的每个集合都包含两种情况，一种是加入新来的元素，另一种是不加入新的元素
+            HashSet<String> subSet = new HashSet<>();
+
+            subSet.addAll(integerSet);
+            subSet.add(arr[k - 1]);
+
+            resultSet.add(subSet);
+            resultSet.add(integerSet);
+        }
+        return resultSet;
+    }
+
+
+
+
+
+    @org.junit.Test
+    public void flag(){
+        Boolean flag = true;
+        if(!flag){
+            System.out.println("``````````");
+        }else {
+            System.out.println("***********");
+        }
+    }
+
+
+    @org.junit.Test
+    public void trans(){
+
+//    将列表转换为集合
+//    Set set = new HashSet(list);
+
+//    将集转换为列表
+//    List list = new ArrayList(set);
+
+//    double[] 转 ArrayList<Double>  可以省略
+//    ArrayList<Double> arrayList = new ArrayList<>(fitPro.length);
+//        for (double anArr : fitPro) {
+//        arrayList.add(anArr);
+//    }
+
+//    Double[]转List
+//    List<Double> list = Arrays.asList(arrDouble);
+
+//    将Array 转 hashSet
+//    Set<String> set = new HashSet<>(Arrays.asList( paperGenetic[i]));
+
+//    hashSet 转 数组
+//    String[] array = new String[setEnd.size()];
+//    array = setEnd.toArray(array);
+
+//    数组转list  转hashSet
+//    HashSet<String> setBegin = new HashSet<>(Arrays.asList(temp1));
+
+//    arrayList 转 数组
+//    String[] itemArray = new String[bachItemList.size()];
+//            for (int i = 0; i < bachItemList.size(); i++) {
+//        itemArray[i] = bachItemList.get(i);
+//    }
+    }
+
+
+
     @org.junit.Test
     public void mod(){
         System.out.println("4,4取模"+Math.floorMod(4,4));

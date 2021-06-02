@@ -115,6 +115,45 @@ public class KLUtils {
 
     }
 
+
+
+
+    public  Set<Set<String>> getSubCollection(String[] arr) {
+        //String[] arr = {"p1", "p2","p3"};
+        Set<Set<String>> f = f(arr.length, arr);
+        System.out.println(f);
+        return f;
+
+    }
+
+    public  Set<Set<String>> f(int k, String[] arr) {
+        if (k == 0) {
+            Set<Set<String>> set = new HashSet<>();
+            //添加一个空集合
+            set.add(new HashSet<>());
+            return set;
+        }
+
+        Set<Set<String>> set = f(k - 1, arr);
+        Set<Set<String>> resultSet = new HashSet<>();
+
+        //扫描上一层的集合
+        for (Set<String> integerSet : set) {
+
+            //上一层的每个集合都包含两种情况，一种是加入新来的元素，另一种是不加入新的元素
+            HashSet<String> subSet = new HashSet<>();
+
+            subSet.addAll(integerSet);
+            subSet.add(arr[k - 1]);
+
+            resultSet.add(subSet);
+            resultSet.add(integerSet);
+        }
+        return resultSet;
+    }
+
+
+
 }
 
 
