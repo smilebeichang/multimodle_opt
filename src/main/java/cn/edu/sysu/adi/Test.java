@@ -100,6 +100,37 @@ public class Test {
     }
 
 
+    /**
+     * 通过交集 并集 差集 来重新对list排序
+     */
+    @org.junit.Test
+    public void rearrange(){
+
+        //定义
+        List<String> listA = new ArrayList<>();
+        List<String> listB = new ArrayList<>();
+        listA.add("A");
+        listA.add("B");
+        listA.add("C");
+        listA.add("D");
+
+        listB.add("B");
+        listB.add("C");
+
+        //差集  AD
+        listA.removeAll(listB);
+        System.out.println(listA);
+
+
+        //并集  ADBC
+        // 不做第一步取的是有重复元素的并集
+        listA.removeAll(listB);
+        listB.addAll(listA);
+        System.out.println(listB);
+
+    }
+
+
 
     @org.junit.Test
     public void mod(){

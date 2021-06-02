@@ -116,10 +116,12 @@ public class KLUtils {
     }
 
 
-
-
+    /**
+     * 返回所有子集合的组成
+     *
+     */
     public  Set<Set<String>> getSubCollection(String[] arr) {
-        //String[] arr = {"p1", "p2","p3"};
+
         Set<Set<String>> f = f(arr.length, arr);
         System.out.println(f);
         return f;
