@@ -2,7 +2,6 @@ package cn.edu.sysu.controller;
 
 import cn.edu.sysu.adi.TYPE;
 import cn.edu.sysu.pojo.Papers;
-import cn.edu.sysu.pojo.QuorumPeer;
 import cn.edu.sysu.utils.JDBCUtils4;
 import cn.edu.sysu.utils.KLUtils;
 import org.junit.Test;
@@ -17,7 +16,7 @@ import java.util.*;
  * @Author : song bei chang
  * @create 2021/05/18 0:17
  */
-public class ADIController4 {
+public class ADIController5 {
 
 
     /*  容器 全局最优 局部最优  */
