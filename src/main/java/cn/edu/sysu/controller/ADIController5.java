@@ -1776,92 +1776,14 @@ public class ADIController5 {
         //ArrayList<String> 转 hashSet<String>
         HashSet<String> itemSet = new HashSet<>(bachItemList);
 
-        //属性个数
-        int attributeNum1  = 0;
-        int attributeNum2  = 0;
-        int attributeNum3  = 0;
-        int attributeNum4  = 0;
-        int attributeNum5  = 0;
 
-        //各个属性的数目
-        for (String s:itemSet) {
-            System.out.println(s);
+        String attributeFlag = getAttributeFlag(itemSet);
 
-            //计算每种属性个数
-            if("1".equals(s.split(":")[2].substring(1,2))){
-                attributeNum1 += 1;
-            }
-            if("1".equals(s.split(":")[2].substring(3,4))){
-                attributeNum2 += 1;
-            }
-            if("1".equals(s.split(":")[2].substring(5,6))){
-                attributeNum3 += 1;
-            }
-            if("1".equals(s.split(":")[2].substring(7,8))){
-                attributeNum4 += 1;
-            }
-            if("1".equals(s.split(":")[2].substring(9,10))){
-                attributeNum5 += 1;
-            }
-        }
-        System.out.println("AttributeRatio1: "+attributeNum1+"\tAttributeRatio2: "+attributeNum2+"\tAttributeRatio3: "+attributeNum3+"\tAttributeRatio4: "+attributeNum4+"\tAttributeRatio5: "+attributeNum5);
-
-        //属性比例
-        double attributeRatio1 = attributeNum1/23.0;
-        double attributeRatio2 = attributeNum2/23.0;
-        double attributeRatio3 = attributeNum3/23.0;
-        double attributeRatio4 = attributeNum4/23.0;
-        double attributeRatio5 = attributeNum5/23.0;
-
-
-        int af1 ;
-        if(attributeRatio1>=0.2 && attributeRatio1<=0.4){
-            af1 = 0;
-        }else if(attributeRatio1<0.2){
-            af1 = -1;
-        }else {
-            af1 = 1;
-        }
-
-        int af2 ;
-        if(attributeRatio2>=0.2 && attributeRatio2<=0.4){
-            af2 = 0;
-        }else if(attributeRatio2<0.2){
-            af2 = -1;
-        }else {
-            af2 = 1;
-        }
-
-        int af3 ;
-        if(attributeRatio3>=0.1 && attributeRatio3<=0.3){
-            af3 = 0;
-        }else if(attributeRatio3<0.1){
-            af3 = -1;
-        }else {
-            af3 = 1;
-        }
-
-        int af4 ;
-        if(attributeRatio4>=0.1 && attributeRatio4<=0.3){
-            af4 = 0;
-        }else if(attributeRatio4<0.1){
-            af4 = -1;
-        }else {
-            af4 = 1;
-        }
-
-        int af5 ;
-        if(attributeRatio5>=0.1 && attributeRatio5<=0.3){
-            af5 = 0;
-        }else if(attributeRatio5<0.1){
-            af5 = -1;
-        }else {
-            af5 = 1;
-        }
-        //输出 attributeFlag
-        String attributeFlag = "("+af1+","+af2+","+af3+","+af4+","+af5+")";
-        System.out.println("目前属性占比情况： attributeFlag:"+attributeFlag);
-
+        int af1 = Integer.parseInt(attributeFlag.split(",")[0]);
+        int af2 = Integer.parseInt(attributeFlag.split(",")[1]);
+        int af3 = Integer.parseInt(attributeFlag.split(",")[2]);
+        int af4 = Integer.parseInt(attributeFlag.split(",")[3]);
+        int af5 = Integer.parseInt(attributeFlag.split(",")[4]);
 
 //=========================  2.0 解集统计   ================================
 
@@ -1869,117 +1791,13 @@ public class ADIController5 {
         //占比失衡的情况： ①多  ②少
 
         // out解的容器  (可能造成比例失衡的解集)
-        Set<String> resultMore = new HashSet<>();
-        Set<String> resultLess = new HashSet<>();
-
 
         //取出属性比例过多的集合的并集（TODO 需考虑以下情况: 两个单集合，各自多一个属性，其无交集   ok）
-        if(af1==1 || af2==1 || af3==1 || af4==1 || af5==1){
-
-            //需要判断 set 是否为空  把判断为空的逻辑 放在上面判断
-            resultMore.clear();
-
-            //表明属性1比例过多，用set1集合接收   bachItemList为方法参数，即一套试卷
-            if(af1==1){
-                for (String aBachItemList : bachItemList) {
-                    if ("1".equals(aBachItemList.split(":")[2].split(",")[0].substring(1, 2))) {
-                        resultMore.add(aBachItemList);
-                    }
-                }
-
-            }
-
-            if(af2==1){
-                for (String aBachItemList : bachItemList) {
-                    if ("1".equals(aBachItemList.split(":")[2].split(",")[1])) {
-                        resultMore.add(aBachItemList);
-                    }
-                }
-            }
-
-            if(af3==1){
-                for (String aBachItemList : bachItemList) {
-                    if ("1".equals(aBachItemList.split(":")[2].split(",")[2])) {
-                        resultMore.add(aBachItemList);
-                    }
-                }
-            }
-
-            if(af4==1){
-                for (String aBachItemList : bachItemList) {
-                    if (aBachItemList.split(":")[2].split(",")[3].equals("1")) {
-                        resultMore.add(aBachItemList);
-                    }
-                }
-            }
-
-            if(af5==1){
-                for (String aBachItemList : bachItemList) {
-                    if ("1".equals(aBachItemList.split(":")[2].split(",")[4].substring(0, 1))) {
-                        resultMore.add(aBachItemList);
-                    }
-                }
-            }
-
-            //集合取并集 后期对并集中的解进行优先级排序
-            System.out.println("属性比例过多的并集：" + resultMore);
-
-
-        }
-
+        Set<String> resultMore = getResultMore(bachItemList,af1,af2,af3,af4,af5);
 
         //取出属性比例不足的集合的并集
-        if(af1==-1 || af2==-1 || af3==-1 || af4==-1 || af5==-1){
+        Set<String> resultLess = getResultLess(bachItemList,af1,af2,af3,af4,af5);
 
-            //需要判断 set 是否为空
-            resultLess.clear();
-
-            //表明属性1比例过少，用set集合接收
-            if(af1==-1){
-                for (String aBachItemList : bachItemList) {
-                    if ("0".equals(aBachItemList.split(":")[2].split(",")[0].substring(1, 2))) {
-                        resultLess.add(aBachItemList);
-                    }
-                }
-            }
-
-            if(af2==-1){
-                for (String aBachItemList : bachItemList) {
-                    if ("0".equals(aBachItemList.split(":")[2].split(",")[1])) {
-                        resultLess.add(aBachItemList);
-                    }
-                }
-            }
-
-            if(af3==-1){
-                for (String aBachItemList : bachItemList) {
-                    if ("0".equals(aBachItemList.split(":")[2].split(",")[2])) {
-                        resultLess.add(aBachItemList);
-                    }
-                }
-            }
-
-            if(af4==-1){
-                for (String aBachItemList : bachItemList) {
-                    if ("0".equals(aBachItemList.split(":")[2].split(",")[3])) {
-                        resultLess.add(aBachItemList);
-                    }
-                }
-            }
-
-            if(af5==-1){
-                //使用 foreach 替换掉 for   (ArrayList时，fori 性能高于 foreach  Linkedlist 时，fori低于foreach)
-                for (String aBachItemList : bachItemList) {
-                    if ("0".equals(aBachItemList.split(":")[2].split(",")[4].substring(0, 1))) {
-                        resultLess.add(aBachItemList);
-                    }
-                }
-            }
-
-            //集合取并集
-            System.out.println("属性比例不足的并集：" + resultLess);
-
-        }
 
 
 //=========================  3.0 执行修补操作   ================================
@@ -3648,6 +3466,215 @@ public class ADIController5 {
 
     }
 
+
+    public String getAttributeFlag(HashSet<String> itemSet){
+
+        //属性个数
+        int attributeNum1  = 0;
+        int attributeNum2  = 0;
+        int attributeNum3  = 0;
+        int attributeNum4  = 0;
+        int attributeNum5  = 0;
+
+        //各个属性的数目
+        for (String s:itemSet) {
+            System.out.println(s);
+
+            //计算每种属性个数
+            if("1".equals(s.split(":")[2].substring(1,2))){
+                attributeNum1 += 1;
+            }
+            if("1".equals(s.split(":")[2].substring(3,4))){
+                attributeNum2 += 1;
+            }
+            if("1".equals(s.split(":")[2].substring(5,6))){
+                attributeNum3 += 1;
+            }
+            if("1".equals(s.split(":")[2].substring(7,8))){
+                attributeNum4 += 1;
+            }
+            if("1".equals(s.split(":")[2].substring(9,10))){
+                attributeNum5 += 1;
+            }
+        }
+        System.out.println("AttributeRatio1: "+attributeNum1+"\tAttributeRatio2: "+attributeNum2+"\tAttributeRatio3: "+attributeNum3+"\tAttributeRatio4: "+attributeNum4+"\tAttributeRatio5: "+attributeNum5);
+
+        //属性比例
+        double attributeRatio1 = attributeNum1/23.0;
+        double attributeRatio2 = attributeNum2/23.0;
+        double attributeRatio3 = attributeNum3/23.0;
+        double attributeRatio4 = attributeNum4/23.0;
+        double attributeRatio5 = attributeNum5/23.0;
+
+
+        int af1 ;
+        if(attributeRatio1>=0.2 && attributeRatio1<=0.4){
+            af1 = 0;
+        }else if(attributeRatio1<0.2){
+            af1 = -1;
+        }else {
+            af1 = 1;
+        }
+
+        int af2 ;
+        if(attributeRatio2>=0.2 && attributeRatio2<=0.4){
+            af2 = 0;
+        }else if(attributeRatio2<0.2){
+            af2 = -1;
+        }else {
+            af2 = 1;
+        }
+
+        int af3 ;
+        if(attributeRatio3>=0.1 && attributeRatio3<=0.3){
+            af3 = 0;
+        }else if(attributeRatio3<0.1){
+            af3 = -1;
+        }else {
+            af3 = 1;
+        }
+
+        int af4 ;
+        if(attributeRatio4>=0.1 && attributeRatio4<=0.3){
+            af4 = 0;
+        }else if(attributeRatio4<0.1){
+            af4 = -1;
+        }else {
+            af4 = 1;
+        }
+
+        int af5 ;
+        if(attributeRatio5>=0.1 && attributeRatio5<=0.3){
+            af5 = 0;
+        }else if(attributeRatio5<0.1){
+            af5 = -1;
+        }else {
+            af5 = 1;
+        }
+        //输出 attributeFlag
+        String attributeFlag = af1+","+af2+","+af3+","+af4+","+af5;
+        System.out.println("目前属性占比情况： attributeFlag:("+attributeFlag+")");
+
+        return attributeFlag;
+
+    }
+
+
+    public Set<String> getResultMore(ArrayList<String> bachItemList,int af1,int af2,int af3,int af4,int af5){
+
+            //需要判断 set 是否为空  把判断为空的逻辑 放在上面判断
+            Set<String> resultMore = new HashSet<>();
+
+
+            //表明属性1比例过多，用set1集合接收   bachItemList为方法参数，即一套试卷
+            if(af1==1){
+                for (String aBachItemList : bachItemList) {
+                    if ("1".equals(aBachItemList.split(":")[2].split(",")[0].substring(1, 2))) {
+                        resultMore.add(aBachItemList);
+                    }
+                }
+
+            }
+
+            if(af2==1){
+                for (String aBachItemList : bachItemList) {
+                    if ("1".equals(aBachItemList.split(":")[2].split(",")[1])) {
+                        resultMore.add(aBachItemList);
+                    }
+                }
+            }
+
+            if(af3==1){
+                for (String aBachItemList : bachItemList) {
+                    if ("1".equals(aBachItemList.split(":")[2].split(",")[2])) {
+                        resultMore.add(aBachItemList);
+                    }
+                }
+            }
+
+            if(af4==1){
+                for (String aBachItemList : bachItemList) {
+                    if (aBachItemList.split(":")[2].split(",")[3].equals("1")) {
+                        resultMore.add(aBachItemList);
+                    }
+                }
+            }
+
+            if(af5==1){
+                for (String aBachItemList : bachItemList) {
+                    if ("1".equals(aBachItemList.split(":")[2].split(",")[4].substring(0, 1))) {
+                        resultMore.add(aBachItemList);
+                    }
+                }
+            }
+
+            //集合取并集 后期对并集中的解进行优先级排序
+            System.out.println("属性比例过多的并集：" + resultMore);
+
+
+        return resultMore;
+
+    }
+
+    public Set<String> getResultLess(ArrayList<String> bachItemList,int af1,int af2,int af3,int af4,int af5){
+
+        Set<String> resultLess = new HashSet<>();
+
+
+            //需要判断 set 是否为空
+            resultLess.clear();
+
+            //表明属性1比例过少，用set集合接收
+            if(af1==-1){
+                for (String aBachItemList : bachItemList) {
+                    if ("0".equals(aBachItemList.split(":")[2].split(",")[0].substring(1, 2))) {
+                        resultLess.add(aBachItemList);
+                    }
+                }
+            }
+
+            if(af2==-1){
+                for (String aBachItemList : bachItemList) {
+                    if ("0".equals(aBachItemList.split(":")[2].split(",")[1])) {
+                        resultLess.add(aBachItemList);
+                    }
+                }
+            }
+
+            if(af3==-1){
+                for (String aBachItemList : bachItemList) {
+                    if ("0".equals(aBachItemList.split(":")[2].split(",")[2])) {
+                        resultLess.add(aBachItemList);
+                    }
+                }
+            }
+
+            if(af4==-1){
+                for (String aBachItemList : bachItemList) {
+                    if ("0".equals(aBachItemList.split(":")[2].split(",")[3])) {
+                        resultLess.add(aBachItemList);
+                    }
+                }
+            }
+
+            if(af5==-1){
+                //使用 foreach 替换掉 for   (ArrayList时，fori 性能高于 foreach  Linkedlist 时，fori低于foreach)
+                for (String aBachItemList : bachItemList) {
+                    if ("0".equals(aBachItemList.split(":")[2].split(",")[4].substring(0, 1))) {
+                        resultLess.add(aBachItemList);
+                    }
+                }
+            }
+
+            //集合取并集
+            System.out.println("属性比例不足的并集：" + resultLess);
+
+
+
+
+        return resultLess;
+
+    }
 
 }
 
