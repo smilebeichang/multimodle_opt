@@ -279,10 +279,10 @@ public class Test {
 
     @org.junit.Test
     public void test1() {
-        Set<String> result = new HashSet<>();
+
         Set<String> set1 = new HashSet<String>() {
             {
-                add("王者荣耀");
+                add("王者荣耀2");
                 add("英雄联盟");
                 add("穿越火线");
                 add("地下城与勇士");
@@ -297,10 +297,13 @@ public class Test {
             }
         };
 
-        result.clear();
-        result.addAll(set1);
-        result.retainAll(set2);
-        System.out.println("交集：" + result);
+        set1.retainAll(set2);
+        if(set1.size()>0){
+            System.out.println("存在交集：" + set1);
+        }else{
+            System.out.println("不存在交集：" + set1);
+        }
+
 
     }
 }
