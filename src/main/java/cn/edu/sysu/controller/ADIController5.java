@@ -1713,7 +1713,7 @@ public class ADIController5 {
      *  题型比例 选择[0.2,0.4]  填空[0.2,0.4]  简答[0.1,0.3] 应用[0.1,0.3]
      *  属性比例 第1属性[0.2,0.4]   第2属性[0.2,0.4]   第3属性[0.1,0.3]  第4属性[0.1,0.3]  第5属性[0.1,0.3]
      *
-     *  FIXME  返回的bachItemList,应该充分利用到
+     *
      */
     private void correctAttribute(int w) throws SQLException {
 
@@ -1738,22 +1738,22 @@ public class ADIController5 {
 
         //根据attributeFlag 获得out解的容器(可能造成比例失衡的解集) 占比失衡的情况： ①多  ②少
 
-        //取出属性比例过多的集合的并集（TODO 需考虑以下情况: 两个单集合，各自多一个属性，其无交集   ok）
-        Set<String> resultMore = getResultMore(bachItemList,af1,af2,af3,af4,af5);
+        //取出属性比例过多的集合的并集
+        Set<String> outMore = getoutMore(bachItemList,af1,af2,af3,af4,af5);
 
         //取出属性比例不足的集合的并集
-        Set<String> resultLess = getResultLess(bachItemList,af1,af2,af3,af4,af5);
+        Set<String> outLess = getoutLess(bachItemList,af1,af2,af3,af4,af5);
 
 
 
-//=========================  3.0 执行修补操作   ================================
+//=========================  3.0 修补操作   ================================
 
         /*
-         *  resultMore resultLess 的关系判断
-         *      1.resultLess有  resultMore有值  则取先交集.然后按权重取
+         *  outMore outLess 的关系判断
+         *      1.outLess有  outMore  则取先交集.然后按权重取
          *          ①FIXME  retainAll 是否存在空集合的情况 可以减少迭代的次数  ②可以直接按无交集进行处理
-         *      2.resultLess无  resultMore有值 则取 resultMore
-         *      3.resultLess有  resultMore无  则取 resultLess
+         *      2.outLess无  outMore 则取 outMore
+         *      3.outLess有  outMore  则取 outLess
          *
          * 目标：将in解替换out解
          * 方法：去题库中搜索，取出新解集后，循环遍历，然后重新计算是否符合要求，这样将会导致计算很冗余
@@ -1769,24 +1769,24 @@ public class ADIController5 {
          *多&少
          */
 
-        //*********  3.1 resultLess有  resultMore有值   *********
-        if(resultMore.size()>0 && resultLess.size()>0){
-            bachItemList = correctAttributeMoreAndLess(resultMore,resultLess,jdbcUtils,bachItemList,af1,af2,af3,af4,af5);
+        //*********  3.1 outLess有  outMore有值   *********
+        if(outMore.size()>0 && outLess.size()>0){
+            bachItemList = correctAttributeMoreAndLess(outMore,outLess,jdbcUtils,bachItemList,af1,af2,af3,af4,af5);
         }
 
 
-        //********  3.2 resultLess有  resultMore无值    *******
-        if(resultMore.size()==0 && resultLess.size()>0){
+        //********  3.2 outLess有  outMore无值    *******
+        if(outMore.size()==0 && outLess.size()>0){
 
-            bachItemList = correctAttributeLess(resultLess,jdbcUtils,bachItemList,af1,af2,af3,af4,af5);
+            bachItemList = correctAttributeLess(outLess,jdbcUtils,bachItemList,af1,af2,af3,af4,af5);
 
         }
 
 
-        //********  3.3 resultLess无  resultMore有值   **********
-        if(resultMore.size()>0 && resultLess.size()==0){
+        //********  3.3 outLess无  outMore有值   **********
+        if(outMore.size()>0 && outLess.size()==0){
 
-            bachItemList = correctAttributeMore(resultMore,jdbcUtils,bachItemList,af1,af2,af3,af4,af5);
+            bachItemList = correctAttributeMore(outMore,jdbcUtils,bachItemList,af1,af2,af3,af4,af5);
 
         }
 
@@ -1895,26 +1895,26 @@ public class ADIController5 {
 
 //=========================  2.0 解集统计   ================================
 
-        //根据flagFlag 得出resultMore/resultLess解集
+        //根据flagFlag 得出outMore/outLess解集
         ArrayList<String> batchItemList = new ArrayList<>();
         Collections.addAll(batchItemList,paperGenetic[w]);
 
         // out解的容器  (可能造成题型比例失衡的解集)
-        Set<String> resultMore = new HashSet<>();
-        Set<String> resultLess = new HashSet<>();
+        Set<String> outMore = new HashSet<>();
+        Set<String> outLess = new HashSet<>();
 
 
         //取出题型比例过多的集合的并集
         if (tf1 == 1 || tf2 == 1 || tf3 == 1 || tf4 == 1) {
 
             //需要判断 set 是否为空
-            resultMore.clear();
+            outMore.clear();
 
-            //表明题型1比例过多，用resultMore集合接收
+            //表明题型1比例过多，用outMore集合接收
             if (tf1 == 1) {
                 for (String aBachItemList : batchItemList) {
                     if (aBachItemList.split(":")[1].equals(TYPE.CHOSE+"")) {
-                        resultMore.add(aBachItemList);
+                        outMore.add(aBachItemList);
                     }
                 }
             }
@@ -1922,7 +1922,7 @@ public class ADIController5 {
             if (tf2 == 1) {
                 for (String aBachItemList : batchItemList) {
                     if (aBachItemList.split(":")[1].equals(TYPE.FILL+"")) {
-                        resultMore.add(aBachItemList);
+                        outMore.add(aBachItemList);
                     }
                 }
             }
@@ -1930,7 +1930,7 @@ public class ADIController5 {
             if (tf3 == 1) {
                 for (String aBachItemList : batchItemList) {
                     if (aBachItemList.split(":")[1].equals(TYPE.SHORT+"")) {
-                        resultMore.add(aBachItemList);
+                        outMore.add(aBachItemList);
                     }
                 }
             }
@@ -1938,13 +1938,13 @@ public class ADIController5 {
             if (tf4 == 1) {
                 for (String aBachItemList : batchItemList) {
                     if (aBachItemList.split(":")[1].equals(TYPE.COMPREHENSIVE+"")) {
-                        resultMore.add(aBachItemList);
+                        outMore.add(aBachItemList);
                     }
                 }
             }
 
             //集合取并集
-            System.out.println("题型比例过多：" + resultMore);
+            System.out.println("题型比例过多：" + outMore);
 
         }
 
@@ -1954,13 +1954,13 @@ public class ADIController5 {
         if(tf1==-1 || tf2==-1 || tf3==-1 || tf4==-1 ){
 
             //清空set
-            resultLess.clear();
+            outLess.clear();
 
             //表明属性1比例过少，用set集合接收
             if(tf1==-1){
                 for (String aBachItemList : batchItemList) {
                     if (!aBachItemList.split(":")[1].equals(TYPE.CHOSE+"")) {
-                        resultLess.add(aBachItemList);
+                        outLess.add(aBachItemList);
                     }
                 }
             }
@@ -1968,7 +1968,7 @@ public class ADIController5 {
             if(tf2==-1){
                 for (String aBachItemList : batchItemList) {
                     if (!aBachItemList.split(":")[1].equals(TYPE.FILL+"")) {
-                        resultLess.add(aBachItemList);
+                        outLess.add(aBachItemList);
                     }
                 }
             }
@@ -1976,7 +1976,7 @@ public class ADIController5 {
             if(tf3==-1){
                 for (String aBachItemList : batchItemList) {
                     if (!aBachItemList.split(":")[1].equals(TYPE.SHORT+"")) {
-                        resultLess.add(aBachItemList);
+                        outLess.add(aBachItemList);
                     }
                 }
             }
@@ -1984,13 +1984,13 @@ public class ADIController5 {
             if(tf4 ==-1){
                 for (String aBachItemList : batchItemList) {
                     if (!aBachItemList.split(":")[1].equals(TYPE.COMPREHENSIVE+"")) {
-                        resultLess.add(aBachItemList);
+                        outLess.add(aBachItemList);
                     }
                 }
             }
 
             //集合取并集
-            System.out.println("题型比例不足：" + resultLess);
+            System.out.println("题型比例不足：" + outLess);
 
         }
 
@@ -1998,10 +1998,10 @@ public class ADIController5 {
  //=========================  3.0 执行修补操作   ================================
 
         /*
-         *  resultMore resultLess 的关系判断
-         *      1.resultLess有  resultMore有值  ①不可能存在交集 ②做两次选取
-         *      2.resultLess无  resultMore有值  则取 resultMore
-         *      3.resultMore无  resultLess有值  则取 resultLess
+         *  outMore outLess 的关系判断
+         *      1.outLess有  outMore有值  ①不可能存在交集 ②做两次选取
+         *      2.outLess无  outMore有值  则取 outMore
+         *      3.outMore无  outLess有值  则取 outLess
          *
          * 目标：将in解替换out解
          * 方法：去题库中搜索，取出新解集后，循环遍历，然后重新计算是否符合要求，这样将会导致计算很冗余
@@ -2015,17 +2015,17 @@ public class ADIController5 {
          *
          */
 
-//*************************  3.1 resultLess有  resultMore有值   *************************
+//*************************  3.1 outLess有  outMore有值   *************************
 
-        //  resultLess有  resultMore 有 分别进行两次迭代    迭代过程中需实时更新比例信息
-        //  resultMore 校验其他类型不要多  resultLess 正常校验
-        if(resultMore.size()>0 && resultLess.size()>0){
+        //  outLess有  outMore 有 分别进行两次迭代    迭代过程中需实时更新比例信息
+        //  outMore 校验其他类型不要多  outLess 正常校验
+        if(outMore.size()>0 && outLess.size()>0){
             System.out.println("本套试卷 题型比例既有多 又有少的情况。");
-            System.out.println(resultMore);
-            System.out.println(resultLess);
+            System.out.println(outMore);
+            System.out.println(outLess);
 
 
-            //*********************  3.1.1 resultMore 修补 **************************
+            //*********************  3.1.1 outMore 修补 **************************
 
             //  SQL 均用or应该没影响  影响范围:inList  and条件使得解集变多，符合题型的要求（一对一）  这个应该用在替补解的过程
             //  CHOSE FILL SHORT COMPREHENSIVE
@@ -2054,9 +2054,9 @@ public class ADIController5 {
             // 原始解集 - out解 + in解 = 新解(拿新解去再次校验)
             // 循环的逻辑：外层out解，内层in解，不断的调用题型比例校验方法，如满足要求则退出，不满足则继续遍历
 
-            System.out.println("开始ResultMore修补");
+            System.out.println("开始outMore修补");
             System.out.println("校验前的集合:"+batchItemList.toString());
-            List<String> outListMore = new ArrayList<>(resultMore);
+            List<String> outListMore = new ArrayList<>(outMore);
 
             Boolean b = false;
             for (int i = 0; i < outListMore.size(); i++) {
@@ -2123,7 +2123,7 @@ public class ADIController5 {
 
 
 
-            //*********************  3.1.2 resultLess 修补 **************************
+            //*********************  3.1.2 outLess 修补 **************************
 
             //  SQL 均用or没影响  影响范围:inList  and条件使得解集变多，符合题型的要求（一对一）  这个应该用在替补解的过程
             //  CHOSE FILL SHORT COMPREHENSIVE
@@ -2152,9 +2152,9 @@ public class ADIController5 {
             // 原始解集 - out解 + in解 = 新解(拿新解去再次校验)
             // 循环的逻辑：外层out解，内层in解，不断的调用题型比例校验方法，如满足要求则退出，不满足则继续遍历
 
-            System.out.println("开始ResultMore修补");
+            System.out.println("开始outMore修补");
             System.out.println("校验前的集合:"+batchItemList.toString());
-            List<String> outListLess = new ArrayList<>(resultLess);
+            List<String> outListLess = new ArrayList<>(outLess);
 
             Boolean bl = false;
             for (int i = 0; i < outListLess.size(); i++) {
@@ -2229,11 +2229,11 @@ public class ADIController5 {
 
 
 
-//*************************  3.2 resultLess有  resultMore无值   *************************
+//*************************  3.2 outLess有  outMore无值   *************************
 
-        if(resultMore.size()==0 && resultLess.size()>0){
+        if(outMore.size()==0 && outLess.size()>0){
             System.out.println("本套试卷 题型比例不足的情况。");
-            System.out.println(resultLess);
+            System.out.println(outLess);
 
             //  SQL 均用or没影响  影响范围:inList  and条件使得解集变多，符合题型的要求（一对一）  这个应该用在替补解的过程
             //  CHOSE FILL SHORT COMPREHENSIVE
@@ -2271,7 +2271,7 @@ public class ADIController5 {
             // 循环的逻辑：外层out解，内层in解，不断的调用题型比例校验方法，如满足要求则退出，不满足则继续遍历
 
             System.out.println("校验前的集合:"+batchItemList.toString());
-            List<String> outList = new ArrayList<>(resultLess);
+            List<String> outList = new ArrayList<>(outLess);
 
             Boolean b = false;
             for (int i = 0; i < outList.size(); i++) {
@@ -2340,12 +2340,12 @@ public class ADIController5 {
         }
 
 
-//*************************  3.1 resultLess无  resultMore有值   *************************
+//*************************  3.1 outLess无  outMore有值   *************************
 
 
-        if(resultMore.size()>0 && resultLess.size()==0){
+        if(outMore.size()>0 && outLess.size()==0){
             System.out.println("本套试卷 题型比例过多的情况。");
-            System.out.println(resultMore);
+            System.out.println(outMore);
 
             //  SQL 均用or应该没影响  影响范围:inList  and条件使得解集变多，符合题型的要求（一对一）  这个应该用在替补解的过程
             //  CHOSE FILL SHORT COMPREHENSIVE
@@ -2383,7 +2383,7 @@ public class ADIController5 {
             // 循环的逻辑：外层out解，内层in解，不断的调用题型比例校验方法，如满足要求则退出，不满足则继续遍历
 
             System.out.println("校验前的集合:"+batchItemList.toString());
-            List<String> outList = new ArrayList<>(resultMore);
+            List<String> outList = new ArrayList<>(outMore);
 
             Boolean b = false;
             for (int i = 0; i < outList.size(); i++) {
@@ -2772,11 +2772,11 @@ public class ADIController5 {
      *  适用场景: att less
      *
      */
-    public ArrayList<String> correctAttributeLess(Set<String> resultLess,JDBCUtils4 jdbcUtils,ArrayList<String> bachItemList,int af1,int af2,int af3,int af4,int af5) throws SQLException {
+    public ArrayList<String> correctAttributeLess(Set<String> outLess,JDBCUtils4 jdbcUtils,ArrayList<String> bachItemList,int af1,int af2,int af3,int af4,int af5) throws SQLException {
 
 
             System.out.println("本套试卷 属性比例不足的情况。");
-            System.out.println(resultLess);
+            System.out.println(outLess);
 
             //SQL 均用and没影响  影响范围:inList  and条件使得解集变少，但更高效
             StringBuilder sb = new StringBuilder();
@@ -2817,7 +2817,7 @@ public class ADIController5 {
             // ori解集  out解集  in解集 的关系
             // 原始解集 - out解 + in解 = 新解(拿新解去再次校验)
             System.out.println("校验前的集合:"+bachItemList.toString());
-            List<String> outList = new ArrayList<>(resultLess);
+            List<String> outList = new ArrayList<>(outLess);
 
 
             Boolean b = false;
@@ -2948,12 +2948,12 @@ public class ADIController5 {
      *  适用场景: att less
      *
      */
-    public ArrayList<String> correctAttributeMore(Set<String> resultMore,JDBCUtils4 jdbcUtils,ArrayList<String> bachItemList,int af1,int af2,int af3,int af4,int af5) throws SQLException {
+    public ArrayList<String> correctAttributeMore(Set<String> outMore,JDBCUtils4 jdbcUtils,ArrayList<String> bachItemList,int af1,int af2,int af3,int af4,int af5) throws SQLException {
 
 
 
             System.out.println("本套试卷 属性比例过高的情况。");
-            System.out.println(resultMore);
+            System.out.println(outMore);
 
             //SQL 均用交集没影响  需进一步校验
             StringBuilder sb = new StringBuilder();
@@ -2993,7 +2993,7 @@ public class ADIController5 {
 
             // ori解集  out解集  in解集 的关系
             // 原始解集 - out解 + in解 = 新解(拿新解去再次校验)
-            List<String> outList = new ArrayList<>(resultMore);
+            List<String> outList = new ArrayList<>(outMore);
             System.out.println("校验前的集合:"+bachItemList.toString());
 
             Boolean b = false;
@@ -3115,14 +3115,14 @@ public class ADIController5 {
      *  适用场景: att   more and less
      *
      */
-    public ArrayList<String> correctAttributeMoreAndLess(Set<String> resultMore,Set<String> resultLess,JDBCUtils4 jdbcUtils,ArrayList<String> bachItemList,int af1,int af2,int af3,int af4,int af5) throws SQLException {
+    public ArrayList<String> correctAttributeMoreAndLess(Set<String> outMore,Set<String> outLess,JDBCUtils4 jdbcUtils,ArrayList<String> bachItemList,int af1,int af2,int af3,int af4,int af5) throws SQLException {
 
 
             //取交集
-            resultMore.retainAll(resultLess);
-            if(resultMore.size()>0){
+            outMore.retainAll(outLess);
+            if(outMore.size()>0){
                 System.out.println("本套试卷 既有属性比例过多，又有属性比例不足的情况   more 和 less 有交集");
-                System.out.println("交集："+resultMore);
+                System.out.println("交集："+outMore);
 
                 StringBuilder sb = new StringBuilder();
                 if(af1>0){
@@ -3161,7 +3161,7 @@ public class ADIController5 {
 
                 // ori解集  out解集  in解集 的关系
                 // 原始解集 - out解 + in解 = 新解(拿新解去再次核对)
-                List<String> outList = new ArrayList<>(resultMore);
+                List<String> outList = new ArrayList<>(outMore);
                 System.out.println("校验前的集合:"+bachItemList.toString());
                 Boolean b = false;
 
@@ -3337,7 +3337,7 @@ public class ADIController5 {
 
                 // 进行两次修补，第一次more 保证其他att不多，或者互补替换即可  第二次less修补
                 // 修补more
-                List<String> outList = new ArrayList<>(resultMore);
+                List<String> outList = new ArrayList<>(outMore);
 
                 Boolean b = false;
                 if(!b) {
@@ -3420,7 +3420,7 @@ public class ADIController5 {
 
                 // 修补less  直接套用less的全部方法即可
 
-                bachItemList = correctAttributeLess(resultLess,jdbcUtils,bachItemList,af1,af2,af3,af4,af5);
+                bachItemList = correctAttributeLess(outLess,jdbcUtils,bachItemList,af1,af2,af3,af4,af5);
 
 
             }
@@ -3525,17 +3525,17 @@ public class ADIController5 {
     }
 
 
-    public Set<String> getResultMore(ArrayList<String> bachItemList,int af1,int af2,int af3,int af4,int af5){
+    public Set<String> getoutMore(ArrayList<String> bachItemList,int af1,int af2,int af3,int af4,int af5){
 
             //需要判断 set 是否为空  把判断为空的逻辑 放在上面判断
-            Set<String> resultMore = new HashSet<>();
+            Set<String> outMore = new HashSet<>();
 
 
             //表明属性1比例过多，用set1集合接收   bachItemList为方法参数，即一套试卷
             if(af1==1){
                 for (String aBachItemList : bachItemList) {
                     if ("1".equals(aBachItemList.split(":")[2].split(",")[0].substring(1, 2))) {
-                        resultMore.add(aBachItemList);
+                        outMore.add(aBachItemList);
                     }
                 }
 
@@ -3544,7 +3544,7 @@ public class ADIController5 {
             if(af2==1){
                 for (String aBachItemList : bachItemList) {
                     if ("1".equals(aBachItemList.split(":")[2].split(",")[1])) {
-                        resultMore.add(aBachItemList);
+                        outMore.add(aBachItemList);
                     }
                 }
             }
@@ -3552,7 +3552,7 @@ public class ADIController5 {
             if(af3==1){
                 for (String aBachItemList : bachItemList) {
                     if ("1".equals(aBachItemList.split(":")[2].split(",")[2])) {
-                        resultMore.add(aBachItemList);
+                        outMore.add(aBachItemList);
                     }
                 }
             }
@@ -3560,7 +3560,7 @@ public class ADIController5 {
             if(af4==1){
                 for (String aBachItemList : bachItemList) {
                     if (aBachItemList.split(":")[2].split(",")[3].equals("1")) {
-                        resultMore.add(aBachItemList);
+                        outMore.add(aBachItemList);
                     }
                 }
             }
@@ -3568,32 +3568,32 @@ public class ADIController5 {
             if(af5==1){
                 for (String aBachItemList : bachItemList) {
                     if ("1".equals(aBachItemList.split(":")[2].split(",")[4].substring(0, 1))) {
-                        resultMore.add(aBachItemList);
+                        outMore.add(aBachItemList);
                     }
                 }
             }
 
             //集合取并集 后期对并集中的解进行优先级排序
-            System.out.println("属性比例过多的并集：" + resultMore);
+            System.out.println("属性比例过多的并集：" + outMore);
 
 
-        return resultMore;
+        return outMore;
 
     }
 
-    public Set<String> getResultLess(ArrayList<String> bachItemList,int af1,int af2,int af3,int af4,int af5){
+    public Set<String> getoutLess(ArrayList<String> bachItemList,int af1,int af2,int af3,int af4,int af5){
 
-        Set<String> resultLess = new HashSet<>();
+        Set<String> outLess = new HashSet<>();
 
 
             //需要判断 set 是否为空
-            resultLess.clear();
+            outLess.clear();
 
             //表明属性1比例过少，用set集合接收
             if(af1==-1){
                 for (String aBachItemList : bachItemList) {
                     if ("0".equals(aBachItemList.split(":")[2].split(",")[0].substring(1, 2))) {
-                        resultLess.add(aBachItemList);
+                        outLess.add(aBachItemList);
                     }
                 }
             }
@@ -3601,7 +3601,7 @@ public class ADIController5 {
             if(af2==-1){
                 for (String aBachItemList : bachItemList) {
                     if ("0".equals(aBachItemList.split(":")[2].split(",")[1])) {
-                        resultLess.add(aBachItemList);
+                        outLess.add(aBachItemList);
                     }
                 }
             }
@@ -3609,7 +3609,7 @@ public class ADIController5 {
             if(af3==-1){
                 for (String aBachItemList : bachItemList) {
                     if ("0".equals(aBachItemList.split(":")[2].split(",")[2])) {
-                        resultLess.add(aBachItemList);
+                        outLess.add(aBachItemList);
                     }
                 }
             }
@@ -3617,7 +3617,7 @@ public class ADIController5 {
             if(af4==-1){
                 for (String aBachItemList : bachItemList) {
                     if ("0".equals(aBachItemList.split(":")[2].split(",")[3])) {
-                        resultLess.add(aBachItemList);
+                        outLess.add(aBachItemList);
                     }
                 }
             }
@@ -3626,18 +3626,18 @@ public class ADIController5 {
                 //使用 foreach 替换掉 for   (ArrayList时，fori 性能高于 foreach  Linkedlist 时，fori低于foreach)
                 for (String aBachItemList : bachItemList) {
                     if ("0".equals(aBachItemList.split(":")[2].split(",")[4].substring(0, 1))) {
-                        resultLess.add(aBachItemList);
+                        outLess.add(aBachItemList);
                     }
                 }
             }
 
             //集合取并集
-            System.out.println("属性比例不足的并集：" + resultLess);
+            System.out.println("属性比例不足的并集：" + outLess);
 
 
 
 
-        return resultLess;
+        return outLess;
 
     }
 
