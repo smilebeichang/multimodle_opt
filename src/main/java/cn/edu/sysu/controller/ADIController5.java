@@ -23,13 +23,13 @@ public class ADIController5 {
     /*  容器 全局最优 局部最优  */
 
     private static double GlobalOptimal = 0;
-    private static double[] LocalOptimal = new double[10];
+    private static double[] LocalOptimal = new double[100];
     private static ArrayList<String> bankList = new ArrayList();
 
 
-    /* 10套试卷 6道题  */
+    /* 100套试卷 6道题  */
 
-    private static String[][] paperGenetic =new String[10][10];
+    private static String[][] paperGenetic =new String[100][10];
 
 
     private  JDBCUtils4 jdbcUtils = new JDBCUtils4();
@@ -50,7 +50,7 @@ public class ADIController5 {
         papers.setPc(0.5);
         papers.setPm(0.5);
 
-        //初始化试卷   从题库中选取题目构成试卷  长度，题型，属性比例
+        //初始化试卷(长度，题型，属性比例)
         //原始
         //initItemBank();
         //轮盘赌
@@ -60,13 +60,15 @@ public class ADIController5 {
 
 
         // i 迭代次数
-        // 迭代3次  出现只有三套试卷可选
-        // 迭代6次  大概率十套试卷一模一样
         for (int i = 0; i < 2000; i++) {
-            //selection();
+            //选择
+            selection();
+            //交叉
             crossCover(papers);
-            //mutate(papers);
+            //变异
+            mutate(papers);
             // FIXME  待实现 小生境环境的搭建
+            //精英策略
             //elitistStrategy();
         }
         System.out.println();
@@ -171,7 +173,7 @@ public class ADIController5 {
         System.out.println("====== 开始选题,构成试卷  轮盘赌构造  ======");
 
         // 试卷大小  份数很有争议，少：具有现实含义   多：提供遗传变异的基本单位
-        int  paperNum = 10 ;
+        int  paperNum = paperGenetic.length;
         // 试题大小
         int questionsNum = 10 ;
 
@@ -510,7 +512,8 @@ public class ADIController5 {
                     temp[j] = paperGenetic[i+1][j];
                 }
                 // 放在内存执行,每执行一次pc 则校验一次  只改变了tem1   其实i和temp 只需要一个即可，获取需要检验的试卷个体
-                correct(i,temp);
+                paperGenetic[i] = temp;
+                correct(i);
             }
         }
     }
@@ -532,43 +535,45 @@ public class ADIController5 {
      *
      *
      */
-    private void correct(int i, String[] temp1) throws SQLException {
+    private void correct(int i) throws SQLException {
 
-        System.out.println("第 "+i+" 题,开始交叉后校验 ..... ");
+        System.out.println("第 "+i+" 题,开始交叉/变异后校验 ..... ");
 
         // 长度校验
-        correctLength(i, temp1);
+        correctLength(i);
 
         // 题型比例校验
-        correctType(i, temp1);
+        correctType(i);
 
         // 属性比例校验
-        correctAttribute(i, temp1);
+        correctAttribute(i);
 
 
     }
 
 
     /**
-     * 变异  不计算适应度值
-     *      长度，属性类型，属性比例
+     * 变异   (长度，属性类型，属性比例)
+     *      目的：为GA提供多样性
+     *
      */
     public  void mutate(Papers papers) throws SQLException {
 
         System.out.println("================== mutate ==================");
-        //JDBCUtils4 jdbcUtils = new JDBCUtils4();
+
         String key  ="";
 
+        // 以试卷为单位、交换试卷的部分试题
         for (int i = 0; i < paperGenetic.length; i++) {
             if(Math.random() < papers.getPm()){
                 Random random = new Random();
-                //变异为什么要 length-1
+                //length-1
                 int mutatePoint = random.nextInt((paperGenetic[1].length)-1);
                 //将Array 转 hashSet
                 Set<String> set = new HashSet<>(Arrays.asList( paperGenetic[i]));
                 System.out.println(i+" 原试卷: "+set);
 
-                // 将要变异的元素   前提是试卷有序排列
+                //将要变异的元素   前提是试卷有序排列
                 String s = paperGenetic[i][mutatePoint];
                 System.out.println("  remove element: "+ s);
                 set.remove(s);
@@ -578,61 +583,25 @@ public class ADIController5 {
                 //单套试卷临时存储容器
                 String[] temp1 = new String[paperGenetic[i].length];
 
-                //生成一个合适的且不存在set中的key
-                //属性类型：1个属性的1题[1,50]  2个属性的2题[51,150]  3个属性的2题[151,250] 4个属性的1题[251,300]
-                //因为默认字典序的缘故 Array.sort() 故此处变异需根据id来进行分类讨论
-                //if (mutatePoint==0){
-                if (removeId<=50){
-                    while (set.size() != paperGenetic[i].length ){
-                        key = random.nextInt(49)+1+"";
-                        if (!key.equals(removeId)){
-                            System.out.println("添加元素："+key);
-                            ArrayList<String> list = jdbcUtils.selectBachItem(key);
-                            set.add(list.get(0)+"");
-                        }
-                    }
-                //}else if(mutatePoint<3){
-                }else if(removeId<=150){
-                    while (set.size() != paperGenetic[i].length ){
-                        key = new Random().nextInt(99) + 51+"";
-                        if (!key.equals(removeId)){
-                            System.out.println("添加元素："+key);
-                            ArrayList<String> list = jdbcUtils.selectBachItem(key);
-                            set.add(list.get(0)+"");
-                        }
-                    }
-                //}else if(mutatePoint<5){
-                }else if(removeId<=250){
-                    while (set.size() != paperGenetic[i].length ){
-                        key = new Random().nextInt(99) + 151+"";
-                        if (!key.equals(removeId)){
-                            System.out.println("添加元素："+key);
-                            ArrayList<String> list = jdbcUtils.selectBachItem(key);
-                            set.add(list.get(0)+"");
-                        }
-                    }
-                //}else if(mutatePoint==5){
-                }else if(mutatePoint<=301){
-                    while (set.size() != paperGenetic[i].length ){
-                        key = new Random().nextInt(49) + 251+"";
-                        if (!key.equals(removeId)){
-                            System.out.println("添加元素："+key);
-                            ArrayList<String> list = jdbcUtils.selectBachItem(key);
-                            set.add(list.get(0)+"");
-                        }
+                //生成一个不存在set中的key
+                while (set.size() != paperGenetic[i].length ){
+                    key = random.nextInt(310)+1+"";
+                    if (!(key+"").equals(removeId)){
+                        ArrayList<String> list = jdbcUtils.selectBachItem(key);
+                        set.add(list.get(0)+"");
                     }
                 }
+                System.out.println("  add element: "+ key);
                 set.toArray(temp1);
-                //原排序方式  21 68 102 163 239 294
-                //默认字典序  102 163 239 294 34 68   是否会有影响，对交叉和变异均有影响，故需进行排序修补
-                //Arrays.sort(temp1);
-                //排序修补 sortPatch
-                temp1 =  sortPatch(temp1);
 
+                //排序修补
+                paperGenetic[i] =  sortPatch(temp1);
 
-                paperGenetic[i]=temp1;
+                //执行变异后的修补操作
+                correct(i);
+
             }
-            System.out.println("  add element: "+ key);
+
             System.out.println("  最终试卷： "+Arrays.toString(paperGenetic[i]));
         }
 
@@ -640,9 +609,8 @@ public class ADIController5 {
 
     /**
      *
-     * 排序修补
-     *      1.获取id,排序，map映射
-     *      2.获取id,重新据库查询一遍  返回的Array[]
+     * 排序
+     *      1.获取id,重新据库查询一遍  返回的Array[]
      */
     private String[] sortPatch(String[] temp1) {
         //题型数量
@@ -654,12 +622,8 @@ public class ADIController5 {
             sortArray[i] = Integer.parseInt(temp1[i].split(":")[0]);
         }
         Arrays.sort(sortArray);
-        // 以下for循环打印id 可以省略
-        for (int i = 0; i < sortArray.length; i++) {
-            System.out.print(sortArray[i]+" ");
-        }
 
-        //根据id的位置，映射，重新排序 tmp1
+        //根据id的位置，映射，重新排序 tmp2
         String[] temp2 = new String[typeNum];
         for (int i = 0; i < sortArray.length; i++) {
             int index = sortArray[i];
@@ -669,11 +633,7 @@ public class ADIController5 {
                 }
             }
         }
-        System.out.println("试题id：");
-        for (int i = 0; i < temp2.length; i++) {
-            System.out.print(temp2[i]+" ");
-        }
-        System.out.println();
+
         return  temp2;
     }
 
@@ -681,23 +641,26 @@ public class ADIController5 {
     /**
      * 选择: 根据轮盘赌选择适应度高的个体
      * 将适应度值打印出来看一下，方便后续比较
-     *     ①如何去计算适应度：以试卷为单位，min*exp^1
-     *     ②初始化时直接将adi值计算，并保存在数据库中  这种方式是最快的，但题型和属性的选取是随机的，且包括交叉变异，故不适合
-     *     如果需要，可以将最终的结果的汇总到数据库。
+     *     ①计算适应度：以试卷为单位，min*exp^1
+     *     ②paperGenetic=newPaperGenetic;
      *
-     *     仅仅依靠选择和轮盘赌，其变化是很小的，故需要更大的外部作用(交叉+变异）
+     *     选择和轮盘赌：择优录取+多样式减低
+     *     交叉+变异：增加多样性(外部作用)   全局变量导致多样性减低的吗？
+     *     交叉：个体不断的选取试题,使各种比例信息符合要求,即,变化的只是个体，不应该导致个体相似
+     *     每次校验完后,不保存，导致的后果是什么呢？  长度确定，但题型和属性无法保证，其实也不应该会导致全局相似才对啊。
+     *
+     *     ①先改正校验  ok   ②再挨步断点
      *
      */
     public  void  selection(){
 
         System.out.println("====================== select ======================");
 
-        //10套试卷   10道题目
+        //100套试卷
         int paperSize = paperGenetic.length;
 
         //轮盘赌 累加百分比
         double[] fitPie = new double[paperSize];
-
 
         //每套试卷的适应度占比  min*exp^1
         double[] fitPro = getFitness(paperSize);
@@ -730,9 +693,9 @@ public class ADIController5 {
         printDoubleArray(randomId);
 
         //轮盘赌 越大的适应度，其叠加时增长越快，即有更大的概率被选中
-        //FIXME 同一套试卷可能会被选取两次   需要做修改  最后导致十套试卷一模一样
-        //FIXME       如果根据id去重，将导致轮盘赌失去了本身的意义
-        //            可以减少paperSize的大小,达到减少重复率过高的情况，但需保证paperGenetic=newPaperGenetic;时不报错
+        //FIXME 同一套试卷可能会被选取多次（轮盘赌的意义）
+        // GA 的通病：
+        //      择优录取,最后的问题 个体越来越相似,所以才需要变异  但变异后的个体，因为经过轮盘赌,也不一定能够保存下来
         String[][] newPaperGenetic =new String[paperSize][];
         int newSelectId = 0;
         for (int i = 0; i < paperSize; i++) {
@@ -742,15 +705,10 @@ public class ADIController5 {
                 newSelectId += 1;
             }
         }
-        //输出老种群的适应度值
-        //System.out.print("老种群");
-
 
         //重新赋值种群的编码
         paperGenetic=newPaperGenetic;
 
-        //输出新种群的适应度值
-        System.out.print("新种群");
 
     }
 
@@ -776,7 +734,7 @@ public class ADIController5 {
 
     /**
      * 1.selection 计算适应度值,
-     * 2.elitistStrategy 保存全局变量(全局最优  局部最优  局部最差)
+     * 2.elitistStrategy 保存全局变量(全局最优  局部最优)
      *
      */
     private double[] getFitness(int paperSize){
@@ -813,6 +771,7 @@ public class ADIController5 {
             // 方案  进行乘以一个exp 来进行适应度值的降低    高等数学里以自然常数e为底的指数函数
             //       System.out.printf("exp(%.3f) 为 %.3f%n", -2.7183, Math.exp(-2.7183));
             //       - 表示取倒数  1/(2.7183 * 2.7183)  =  0.135
+
             // 适应度值需考虑   题型和属性比例
             // 原有的adi min小于1是否有影响（没影响，只是额外新增一个惩罚参数） 但因为实在太小了，所以*100
             // 计算每套试卷的惩罚系数  实际比例 vs 期望比例
@@ -821,11 +780,9 @@ public class ADIController5 {
             // 按照比例计算 可以减少后续的修改
             //     题型比例 选择[0.2,0.4]  填空[0.2,0.4]  简答[0.1,0.3]  应用[0.1,0.3]
             //     属性比例 第1属性[0.2,0.4]   第2属性[0.2,0.4]   第3属性[0.1,0.3]  第4属性[0.1,0.3]  第5属性[0.1,0.3]
-            //     [4.6,9.2]  [2.3,6.9]
 
 
-            // 题型的曝光度
-            //题型个数
+            // 题型个数
             String [] expList = paperGenetic[i];
             int typeChose  = 0;
             int typeFill   = 0;
@@ -835,7 +792,6 @@ public class ADIController5 {
 
             //此次迭代各个题型的数目
             for (String s:expList) {
-                //System.out.println(s);
 
                 //计算每种题型个数
                 if(TYPE.CHOSE.toString().equals(s.split(":")[1])){
@@ -851,7 +807,6 @@ public class ADIController5 {
                     typeCompre += 1;
                 }
             }
-            System.out.println("目前题型数量情况： typeChose:"+typeChose+" typeFill:"+typeFill+" typeShort:"+typeShort+" typeCompre:"+typeCompre);
 
             // 题型比例
             double typeChoseRation  =  typeChose/10.0;
@@ -898,8 +853,7 @@ public class ADIController5 {
             }
 
 
-
-            // 各个属性的曝光度
+            // 属性个数
             int exp1 = 0;
             int exp2 = 0;
             int exp3 = 0;
@@ -914,7 +868,6 @@ public class ADIController5 {
                 exp4 = exp4 + Integer.parseInt(splits[2].split(",")[3]);
                 exp5 = exp5 + Integer.parseInt(splits[2].split(",")[4].substring(0,1));
             }
-            System.out.println("目前属性数量情况： exp1:"+exp1+" exp2:"+exp2+" exp3:"+exp3+" exp4:"+exp4+" exp5:"+exp5);
 
             // 属性比例 第1属性[0.2,0.4]   第2属性[0.2,0.4]   第3属性[0.1,0.3]  第4属性[0.1,0.3]  第5属性[0.1,0.3]
             //先判断是否在范围内，在的话，为0，不在的话，然后进一步和上下限取差值，绝对值
@@ -982,7 +935,7 @@ public class ADIController5 {
 
             System.out.println("minrum: "+minrum);
 
-            //适应度值  (新增 惩罚系数)
+            //适应度值 (min * 惩罚系数)
             minrum = minrum * Math.exp(expNum);
             //个体和总和
             fitTmp[i] = minrum ;
@@ -1616,19 +1569,19 @@ public class ADIController5 {
      *              ③如果都符合要求，则随机选取一题，再在下层做处理
      *
      */
-    private void correctLength(int i, String[] temp1) throws SQLException {
+    private void correctLength(int w) throws SQLException {
 
         //去重操作
-        HashSet<String> setBegin = new HashSet<>(Arrays.asList(temp1));
+        HashSet<String> setBegin = new HashSet<>(Arrays.asList(paperGenetic[w]));
 
 
         if (setBegin.size() == 10){
 
-            System.out.println("第 "+i+" 题, 交叉后,size正常");
+            System.out.println("第 "+w+" 题, 交叉/变异后,size正常");
 
         }else{
 
-            System.out.println("第 "+i+" 题, 交叉导致size不匹配：开始进行长度修补 步骤1 ....");
+            System.out.println("第 "+w+" 题, 交叉/变异导致size不匹配：开始进行长度修补 ");
 
             HashSet<String> setEnd = new HashSet<>();
 
@@ -1720,7 +1673,7 @@ public class ADIController5 {
                 }
             }
             //随机选题
-            if(setEnd.size() != 10){
+            while(setEnd.size() != 10){
                 //  where 1=1
                 String sql = " 1=1 order by RAND() limit 1 ";
                 ArrayList<String> arrayList = jdbcUtils.selectBySql(sql);
@@ -1735,10 +1688,10 @@ public class ADIController5 {
             String[] array = new String[setEnd.size()];
             array = setEnd.toArray(array);
             array = sortPatch(array);
-            paperGenetic[i]=array;
+            paperGenetic[w]=array;
 
             //打印选取的题目，打印的结果 应该是内存地址
-            System.out.println("步骤1 size修补后的结果如下："+Arrays.toString(paperGenetic[i]));
+            System.out.println("步骤1 size修补后的结果如下："+Arrays.toString(paperGenetic[w]));
 
         }
 
@@ -1753,29 +1706,25 @@ public class ADIController5 {
      *  <属性比例校验>
      *  具体步骤如下：
      *      1.获取各个属性的比例信息
-     *      2.和预期做比较  得出差值
+     *      2.和预期做比较  得出out解集
      *      3.找寻最合适的解
-     *          ①是否需要计算题型的差值
-     *            建议要，无非多几行代码的事，一次性对适应度值进行最终赋值，避免了类型和属性的来回比较和权衡
+     *      4.输出
      *
      *  题型比例 选择[0.2,0.4]  填空[0.2,0.4]  简答[0.1,0.3] 应用[0.1,0.3]
      *  属性比例 第1属性[0.2,0.4]   第2属性[0.2,0.4]   第3属性[0.1,0.3]  第4属性[0.1,0.3]  第5属性[0.1,0.3]
      *
-     *          ②计算公式
-     *      4.输出最后的方案
-     *
+     *  FIXME  返回的bachItemList,应该充分利用到
      */
-    private ArrayList<String> correctAttribute(int w, String[] temp1) throws SQLException {
+    private void correctAttribute(int w) throws SQLException {
 
         ArrayList<String> bachItemList = new ArrayList();
         Collections.addAll(bachItemList, paperGenetic[w]);
 
 
 //=========================  1.0 指标统计   ================================
-        System.out.println("=================  指标信息初步统计  =====================");
+
         //ArrayList<String> 转 hashSet<String>
         HashSet<String> itemSet = new HashSet<>(bachItemList);
-
 
         String attributeFlag = getAttributeFlag(itemSet);
 
@@ -1787,10 +1736,7 @@ public class ADIController5 {
 
 //=========================  2.0 解集统计   ================================
 
-        //根据attributeFlag 获得 out
-        //占比失衡的情况： ①多  ②少
-
-        // out解的容器  (可能造成比例失衡的解集)
+        //根据attributeFlag 获得out解的容器(可能造成比例失衡的解集) 占比失衡的情况： ①多  ②少
 
         //取出属性比例过多的集合的并集（TODO 需考虑以下情况: 两个单集合，各自多一个属性，其无交集   ok）
         Set<String> resultMore = getResultMore(bachItemList,af1,af2,af3,af4,af5);
@@ -1804,18 +1750,19 @@ public class ADIController5 {
 
         /*
          *  resultMore resultLess 的关系判断
-         *      1.resultLess有  resultMore有值  则取先交集.然后按权重取 ①FIXME  retainAll 是否存在空集合的情况
+         *      1.resultLess有  resultMore有值  则取先交集.然后按权重取
+         *          ①FIXME  retainAll 是否存在空集合的情况 可以减少迭代的次数  ②可以直接按无交集进行处理
          *      2.resultLess无  resultMore有值 则取 resultMore
-         *      3.resultMore无  resultLess有值 则取 resultLess
+         *      3.resultLess有  resultMore无  则取 resultLess
          *
          * 目标：将in解替换out解
          * 方法：去题库中搜索，取出新解集后，循环遍历，然后重新计算是否符合要求，这样将会导致计算很冗余
          * 要求：
          *      1.新增、删除不影响其他类型和属性比例
-         *      2.如果找不到，则在较优解中随机选取一个用作替换解即可
+         *      2.如果找不到完美解，则在较优解中随机选取一个替换解
          *
          *多    可以随机选取一个带有这个属性的题目,然后(move,add)   注意：控制题型
-         *     ①多一个  ②多N个 先遍历匹配(完美解)，若没有，则进行（替补解）
+         *      ①多一个  ②多N个 先遍历匹配(完美解)，若没有，则进行（替补解）
          *少    可以随机选取一个不带有这个属性的题目，然后(move,add)
          *      ①少一个  ②少N个
          *
@@ -1843,7 +1790,18 @@ public class ADIController5 {
 
         }
 
-        return bachItemList;
+        //    arrayList 转 数组
+        String[] itemArray = new String[bachItemList.size()];
+        for (int i = 0; i < bachItemList.size(); i++) {
+            itemArray[i] = bachItemList.get(i);
+        }
+
+        //  list  转 hashSet
+        HashSet<String> temp3 = new HashSet<>(bachItemList);
+        getAttributeFlag(temp3);
+        paperGenetic[w] = itemArray;
+
+
     }
 
 
@@ -1854,13 +1812,14 @@ public class ADIController5 {
      * 题型校验  每次校验完成后，进行交叉变异，typeFlag很大概率会再次失衡
      * 保证每次迭代和选取比例适当
      *
+     *
      */
-    private void correctType(int w, String[] temp1) throws SQLException {
+    private void correctType(int w) throws SQLException {
 
 
 //=========================  1.0 指标统计   ================================
 
-        HashSet<String> setBegin = new HashSet<>(Arrays.asList(temp1));
+        HashSet<String> setBegin = new HashSet<>(Arrays.asList(paperGenetic[w]));
         //题型数量
         int typeChose = 0;
         int typeFill = 0;
@@ -1938,7 +1897,7 @@ public class ADIController5 {
 
         //根据flagFlag 得出resultMore/resultLess解集
         ArrayList<String> batchItemList = new ArrayList<>();
-        Collections.addAll(batchItemList,temp1);
+        Collections.addAll(batchItemList,paperGenetic[w]);
 
         // out解的容器  (可能造成题型比例失衡的解集)
         Set<String> resultMore = new HashSet<>();
@@ -2218,7 +2177,7 @@ public class ADIController5 {
                     for (int j = 0; j < inList2.size(); j++) {
                         //  校验题型和属性比例信息
                         //bl = typeCheck(batchItemList,outListLess.get(i),inList2.get(j));
-                        b = true;
+                        bl = true;
 
                         if(bl){
                             // 删除out解，添加in解
@@ -2492,6 +2451,12 @@ public class ADIController5 {
             System.out.println("校验后的集合:"+batchItemList.toString());
 
         }
+        //    arrayList 转 数组
+        String[] itemArray = new String[batchItemList.size()];
+        for (int i = 0; i < batchItemList.size(); i++) {
+            itemArray[i] = batchItemList.get(i);
+        }
+        paperGenetic[w] = itemArray;
 
     }
 
@@ -3147,13 +3112,13 @@ public class ADIController5 {
 
     /**
      *  修补算子
-     *  适用场景: att less
+     *  适用场景: att   more and less
      *
      */
     public ArrayList<String> correctAttributeMoreAndLess(Set<String> resultMore,Set<String> resultLess,JDBCUtils4 jdbcUtils,ArrayList<String> bachItemList,int af1,int af2,int af3,int af4,int af5) throws SQLException {
 
 
-            //取交集   是否需要判断more 和 less 分别的size大小
+            //取交集
             resultMore.retainAll(resultLess);
             if(resultMore.size()>0){
                 System.out.println("本套试卷 既有属性比例过多，又有属性比例不足的情况   more 和 less 有交集");
@@ -3190,14 +3155,12 @@ public class ADIController5 {
                     sb.append(" p5=1 and ");
                 }
 
-                //获取新解的集合   and 条件拼接是否会产生null解
+                //获取in的解集   and 条件拼接是否会产生null解
                 String sql = sb.toString().substring(0, sb.toString().length() - 4);
                 ArrayList<String> inList = jdbcUtils.selectBySql(sql);
 
                 // ori解集  out解集  in解集 的关系
                 // 原始解集 - out解 + in解 = 新解(拿新解去再次核对)
-                // 循环的逻辑，应该是 外层out解，内层in解，不断的调用属性比例校验方法，如满足要求则退出，不满足则继续遍历。最后的终止条件是 遍历终止
-
                 List<String> outList = new ArrayList<>(resultMore);
                 System.out.println("校验前的集合:"+bachItemList.toString());
                 Boolean b = false;
@@ -3212,8 +3175,8 @@ public class ADIController5 {
 
                     for (int j = 0; j < inListRe.size(); j++) {
 
-                        // 根据ori解 out解 in解 三者的关系进行(属性比例、原有题型的约束)
-                        // 有部分可能性导致题型约束遭到破坏
+                        // 根据ori解 out解 in解 三者的关系进行(属性比例、题型的约束)
+                        // 有部分可能性导致题型约束遭到破坏  可以通过调整inList解集,来进行保证题型约束
                         b = propCheck(bachItemList,outList.get(i),inListRe.get(j));
 
                         if(b){
@@ -3237,9 +3200,9 @@ public class ADIController5 {
 
                 /*
                  * 寻找替补解（如果没能找到完美解,则择优录取）
-                 * 替换原则:不影响其他属性，故最好完全互补替代 type attribute，但其前提是 题库中存在互补的解
-                 * out解信息 此处不能和 单独的多和少一样做简单替换处理 其需要做一定的分类讨论
-                 * 利用af 信息，如果=1 则p=0    如果=-1 则p=1
+                 * 替换原则:不影响其他属性，故最好完全互补替代 type attribute，但其前提是 题库中存在互补的解，故需迭代
+                 * out解信息 因为是交集的情况，故此处需要做两次替换（先more 再less）
+                 *          利用af信息，如果=1 则p=0    如果=-1 则p=1
                  *
                  */
                 if(!b) {
@@ -3256,7 +3219,7 @@ public class ADIController5 {
                         String a5 = null;
 
 
-                        //获取正常属性、空缺属性信息  使用集合或sql接收,并直接转换为 p1 p2 p3 p4 p5
+                        //获取正常属性、空缺属性、过多属性信息  使用sql或集合接收,并直接转换为 p1 p2 p3 p4 p5
                         ArrayList<String> lessTemp = new ArrayList<>();
                         ArrayList<String> moreTemp = new ArrayList<>();
                         if(af1==-1){
@@ -3339,7 +3302,7 @@ public class ADIController5 {
                                 System.out.println(sqlFinally);
                                 ArrayList<String> arrayList = jdbcUtils.selectBySql(sqlFinally);
 
-                                // 获取第一个解
+                                // 获取第一个解?
                                 if(arrayList.size()>0){
                                     System.out.println("out解："+outList.get(i));
                                     System.out.println("in解："+arrayList.get(0));
@@ -3372,8 +3335,7 @@ public class ADIController5 {
 
                 System.out.println("本套试卷 既有属性比例过多，又有属性比例不足的情况   more 和 less 无交集");
 
-                //FIXME  待完善
-                // 有一个属性多了,还有一个属性少了    进行两次替换即可，第一次替换more 保证其他att不多，或者互补替换即可  第二次正常替换
+                // 进行两次修补，第一次more 保证其他att不多，或者互补替换即可  第二次less修补
                 // 修补more
                 List<String> outList = new ArrayList<>(resultMore);
 
@@ -3382,7 +3344,8 @@ public class ADIController5 {
                     //遍历out解 需考虑终止条件
                     for (int i = 0; i < outList.size(); i++) {
 
-                        //out解信息
+                        //out解信息,把type和0取出  (1,0,0,0,1)
+                        //1 的解此处可能会导致漏缺
                         String t1 = " and type = '" + outList.get(i).split(":")[1] +"'";
                         String[] arr = outList.get(i).split(":")[2].split(",");
                         String a1 = "1".equals(arr[0].substring(1,2))?"": " and p1 = 0 ";
@@ -3391,7 +3354,7 @@ public class ADIController5 {
                         String a4 = "1".equals(arr[3])?"": " and p4 = 0 ";
                         String a5 = "1".equals(arr[4].substring(0,1))?"": " and p5 = 0 ";
 
-                        //目前过多解信息  取出1的解,使用集合接收,并直接转换为 p1 p2 p3 p4 p5
+                        //目前元素过多的信息  把1取出,使用集合接收,并直接转换为 p1 p2 p3 p4 p5
                         ArrayList<String> moreTemp = new ArrayList<>();
                         if(af1==1){
                             moreTemp.add("p1");
@@ -3428,7 +3391,7 @@ public class ADIController5 {
                             String tmp3=tmp2.replace("]"," = 0 ");
                             System.out.println(tmp3);
 
-                            //more ori type ，条件拼接 p5=1
+                            //more ori type ，条件拼接
                             String sqlFinally = tmp3 + a1 + a2 + a3 + a4 + a5 + t1;
                             System.out.println(sqlFinally);
                             ArrayList<String> arrayList = jdbcUtils.selectBySql(sqlFinally);
@@ -3468,6 +3431,8 @@ public class ADIController5 {
 
 
     public String getAttributeFlag(HashSet<String> itemSet){
+
+        System.out.println("=================  指标信息初步统计  =====================");
 
         //属性个数
         int attributeNum1  = 0;
@@ -3676,6 +3641,21 @@ public class ADIController5 {
 
     }
 
+
+    @Test
+    public void set() throws SQLException {
+        HashSet<String> setEnd = new HashSet<>();
+        //随机选题
+        while(setEnd.size() != 100){
+            //  where 1=1
+            String sql = " 1=1 order by RAND() limit 1 ";
+            ArrayList<String> arrayList = jdbcUtils.selectBySql(sql);
+            HashSet<String> tmp = new HashSet<>(arrayList);
+            setEnd.addAll(tmp);
+        }
+
+
+    }
 }
 
 
