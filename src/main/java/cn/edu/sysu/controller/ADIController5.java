@@ -1,6 +1,7 @@
 package cn.edu.sysu.controller;
 
 import cn.edu.sysu.adi.TYPE;
+import cn.edu.sysu.niche.Niche2;
 import cn.edu.sysu.pojo.Papers;
 import cn.edu.sysu.utils.JDBCUtils4;
 import cn.edu.sysu.utils.KLUtils;
@@ -34,6 +35,9 @@ public class ADIController5 {
 
     private  JDBCUtils4 jdbcUtils = new JDBCUtils4();
 
+    // 小生境对象
+    Niche2 niche = new Niche2();
+
 
     /**
      * 计算适应度值  ①计算方式 轮盘赌
@@ -60,13 +64,15 @@ public class ADIController5 {
 
 
         // i 迭代次数
-        for (int i = 0; i < 2000; i++) {
+        for (int i = 0; i < 500; i++) {
             //选择
             selection();
             //交叉
-            crossCover(papers);
+            //crossCover(papers);
+            //小生境
+            niche.RTS(paperGenetic);
             //变异
-            mutate(papers);
+            //mutate(papers);
             // FIXME  待实现 小生境环境的搭建
             //精英策略
             //elitistStrategy();
@@ -76,8 +82,8 @@ public class ADIController5 {
 
 
     /**
-     * TODO 遗传算法中的锦标赛选择策略
-     * TODO 每次从种群中取出一定数量个体（放回抽样），然后选择其中最好的一个进入子代种群。
+     *  遗传算法中的锦标赛选择策略
+     *  每次从种群中取出一定数量个体（放回抽样），然后选择其中最好的一个进入子代种群。
      *      具体的操作步骤如下：
      *          1、确定每次选择的个体数量N。（N元锦标赛选择即选择N个个体）
      *          2、从种群中随机选择N个个体(每个个体被选择的概率相同) ，根据每个个体的适应度值，
@@ -154,12 +160,12 @@ public class ADIController5 {
 
 
     /**
-     *      TODO  本周任务  1.通过构造的方法初始化题目 (轮盘赌  + 锦标赛   ok）
-     *      TODO          2.将属性类型个数改为题型，以及比例   （校验   ok）
-     *      TODO          3.交叉变异后 校验比例（题型+属性） 直接替换  （迭代一百次以后，没有就直接退出） （待实现）
+     *  本周任务  1.通过构造的方法初始化题目 (轮盘赌  + 锦标赛   ok）
+     *          2.将属性类型个数改为题型，以及比例   （校验   ok）
+     *          3.交叉变异后 校验比例（题型+属性） 直接替换  （迭代一百次以后，没有就直接退出） （待实现）
      *
      *
-     * FIXME 使用构造法选取题目
+     * 使用构造法选取题目
      *          1.题型构造解决 （完全随机模式,不考虑下限比例）
      *          2.属性构造解决 （完全随机模式,不考虑下限比例）
      *          3.设置属性比例  可以通过惩罚系数来设定  超出,则急剧减少
@@ -172,7 +178,7 @@ public class ADIController5 {
 
         System.out.println("====== 开始选题,构成试卷  轮盘赌构造  ======");
 
-        // 试卷大小  份数很有争议，少：具有现实含义   多：提供遗传变异的基本单位
+        // 试卷大小  提供遗传变异的基本单位
         int  paperNum = paperGenetic.length;
         // 试题大小
         int questionsNum = 10 ;
@@ -487,20 +493,20 @@ public class ADIController5 {
 
 
     /**
-     * 交叉  此处不计算适应度，目标是校验长度，属性类型，属性比例
+     * 交叉  此处不涉及适应度
+     * 交叉的单位:  试题
+     * 交叉的结果： 长度,题型,属性比例 进一步用修补算子进行修补
+     *          random.nextInt(100)  指生成一个介于[0,n)的int值
      */
     private void crossCover(Papers papers) throws SQLException {
 
         System.out.println("================== cross ==================");
 
-        //  交叉的单位:  试题
-        //  交叉的结果： 长度,题型,属性比例 进一步用修补算子进行修补
-        //             random.nextInt(100)  指生成一个介于[0,n)的int值
-        //  初始化时,保证了试题id的升序排序
+
+        //  单点交叉
         int point = paperGenetic[1].length;
         for (int i = 0; i < paperGenetic.length-1; i++) {
             if (Math.random() < papers.getPc()) {
-                //单点交叉
                 String [] temp = new String[point];
                 int a = new Random().nextInt(point);
 
@@ -511,7 +517,7 @@ public class ADIController5 {
                 for (int j = a; j < point; j++) {
                     temp[j] = paperGenetic[i+1][j];
                 }
-                // 放在内存执行,每执行一次pc 则校验一次  只改变了tem1   其实i和temp 只需要一个即可，获取需要检验的试卷个体
+                // 放在内存执行,每执行一次pc 则校验一次
                 paperGenetic[i] = temp;
                 correct(i);
             }
@@ -521,12 +527,12 @@ public class ADIController5 {
 
 
     /**
-     * FIXME  优化长度和题型的校验设计
+     *
      * 执行修补操作(交叉变异均可能导致数量，题型，属性发生了变化)
      *      步骤：
      *          (1)校验size, 按照题型新增n道题目，or 随机新增题目数
-     *          (2)校验题型, in/out  优劣解（权重）
-     *          (2)校验属性, in/out  优劣解（权重）
+     *          (2)校验题型, in/out  完美解、替补解（权重）
+     *          (2)校验属性, in/out  完美解、替补解（权重 inListRe/inCompose）
      *
      * 46:SHORT:(1,0,0,0,0):0.09500000000000001:0.0:0.0:0.0:0.0
      * 题型比例 选择[0.2,0.4]  填空[0.2,0.4]  简答[0.1,0.3] 应用[0.1,0.3]
@@ -553,11 +559,11 @@ public class ADIController5 {
 
 
     /**
-     * 变异   (长度，属性类型，属性比例)
+     * 变异  (长度，属性类型，属性比例)
      *      目的：为GA提供多样性
      *
      */
-    public  void mutate(Papers papers) throws SQLException {
+    private void mutate(Papers papers) throws SQLException {
 
         System.out.println("================== mutate ==================");
 
@@ -639,15 +645,14 @@ public class ADIController5 {
 
 
     /**
-     * 选择: 根据轮盘赌选择适应度高的个体
+     * 选择: 以适应度为导向,轮盘赌为策略，适者生存和多样性的权衡
      * 将适应度值打印出来看一下，方便后续比较
      *     ①计算适应度：以试卷为单位，min*exp^1
      *     ②paperGenetic=newPaperGenetic;
      *
      *     选择和轮盘赌：择优录取+多样式减低
-     *     交叉+变异：增加多样性(外部作用)   全局变量导致多样性减低的吗？
-     *     交叉：个体不断的选取试题,使各种比例信息符合要求,即,变化的只是个体，不应该导致个体相似
-     *     每次校验完后,不保存，导致的后果是什么呢？  长度确定，但题型和属性无法保证，其实也不应该会导致全局相似才对啊。
+     *     交叉+变异：增加多样性(外部作用)
+     *     交叉：个体不断的选取试题,使各种比例信息符合要求,即,变化的只是个体，不会导致个体相似
      *
      *     ①先改正校验  ok   ②再挨步断点
      *
@@ -693,7 +698,7 @@ public class ADIController5 {
         printDoubleArray(randomId);
 
         //轮盘赌 越大的适应度，其叠加时增长越快，即有更大的概率被选中
-        //FIXME 同一套试卷可能会被选取多次（轮盘赌的意义）
+        // 同一套试卷可能会被选取多次（轮盘赌的意义）
         // GA 的通病：
         //      择优录取,最后的问题 个体越来越相似,所以才需要变异  但变异后的个体，因为经过轮盘赌,也不一定能够保存下来
         String[][] newPaperGenetic =new String[paperSize][];
@@ -1023,7 +1028,7 @@ public class ADIController5 {
         //轮盘赌 累加百分比
         double[] fitPie = new double[bankList.size()];
 
-        //计算每道试题的适应度占比   1*0.5*0.8   FIXME:需要核实为什么惩罚后，基因策略和选择会产生这么大的影响，导致大面积重复   难道是因为基数太小了吗
+        //计算每道试题的适应度占比   1*0.5*0.8
         double[] fitnessArray = getRouletteFitness(itemSet);
 
         //id去重操作
@@ -1559,12 +1564,10 @@ public class ADIController5 {
 
 
     /**
-     *  长度 校验
+     *  长度校验
      *  检验完成后，更新 paperGenetic
      *
-     *
-     *  原始的方法是 按照比例进行匹配
-     *  解决方案：    ①size的大小为10时退出
+     *  解决方案：    ①size==10,退出
      *              ②如果在小于范围下限，则按照题型选取
      *              ③如果都符合要求，则随机选取一题，再在下层做处理
      *
@@ -1700,14 +1703,11 @@ public class ADIController5 {
 
 
     /**
-     *  TODO  属性比例校验
-     *  TODO  根据现有解得出一个评判标准,然后重新抽取题目选取最优解
-     *
      *  <属性比例校验>
      *  具体步骤如下：
-     *      1.获取各个属性的比例信息
-     *      2.和预期做比较  得出out解集
-     *      3.找寻最合适的解
+     *      1.获取各个属性的比例信息,得到flag
+     *      2.和预期做比较,得出in解集
+     *      3.找寻完美解、替补解
      *      4.输出
      *
      *  题型比例 选择[0.2,0.4]  填空[0.2,0.4]  简答[0.1,0.3] 应用[0.1,0.3]
@@ -1751,8 +1751,8 @@ public class ADIController5 {
         /*
          *  outMore outLess 的关系判断
          *      1.outLess有  outMore  则取先交集.然后按权重取
-         *          ①FIXME  retainAll 是否存在空集合的情况 可以减少迭代的次数  ②可以直接按无交集进行处理
-         *      2.outLess无  outMore 则取 outMore
+         *          ①retainAll 是否存在交集的情况 可以减少迭代的次数  ②按无交集进行处理
+         *      2.outLess无  outMore  则取 outMore
          *      3.outLess有  outMore  则取 outLess
          *
          * 目标：将in解替换out解
@@ -1809,9 +1809,9 @@ public class ADIController5 {
 
 
     /**
-     * 题型校验  每次校验完成后，进行交叉变异，typeFlag很大概率会再次失衡
-     * 保证每次迭代和选取比例适当
-     *
+     * 题型校验
+     *      每次校验完成后，进行交叉变异，typeFlag很大概率会再次失衡
+     *      保证每次迭代过程中题型比例适当
      *
      */
     private void correctType(int w) throws SQLException {
@@ -1849,8 +1849,6 @@ public class ADIController5 {
         double typeFileRation = typeFill / 10.0;
         double typeShortRation = typeShort / 10.0;
         double typeCompreRation = typeCompre / 10.0;
-
-        System.out.println("=================  指标信息flag统计  =====================");
 
         //题型flag (-1->少于,0->正常,1->大于)
         int tf1;
@@ -1999,7 +1997,7 @@ public class ADIController5 {
 
         /*
          *  outMore outLess 的关系判断
-         *      1.outLess有  outMore有值  ①不可能存在交集 ②做两次选取
+         *      1.outLess有  outMore有值  不可能存在交集，故做两次选取
          *      2.outLess无  outMore有值  则取 outMore
          *      3.outMore无  outLess有值  则取 outLess
          *
@@ -2050,8 +2048,7 @@ public class ADIController5 {
             String sqlMore = "(" + sbMore.toString().substring(0, sbMore.toString().length() - 3) +")";
             ArrayList<String> inListMore = jdbcUtils.selectBySql(sqlMore);
 
-            // ori解集  out解集  in解集 的关系
-            // 原始解集 - out解 + in解 = 新解(拿新解去再次校验)
+            // ori解集 - out解 + in解 = 新解(拿新解去再次校验)
             // 循环的逻辑：外层out解，内层in解，不断的调用题型比例校验方法，如满足要求则退出，不满足则继续遍历
 
             System.out.println("开始outMore修补");
@@ -2061,7 +2058,7 @@ public class ADIController5 {
             Boolean b = false;
             for (int i = 0; i < outListMore.size(); i++) {
 
-                // 校验题型的时候，尽量需满足属性要求   本身是一个矫正因子，故不能影响其他属性的信息 是根本
+                // 题型校验本身是一个矫正因子，故不能影响属性比例信息 是根本
                 // 如果不满足，导致下层的工作量变大
                 String p1 = " and( p1 = " + outListMore.get(i).split(":")[2].split(",")[0].substring(1,2);
                 String p2 = " and p2 = " + outListMore.get(i).split(":")[2].split(",")[1];
@@ -2148,8 +2145,7 @@ public class ADIController5 {
             String sqlLess = "(" + sbLess.toString().substring(0, sbLess.toString().length() - 3) +")";
             ArrayList<String> inListLess = jdbcUtils.selectBySql(sqlLess);
 
-            // ori解集  out解集  in解集 的关系
-            // 原始解集 - out解 + in解 = 新解(拿新解去再次校验)
+            // ori解集 - out解 + in解 = 新解(拿新解去再次校验)
             // 循环的逻辑：外层out解，内层in解，不断的调用题型比例校验方法，如满足要求则退出，不满足则继续遍历
 
             System.out.println("开始outMore修补");
@@ -2991,8 +2987,7 @@ public class ADIController5 {
             String sql = sb.toString().substring(0, sb.toString().length() - 4);
             ArrayList<String> inList = jdbcUtils.selectBySql(sql);
 
-            // ori解集  out解集  in解集 的关系
-            // 原始解集 - out解 + in解 = 新解(拿新解去再次校验)
+            // ori解集 - out解 + in解 = 新解(拿新解去再次校验)
             List<String> outList = new ArrayList<>(outMore);
             System.out.println("校验前的集合:"+bachItemList.toString());
 

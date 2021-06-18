@@ -66,9 +66,7 @@
           <root url="jar://D:/app/Java/jdk1.8.0_152/lib/tools.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES>
-          <root url="jar://D:/app/Java/jdk1.8.0_152/lib/tools.jar!/" />
-        </SOURCES>
+        <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="library" scope="PROVIDED" name="Maven: javax.servlet:javax.servlet-api:3.1.0" level="project" />
