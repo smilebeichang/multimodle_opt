@@ -48,13 +48,13 @@ public class KLUtils {
      */
     public  void arrayPrint(Double[][] klArray) {
         //遍历输出 K_L 矩阵
-        System.out.println("K_L information矩阵如下: ");
+        //System.out.println("K_L information矩阵如下: ");
         for (Double[] fs:klArray) {
             for (Double fss:fs) {
                 //相当于arr[i][j]
                 System.out.print(fss+"  ");
             }
-            System.out.println();
+            //System.out.println();
         }
     }
 
@@ -107,10 +107,10 @@ public class KLUtils {
         int p3 = fill_set.contains("c")?1:0;
         int p4 = fill_set.contains("d")?1:0;
         int p5 = fill_set.contains("e")?1:0;
-        System.out.println("=======================");
+        //System.out.println("=======================");
         String ip = "("+p1+","+p2+","+p3+","+p4+","+p5+")";
-        //System.out.println("属性："+attributes);
-        System.out.println("属性："+ip);
+        ////System.out.println("属性："+attributes);
+        //System.out.println("属性："+ip);
         return ip;
 
     }
@@ -123,7 +123,7 @@ public class KLUtils {
     public  Set<Set<String>> getSubCollection(String[] arr) {
 
         Set<Set<String>> f = f(arr.length, arr);
-        System.out.println(f);
+        //System.out.println(f);
         return f;
 
     }

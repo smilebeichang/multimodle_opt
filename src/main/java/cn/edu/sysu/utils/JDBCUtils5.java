@@ -205,7 +205,7 @@ public class JDBCUtils5 {
 
         try {
             conn =
-                    DriverManager.getConnection("jdbc:mysql://localhost/sysu?"+"user=root&password=root");
+                    DriverManager.getConnection("jdbc:mysql://localhost/sysu?"+"user=root&password=root&useSSL=false");
             ps = conn.prepareStatement("select * from sysu.adi20210528 where id in (" +
                     ids +  ");");
             rs = ps.executeQuery();
@@ -274,7 +274,7 @@ public class JDBCUtils5 {
 
         try {
             conn =
-                    DriverManager.getConnection("jdbc:mysql://localhost/sysu?"+"user=root&password=root");
+                    DriverManager.getConnection("jdbc:mysql://localhost/sysu?"+"user=root&password=root&useSSL=false");
             ps = conn.prepareStatement("select * from sysu.adi20210523 where " + sqlWhere );
             rs = ps.executeQuery();
 

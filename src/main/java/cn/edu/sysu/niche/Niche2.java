@@ -1,6 +1,7 @@
 package cn.edu.sysu.niche;
 
 import cn.edu.sysu.adi.TYPE;
+import cn.edu.sysu.controller.ADIController6;
 import cn.edu.sysu.utils.JDBCUtils4;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -42,16 +43,20 @@ import java.util.zip.DeflaterOutputStream;
  *
  * TODO   这三天的任务：
  * TODO   1.英文文献过一遍（认真看过程部分）      ok
- * TODO   2.限制锦标赛拥挤算法的实现          6h
+ * TODO   2.限制锦标赛拥挤算法的实现             1h 检验流程是否正常
  *              考虑交叉变异小生境的执行顺序  0.5h 、
- *              目前顺序： 选择 -- 交叉 -- 小生境(选择-交叉-变异-小生境) -- 变异
+ *              目前顺序： 选择 -- 交叉 -- 变异 -- 小生境
+ *              执行小生境后，再执行修补算子是否会影响多样性呢？
+ *                  相似的个体指的是adi的相似，
+ *                  修补修补的是长度、类型、属性，
+ *                  两个方向不一样,是否会有很多无效行为。后期查看相关文献,考虑其相关性
+ *
  *              选择：基于适应度值进行选择优胜个体
  *              交叉：随机交叉，保证长度、类型、属性要求
- *              小生境：拥挤，替换近似解
  *              变异：随机变异，保证长度、类型、属性要求
- *              目前这种顺序是无效的：前后阶段的交叉变异未能维持多样性,个体已经被替换
+ *              小生境：拥挤，替换近似解
  *              解决方法：直接在交叉。变异阶段各执行一次小生境
- *                      合适是否在交叉和变异阶段均需进行小生境？
+ *                      是否在交叉和变异阶段均需进行小生境？
  *                              交叉不需要,限制性锦标赛拥挤本身是没做要求的（文献：交叉变异是同一个个体？ 目前：全局交叉,全局变异）
  *                              单个执行和全局执行是否有偏差：
  *                                      交叉阶段：
@@ -64,10 +69,9 @@ import java.util.zip.DeflaterOutputStream;
  *                              ②意味着变异可能无效
  *                                  为什么小生境能维持多样性，因为其变异后的个体，会随机选择性的替换最相似的个体
  *                                  而正常的变异，则直接进行替换。直接替换的话，可能的问题是，无法定向维持样性
- *                                  如果变异无效，是否还需要进行修补操作，需要看交叉是否影响了个体的类型属性要求。
+ *                                  是否还需要进行修补操作，需要看交叉是否影响了个体的类型属性要求。
  *                                     因为是全局交叉+全局变异，则表明类型属性要求遭到了破坏。故需要进行修补
  *                                     下一阶段任务：将全局交叉变异，变成单个个体的交叉变异。
- *                                  暂时按照不管是变异，都进行变异后的修补操作。
  *
  *
  *
@@ -83,6 +87,7 @@ import java.util.zip.DeflaterOutputStream;
  *
  *
  * TODO   3.确定性拥挤算法的实现             1.5h
+ *
  * TODO   4.汇总做比较  得出这周的学习汇报进展 4h
  *
  */
@@ -101,8 +106,35 @@ public class Niche2 {
 
 
 
+    /**
+     * 限制性锦标赛选择算法 restricted tournament selection
+     * 目前变异无效,需要查明原因
+     *
+     */
+    public ArrayList<Object>  RTS(String[][] paperGenetictmp,int i) throws SQLException {
+
+        //赋值给全局变量
+        paperGenetic = paperGenetictmp;
+
+        //父代变异产生新个体c1
+        ArrayList<String[]> cList = mutate(paperGenetic[i]);
+
+        //为c1从当前种群中随机选取c*w个体  4个小生境  10元锦标赛
+        ArrayList<Map<Integer, String[]>[]> cwList = championship();
+
+        //替换
+        int similarPhenIndex = closestResemble(cList, cwList);
+
+        ArrayList<Object> result = new ArrayList<>(2);
+        result.add(similarPhenIndex);
+        result.add(paperGenetic);
+        return  result;
+
+    }
+
+
     /** 限制性锦标赛选择算法 restricted tournament selection */
-    public void  RTS(String[][] paperGenetictmp) throws SQLException {
+    public void  RTS2(String[][] paperGenetictmp) throws SQLException {
         //赋值给全局变量
         paperGenetic = paperGenetictmp;
 
@@ -112,8 +144,10 @@ public class Niche2 {
         String[] p2 = paperGenetic[random.nextInt(100)];
 
 
-        //父代交叉、变异，产生新个体c1 c2
-        ArrayList<String[]> cList = crossMutate(p1, p2);
+        //父代交叉、变异，产生新个体c1/c2
+        //ArrayList<String[]> cList = crossMutate(p1, p2);
+        //父代变异产生新个体c1/c2
+        ArrayList<String[]> cList = mutate(p1);
 
 
         //分别为c1/c2从当前种群中随机选取c*w个体  9个小生境  10元锦标赛
@@ -131,7 +165,30 @@ public class Niche2 {
      * 如果f(c2)>f(d2),则用c2替换d2,否则保留d2;
      *
      */
-    private void closestResemble(ArrayList<String[]> cList, ArrayList<Map<Integer, String[]>[]> cwList) {
+    private int closestResemble(ArrayList<String[]> cList, ArrayList<Map<Integer, String[]>[]> cwList) {
+        //  表现型  适应度值，或者 minAdi
+        //  基因型  解(2,3,56,24,4,6,89,98,200,23)
+        String[] c1 = cList.get(0);
+
+        Map<Integer, String[]>[] cw1 = cwList.get(0);
+
+        // 选取表现型做相似性校验
+        int similarPhenIndex = similarPhen(c1, cw1);
+
+        //选取基因型做相似性校验
+        //similarGene(c1,cw1);
+
+        return similarPhenIndex;
+
+    }
+
+
+    /**
+     * 如果f(c1)>f(d1),则用c1替换d1,否则保留d1;
+     * 如果f(c2)>f(d2),则用c2替换d2,否则保留d2;
+     *
+     */
+    private void closestResemble2(ArrayList<String[]> cList, ArrayList<Map<Integer, String[]>[]> cwList) {
         //  表现型  适应度值，或者minAdi
         //  基因型  解(2,3,56,24,4,6,89,98,200,23)
         String[] c1 = cList.get(0);
@@ -151,19 +208,24 @@ public class Niche2 {
 
     }
 
+
     /**
-     * 在cw1中寻找c1的近似解  9个小生境  10元锦标赛  c1是一套试卷   cw1是n*w套试卷
-     * 根据adi来判断与c1/c2的相似性,找出最相似的值 返回索引，替换全局基因
+     * 在cw1中寻找c1的近似解  4个小生境  10元锦标赛  c1是一套试卷  cw1是c*w套试卷
+     * 根据adi来找出最相似的值 返回索引，替换全局基因
      *
+     * 替换的是minPhen,属性校验的也应该是minPhen
+     * 解决方案：①将minPhen返回，ADI层进行修补
+     *         ②niche层进行修补，但需将全局基因返回到ADI层
+     *         为了节省内存开销，采取第一种方案
      *
      */
-    private void similarPhen(String[] c1, Map<Integer, String[]>[] cw1) {
+    private int similarPhen(String[] c1, Map<Integer, String[]>[] cw1) {
 
         double minADI = getMinADI(c1);
         double min = 9999;
         int minPhen = 0;
 
-        //外层小生境数，内层N元锦标赛
+        //外层C小生境数，内层W元锦标赛
         for (Map<Integer, String[]> aCw11 : cw1) {
             //cwList.get(0)[1].get(2)
             String[] itemArray;
@@ -173,12 +235,7 @@ public class Niche2 {
                     int key = (int) o;
                     itemArray = aCw11.get(key);
 
-                    //获取最相似的解 key  好像key也存在很大概率的重复（还能接受）
-                    //80 16 65 33 0
-                    //1  98 96 97 67
-                    //49 82 50 3  66
-                    //17 81 32 18 17
-                    //82 33 19 2
+                    //获取最相似的解 key
                     double abs = Math.abs(minADI - getMinADI(itemArray));
                     if (min > abs) {
                         min = abs;
@@ -186,22 +243,24 @@ public class Niche2 {
                     }
                 }
             }
+
         }
 
-        System.out.println("最相似的个体为："+minPhen + paperGenetic[minPhen]);
+        //System.out.println("最相似的个体为："+minPhen + paperGenetic[minPhen]);
 
-        // 替换c1 可能存在空指针的情况
-        if (minADI - getMinADI(paperGenetic[minPhen])<0){
+        // 替换c1 将abs放开，直接替换呢？看看是否还会导致大面积相似
+        //if (minADI - getMinADI(paperGenetic[minPhen])<0){
             //判断哪个小生境环境下存在最相似的个体  contain
             boolean flag = true;
             for (Map<Integer, String[]> aCw1 : cw1) {
                 if (aCw1.get(minPhen) != null && flag) {
-                    paperGenetic[minPhen] = aCw1.get(minPhen);
+                    paperGenetic[minPhen] = c1;
                     flag = false;
                 }
             }
-        }
+        //}
 
+        return minPhen;
 
     }
 
@@ -390,7 +449,7 @@ public class Niche2 {
         //最小值
         double minrum = Math.min(Math.min(Math.min(Math.min(adi1r,adi2r),adi3r),adi4r),adi5r) * 100 ;
 
-        //System.out.println("minrum: "+minrum);
+        ////System.out.println("minrum: "+minrum);
 
         //适应度值 (min * 惩罚系数)
         minrum = minrum * Math.exp(expNum);
@@ -421,10 +480,50 @@ public class Niche2 {
             }
             //计算相似性,并保存最优解  大面积出现相似性为0或者1 的情况
             idSet.retainAll(c1Set);
-            System.out.println("t"+i+" : "+idSet.size());
+            //System.out.println("t"+i+" : "+idSet.size());
         }
-        System.out.println("********************");
+        //System.out.println("********************");
     }
+
+    /**
+     *  分别为c1从当前种群中随机选取c*w个体
+     *  当前种群和题库的关系
+     *  题库: 310 道题
+     *  种群: 4*10<=40（存在重复+交叉变异）
+     *
+     */
+    private ArrayList<Map<Integer, String[]>[]> championship()  {
+
+        //4个小生境  10元锦标赛
+        int num = 4 ;
+        Map<Integer, String[]>[] cwList1 = new HashMap[num];
+
+        //基本单位:试卷。故随机生成一个下标即可 (需保存下标,方便后续替补 map(k,v))
+        //数组 map
+        for (int i = 0; i < num; i++) {
+            Set<String> set1 = new HashSet<>();
+            // 将个体保存为map结构
+            Map<Integer, String[]> mapc1w = new HashMap<>(10);
+            while (set1.size() != 10) {
+                int i1 = new Random().nextInt(paperGenetic.length);
+                if (!set1.contains(":"+i1)) {
+                    set1.add(":"+i1 );
+                    //String s = ArrayUtils.toString(paperGenetic[i1])+"_"+i1;
+                    //c1w.add(s);
+                    mapc1w.put(i1,paperGenetic[i1]);
+                }
+                cwList1[i] = mapc1w;
+            }
+        }
+
+        ArrayList<Map<Integer, String[]>[]> cwList = new ArrayList<>(1);
+        cwList.add(cwList1);
+        // 获取个体的方法:   cwList.get(0)[1].get(2)
+        return cwList;
+
+    }
+
+
 
     /**
      *  分别为c1/c2从当前种群中随机选取c*w个体
@@ -433,7 +532,7 @@ public class Niche2 {
      *  种群: 100*10<=1000（存在重复+交叉变异）
      *
      */
-    private ArrayList<Map<Integer, String[]>[]> championship()  {
+    private ArrayList<Map<Integer, String[]>[]> championship2()  {
 
         //9个小生境  10元锦标赛
         int num = 9 ;
@@ -509,6 +608,7 @@ public class Niche2 {
         return cwList;
 
     }
+
 
 
 
@@ -591,6 +691,52 @@ public class Niche2 {
         ArrayList<String[]> cList = new ArrayList<>(2);
         cList.add(c11);
         cList.add(c21);
+        return  cList;
+
+    }
+
+
+
+    /**
+     *  通过变异获得c1个体
+     *  随机变异
+     *
+     */
+    private ArrayList<String[]> mutate(String[] c1) throws SQLException {
+
+        //单点交叉
+        int length = 10;
+//      String [] c1 = p1;
+
+        //c1变异
+        Random random = new Random();
+        int mutatePoint = random.nextInt(length-1);
+        //将Array 转 hashSet  去除重复的元素了,有效，但需向上核实为什么会重复？
+        Set<String> set = new HashSet<>(Arrays.asList(c1));
+
+        //将要变异的元素
+        String s = c1[mutatePoint];
+        set.remove(s);
+        int removeId = Integer.parseInt(s.split(":")[0]);
+
+        //临时存储容器
+        String[] c11 = new String[length];
+
+        //生成一个不存在set中的key  保证题型长度符合要求
+        while (set.size() != length ){
+            String key = random.nextInt(310)+1+"";
+            if (!(key+"").equals(removeId+"")){
+                ArrayList<String> list = jdbcUtils.selectBachItem(key);
+                set.add(list.get(0)+"");
+            }
+        }
+        set.toArray(c11);
+        //排序
+        new ADIController6().sortPatch(c11);
+
+
+        ArrayList<String[]> cList = new ArrayList<>(1);
+        cList.add(c11);
         return  cList;
 
     }

@@ -26,7 +26,7 @@ public class JDBCUtils4 {
             try {
                 Class.forName("com.mysql.jdbc.Driver");
             } catch (Exception ex) {
-                System.out.println("驱动加载失败");
+                //System.out.println("驱动加载失败");
                 ex.printStackTrace();
             }
 
@@ -43,9 +43,9 @@ public class JDBCUtils4 {
                 }
 
             } catch (SQLException ex) {
-                System.out.println("SQLException: " + ex.getMessage());
-                System.out.println("SQLState: " + ex.getSQLState());
-                System.out.println("VendorError: " + ex.getErrorCode());
+                //System.out.println("SQLException: " + ex.getMessage());
+                //System.out.println("SQLState: " + ex.getSQLState());
+                //System.out.println("VendorError: " + ex.getErrorCode());
             }finally {
                 if(ps!= null) {
                     ps.close();
@@ -54,7 +54,7 @@ public class JDBCUtils4 {
                     conn.close();
                 }
             }
-            System.out.println();
+            //System.out.println();
             return list;
     }
 
@@ -82,14 +82,14 @@ public class JDBCUtils4 {
                     "(id,type, pattern,p1,p2,p3,p4,p5, base, penalty, adi1_r, adi2_r, adi3_r, adi4_r, adi5_r) \n" +
                     "VALUES("+id+",\""+type+"\","+"\""+pattern+"\","+p1+","+p2+","+p3+","+p4+","+p5+","+base+",\""+penalty+"\","+adi1_r+","+adi2_r+","+adi3_r+","+adi4_r+","+adi5_r+");";
                     //"VALUES("+id+",\""+pattern+"\","+base+",\""+penalty+"\","+adi1_r+","+adi2_r+","+adi3_r+","+adi4_r+","+adi5_r+");";
-            System.out.println(sql);
+            //System.out.println(sql);
             ps = conn.prepareStatement(sql);
             ps.execute();
 
         } catch (SQLException ex) {
-            System.out.println("SQLException: " + ex.getMessage());
-            System.out.println("SQLState: " + ex.getSQLState());
-            System.out.println("VendorError: " + ex.getErrorCode());
+            //System.out.println("SQLException: " + ex.getMessage());
+            //System.out.println("SQLState: " + ex.getSQLState());
+            //System.out.println("VendorError: " + ex.getErrorCode());
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }finally {
@@ -118,14 +118,14 @@ public class JDBCUtils4 {
                     "SET adi1_d="+adi1_d +", adi2_d=" +adi2_d+", " +
                     "adi3_d="+ adi3_d+", adi4_d="+adi4_d+", adi5_d="+adi5_d+", " +
                     "ps="+ps1+", pg="+pg+" where id="+id+" ;";
-            System.out.println(sql);
+            //System.out.println(sql);
             ps = conn.prepareStatement(sql);
             ps.execute();
 
         } catch (SQLException ex) {
-            System.out.println("SQLException: " + ex.getMessage());
-            System.out.println("SQLState: " + ex.getSQLState());
-            System.out.println("VendorError: " + ex.getErrorCode());
+            //System.out.println("SQLException: " + ex.getMessage());
+            //System.out.println("SQLState: " + ex.getSQLState());
+            //System.out.println("VendorError: " + ex.getErrorCode());
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }finally {
@@ -151,7 +151,7 @@ public class JDBCUtils4 {
         try {
             Class.forName("com.mysql.jdbc.Driver");
         } catch (Exception ex) {
-            System.out.println("驱动加载失败");
+            //System.out.println("驱动加载失败");
             ex.printStackTrace();
         }
 
@@ -169,9 +169,9 @@ public class JDBCUtils4 {
             id = rs.getInt("id");
 
         } catch (SQLException ex) {
-            System.out.println("SQLException: " + ex.getMessage());
-            System.out.println("SQLState: " + ex.getSQLState());
-            System.out.println("VendorError: " + ex.getErrorCode());
+            //System.out.println("SQLException: " + ex.getMessage());
+            //System.out.println("SQLState: " + ex.getSQLState());
+            //System.out.println("VendorError: " + ex.getErrorCode());
         }finally {
             if(ps!= null) {
                 ps.close();
@@ -180,7 +180,7 @@ public class JDBCUtils4 {
                 conn.close();
             }
         }
-        System.out.println();
+        //System.out.println();
         return id;
 
     }
@@ -199,17 +199,17 @@ public class JDBCUtils4 {
         try {
             Class.forName("com.mysql.jdbc.Driver");
         } catch (Exception ex) {
-            System.out.println("驱动加载失败");
+            //System.out.println("驱动加载失败");
             ex.printStackTrace();
         }
 
         try {
             conn =
-                    DriverManager.getConnection("jdbc:mysql://localhost/sysu?"+"user=root&password=root");
+                    DriverManager.getConnection("jdbc:mysql://localhost/sysu?"+"user=root&password=root&useSSL=false");
             ps = conn.prepareStatement("select * from sysu.adi20210528 where id in (" +
                     ids +  ");");
             rs = ps.executeQuery();
-            System.out.println("select * from sysu.adi20210528 where id in (" + ids +  ");");
+            //System.out.println("select * from sysu.adi20210528 where id in (" + ids +  ");");
 
             while(rs.next()) {
                 int id = rs.getInt("id");
@@ -225,9 +225,9 @@ public class JDBCUtils4 {
             }
 
         } catch (SQLException ex) {
-            System.out.println("SQLException: " + ex.getMessage());
-            System.out.println("SQLState: " + ex.getSQLState());
-            System.out.println("VendorError: " + ex.getErrorCode());
+            //System.out.println("SQLException: " + ex.getMessage());
+            //System.out.println("SQLState: " + ex.getSQLState());
+            //System.out.println("VendorError: " + ex.getErrorCode());
         }finally {
             if(ps!= null) {
                 ps.close();
@@ -236,7 +236,7 @@ public class JDBCUtils4 {
                 conn.close();
             }
         }
-        System.out.println();
+        //System.out.println();
         return list;
     }
 
@@ -259,7 +259,7 @@ public class JDBCUtils4 {
         }
         String sqlWhere = sb.toString().substring(0, sb.toString().length() - 3);
         sqlWhere = sqlWhere +");";
-        System.out.println("sqlwhere :"+sqlWhere);
+        //System.out.println("sqlwhere :"+sqlWhere);
 
         ArrayList<String> list = new ArrayList<>();
         Connection conn = null;
@@ -268,13 +268,13 @@ public class JDBCUtils4 {
         try {
             Class.forName("com.mysql.jdbc.Driver");
         } catch (Exception ex) {
-            System.out.println("驱动加载失败");
+            //System.out.println("驱动加载失败");
             ex.printStackTrace();
         }
 
         try {
             conn =
-                    DriverManager.getConnection("jdbc:mysql://localhost/sysu?"+"user=root&password=root");
+                    DriverManager.getConnection("jdbc:mysql://localhost/sysu?"+"user=root&password=root&useSSL=false");
             ps = conn.prepareStatement("select * from sysu.adi20210523 where " + sqlWhere );
             rs = ps.executeQuery();
 
@@ -297,9 +297,9 @@ public class JDBCUtils4 {
             }
 
         } catch (SQLException ex) {
-            System.out.println("SQLException: " + ex.getMessage());
-            System.out.println("SQLState: " + ex.getSQLState());
-            System.out.println("VendorError: " + ex.getErrorCode());
+            //System.out.println("SQLException: " + ex.getMessage());
+            //System.out.println("SQLState: " + ex.getSQLState());
+            //System.out.println("VendorError: " + ex.getErrorCode());
         }finally {
             if(ps!= null) {
                 ps.close();
@@ -308,7 +308,7 @@ public class JDBCUtils4 {
                 conn.close();
             }
         }
-        System.out.println();
+        //System.out.println();
         return list;
     }
 
@@ -327,7 +327,7 @@ public class JDBCUtils4 {
         try {
             Class.forName("com.mysql.jdbc.Driver");
         } catch (Exception ex) {
-            System.out.println("驱动加载失败");
+            //System.out.println("驱动加载失败");
             ex.printStackTrace();
         }
 
@@ -352,9 +352,9 @@ public class JDBCUtils4 {
             }
 
         } catch (SQLException ex) {
-            System.out.println("SQLException: " + ex.getMessage());
-            System.out.println("SQLState: " + ex.getSQLState());
-            System.out.println("VendorError: " + ex.getErrorCode());
+            //System.out.println("SQLException: " + ex.getMessage());
+            //System.out.println("SQLState: " + ex.getSQLState());
+            //System.out.println("VendorError: " + ex.getErrorCode());
         }finally {
             if(ps!= null) {
                 ps.close();
@@ -363,7 +363,7 @@ public class JDBCUtils4 {
                 conn.close();
             }
         }
-        System.out.println();
+        //System.out.println();
         return list;
 
     }
@@ -376,16 +376,18 @@ public class JDBCUtils4 {
      */
     public  String selectOneItem(int sqlId) throws SQLException {
 
+
         ResultSet rs ;
         String item = "";
         try {
             Class.forName("com.mysql.jdbc.Driver");
         } catch (Exception ex) {
-            System.out.println("驱动加载失败");
+            //System.out.println("驱动加载失败");
             ex.printStackTrace();
         }
 
-        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/sysu?" + "user=root&password=root&useSSL=false"); PreparedStatement ps = conn.prepareStatement("SELECT t1.id,t1.type,t1.pattern \n" +
+        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/sysu?" + "user=root&password=root&useSSL=false");
+             PreparedStatement ps = conn.prepareStatement("SELECT t1.id,t1.type,t1.pattern \n" +
                 "FROM sysu.adi20210528 AS t1 \n" +
                 "WHERE t1.id = " + sqlId)) {
             rs = ps.executeQuery();
@@ -396,12 +398,18 @@ public class JDBCUtils4 {
                 item = id + ":" + type + ":" + attributes;
 
             }
+            if(ps!= null) {
+                ps.close();
+            }
+            if(conn!= null) {
+                conn.close();
+            }
         } catch (SQLException ex) {
-            System.out.println("SQLException: " + ex.getMessage());
-            System.out.println("SQLState: " + ex.getSQLState());
-            System.out.println("VendorError: " + ex.getErrorCode());
+            //System.out.println("SQLException: " + ex.getMessage());
+            //System.out.println("SQLState: " + ex.getSQLState());
+            //System.out.println("VendorError: " + ex.getErrorCode());
         }
-        System.out.println();
+        //System.out.println();
         return item;
 
     }
@@ -419,7 +427,7 @@ public class JDBCUtils4 {
         try {
             Class.forName("com.mysql.jdbc.Driver");
         } catch (Exception ex) {
-            System.out.println("驱动加载失败");
+            //System.out.println("驱动加载失败");
             ex.printStackTrace();
         }
 
@@ -436,9 +444,9 @@ public class JDBCUtils4 {
             }
 
         } catch (SQLException ex) {
-            System.out.println("SQLException: " + ex.getMessage());
-            System.out.println("SQLState: " + ex.getSQLState());
-            System.out.println("VendorError: " + ex.getErrorCode());
+            //System.out.println("SQLException: " + ex.getMessage());
+            //System.out.println("SQLState: " + ex.getSQLState());
+            //System.out.println("VendorError: " + ex.getErrorCode());
         }finally {
             if(ps!= null) {
                 ps.close();
@@ -447,7 +455,7 @@ public class JDBCUtils4 {
                 conn.close();
             }
         }
-        System.out.println();
+        //System.out.println();
         return list;
     }
 
@@ -464,7 +472,7 @@ public class JDBCUtils4 {
         try {
             Class.forName("com.mysql.jdbc.Driver");
         } catch (Exception ex) {
-            System.out.println("驱动加载失败");
+            //System.out.println("驱动加载失败");
             ex.printStackTrace();
         }
 
@@ -489,9 +497,9 @@ public class JDBCUtils4 {
             }
 
         } catch (SQLException ex) {
-            System.out.println("SQLException: " + ex.getMessage());
-            System.out.println("SQLState: " + ex.getSQLState());
-            System.out.println("VendorError: " + ex.getErrorCode());
+            //System.out.println("SQLException: " + ex.getMessage());
+            //System.out.println("SQLState: " + ex.getSQLState());
+            //System.out.println("VendorError: " + ex.getErrorCode());
         }finally {
             if(ps!= null) {
                 ps.close();
@@ -500,7 +508,7 @@ public class JDBCUtils4 {
                 conn.close();
             }
         }
-        System.out.println();
+        //System.out.println();
         return list;
     }
 

@@ -5,9 +5,12 @@ import cn.edu.sysu.niche.Niche2;
 import cn.edu.sysu.pojo.Papers;
 import cn.edu.sysu.utils.JDBCUtils4;
 import cn.edu.sysu.utils.KLUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
-import scala.Function4;
 
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -17,26 +20,30 @@ import java.util.*;
  *
  * @Author : song bei chang
  * @create 2021/05/18 0:17
+ *
+ * 比较部分：1.重叠率达到50%的时间,文献  或者 max相似个体的数目
+ *          2.平均适应度值（后期考虑）
+ *
+ * 检验为什么会出现过早收敛的现象
+ *
  */
-public class ADIController5 {
+public class ADIController6 {
 
 
     /*  容器 全局最优 局部最优  */
-
     private static double GlobalOptimal = 0;
     private static double[] LocalOptimal = new double[100];
     private static ArrayList<String> bankList = new ArrayList();
 
 
     /* 100套试卷 10道题  */
-
     private static String[][] paperGenetic =new String[100][10];
 
 
     private  JDBCUtils4 jdbcUtils = new JDBCUtils4();
 
     // 小生境对象
-    private Niche2 niche = new Niche2();
+    private Niche2 niche2 = new Niche2();
 
 
     /**
@@ -46,7 +53,7 @@ public class ADIController5 {
      *
      */
     @Test
-    public  void ori() throws SQLException {
+    public  void ori() throws SQLException, FileNotFoundException {
 
         //选择100套的原因，只有基数够大，才能为交叉变异提供相对较多的原始材料  打算先以100套试卷为变更基础,最后正序取前三
         //抽取试卷  100套、每套试卷10题
@@ -68,11 +75,9 @@ public class ADIController5 {
             //选择
             selection();
             //交叉
-            crossCover(papers);
-            //FIXME  小生境环境的搭建
-            //niche.RTS(paperGenetic);
+            //crossCover(papers);
             //变异
-            mutate(papers);
+            //mutate(papers);
             //精英策略
             //elitistStrategy();
             //统计相似个体的数目
@@ -89,9 +94,16 @@ public class ADIController5 {
      * 找出一个数组中一个数字出现次数最多的数字
      * 用HashMap的key来存放数组中存在的数字，value存放该数字在数组中出现的次数
      *
+     * 将结果写到指定文件，便于后续统计
+     *
      */
-    private void countCalculations(String[][] paperGenetic){
+    private void countCalculations(String[][] paperGenetic) throws FileNotFoundException {
 
+        //PrintStream ps = new PrintStream("F:\\song\\SYSU\\multimodal_optimization\\src\\main\\java\\cn\\edu\\sysu\\controller\\testIO.txt");
+        //System.setOut(ps);
+
+        Log log = LogFactory.getLog(ADIController6.class);
+        log.info("测试 log4j");
         //int[] array = {2, 1, 1,2, 3, 4, 5, 2, 2,5, 2, 2};
         //将String[][] paperGenetic 转化为 String[] array
         String[] array = new String[paperGenetic.length];
@@ -99,13 +111,13 @@ public class ADIController5 {
         for (int i = 0; i < paperGenetic.length; i++) {
             //排序操作，为了保证检测出相似性
             String[] strings = sortPatch(paperGenetic[i]);
-            String idTmp = "[";
+            StringBuilder idTmp = new StringBuilder();
             for (String s : strings) {
                 //将id抽取出来,并拼接成新数组
-                //System.out.println(s.split(":")[0]);
-                idTmp = idTmp + s.split(":")[0]+",";
+                System.out.println(s.split(":")[0]);
+                idTmp.append(s.split(":")[0]).append(":");
             }
-            array[i] = idTmp+"]";
+            array[i] = idTmp.toString();
         }
 
 
@@ -127,6 +139,7 @@ public class ADIController5 {
             String key = entry.getKey();
             Integer count = entry.getValue();
             System.out.println("试题编号："+ key+"  次数："+count);
+            log.info("试题编号："+ key+"  次数："+count);
 
         }
 
@@ -146,10 +159,67 @@ public class ADIController5 {
         }
         System.out.println("出现次数最多的数字为：" + maxNumber);
         System.out.println("该数字一共出现" + maxCount + "次");
+        log.info("出现次数最多的数字为：" + maxNumber);
+        log.info("该数字一共出现" + maxCount + "次");
+
+
+
 
 
     }
 
+
+    /**
+     * mutePlus
+     */
+    public void  mutePlus(Papers papers) throws SQLException {
+
+
+        //将其植入，增大变异
+        // 以试卷为单位、交换试卷的部分试题
+        String key  ="";
+        for (int i = 0; i < paperGenetic.length; i++) {
+            if(Math.random() < papers.getPm()){
+                Random random = new Random();
+                //length-1
+                int mutatePoint = random.nextInt((paperGenetic[1].length)-1);
+                //将Array 转 hashSet
+                Set<String> set = new HashSet<>(Arrays.asList( paperGenetic[i]));
+                System.out.println(i+" 原试卷: "+set);
+
+                //将要变异的元素   前提是试卷有序排列
+                String s = paperGenetic[i][mutatePoint];
+                System.out.println("  remove element: "+ s);
+                set.remove(s);
+                int removeId = Integer.parseInt(s.split(":")[0]);
+                System.out.println("  临时试卷：  "+set);
+
+                //单套试卷临时存储容器
+                String[] temp1 = new String[paperGenetic[i].length];
+
+                //生成一个不存在set中的key
+                while (set.size() != paperGenetic[i].length ){
+                    key = random.nextInt(310)+1+"";
+                    if (!(key+"").equals(removeId+"")){
+                        ArrayList<String> list = jdbcUtils.selectBachItem(key);
+                        set.add(list.get(0)+"");
+                    }
+                }
+                System.out.println("  add element: "+ key);
+                set.toArray(temp1);
+
+                //排序修补
+                paperGenetic[i] =  sortPatch(temp1);
+
+                //执行变异后的修补操作
+                correct(i);
+
+            }
+
+            System.out.println("  最终试卷： "+Arrays.toString(paperGenetic[i]));
+        }
+
+    }
 
 
     /**
@@ -162,6 +232,7 @@ public class ADIController5 {
      *          3、重复步骤(2)多次（重复次数为种群的大小），直到新的种群规模达到原来的种群规模。
      */
     private void initItemBank5() throws SQLException {
+
 
         System.out.println("====== 开始选题,构成试卷  锦标赛构造  ======");
 
@@ -246,6 +317,8 @@ public class ADIController5 {
      *
      */
     private void initItemBank4() throws SQLException {
+
+
 
         System.out.println("====== 开始选题,构成试卷  轮盘赌构造  ======");
 
@@ -355,6 +428,8 @@ public class ADIController5 {
      */
     private void initItemBank() throws SQLException {
 
+
+
         System.out.println("====== 开始选题,构成试卷  ======");
 
         /*  试卷数 */
@@ -453,6 +528,8 @@ public class ADIController5 {
      *
      */
     private Boolean propCheck(ArrayList<String> bachItemList,String s, String s1) {
+
+
 
         // 刪除元素s，添加元素s1
         for (int i = 0; i < bachItemList.size(); i++) {
@@ -571,6 +648,8 @@ public class ADIController5 {
      */
     private void crossCover(Papers papers) throws SQLException {
 
+
+
         System.out.println("================== cross ==================");
 
 
@@ -614,6 +693,8 @@ public class ADIController5 {
      */
     private void correct(int i) throws SQLException {
 
+
+
         System.out.println("第 "+i+" 题,开始交叉/变异后校验 ..... ");
 
         // 长度校验
@@ -633,54 +714,32 @@ public class ADIController5 {
      * 变异  (长度，属性类型，属性比例)
      *      目的：为GA提供多样性
      *
+     * 以试卷为单位、交换试卷的部分试题
+     * 原有小生境是随机生成父代，并一定进行变异操作。和自带的逻辑存在偏差，
+     * 解决方案：
+     *      ①迭代个体+if交叉概率+只变异一个个体
+     *
      */
     private void mutate(Papers papers) throws SQLException {
 
+
+
         System.out.println("================== mutate ==================");
 
-        String key  ="";
-
-        // 以试卷为单位、交换试卷的部分试题
         for (int i = 0; i < paperGenetic.length; i++) {
-            if(Math.random() < papers.getPm()){
-                Random random = new Random();
-                //length-1
-                int mutatePoint = random.nextInt((paperGenetic[1].length)-1);
-                //将Array 转 hashSet
-                Set<String> set = new HashSet<>(Arrays.asList( paperGenetic[i]));
-                System.out.println(i+" 原试卷: "+set);
+            if (Math.random() < papers.getPm()) {
 
-                //将要变异的元素   前提是试卷有序排列
-                String s = paperGenetic[i][mutatePoint];
-                System.out.println("  remove element: "+ s);
-                set.remove(s);
-                int removeId = Integer.parseInt(s.split(":")[0]);
-                System.out.println("  临时试卷：  "+set);
-
-                //单套试卷临时存储容器
-                String[] temp1 = new String[paperGenetic[i].length];
-
-                //生成一个不存在set中的key
-                while (set.size() != paperGenetic[i].length ){
-                    key = random.nextInt(310)+1+"";
-                    if (!(key+"").equals(removeId+"")){
-                        ArrayList<String> list = jdbcUtils.selectBachItem(key);
-                        set.add(list.get(0)+"");
-                    }
-                }
-                System.out.println("  add element: "+ key);
-                set.toArray(temp1);
-
-                //排序修补
-                paperGenetic[i] =  sortPatch(temp1);
+                //使用小生境的变异替换掉原有变异  需要将变异后的种群返回
+                ArrayList<Object> rts = niche2.RTS(paperGenetic, i);
+                int similarPhenIndex = (int) rts.get(0);
+                paperGenetic = (String[][]) rts.get(1);
 
                 //执行变异后的修补操作
-                correct(i);
-
+                correct(similarPhenIndex);
             }
-
-            System.out.println("  最终试卷： "+Arrays.toString(paperGenetic[i]));
         }
+
+        //mutePlus(papers);
 
     }
 
@@ -689,7 +748,9 @@ public class ADIController5 {
      * 排序
      *      1.获取id,重新据库查询一遍  返回的Array[]
      */
-    private String[] sortPatch(String[] temp1) {
+    public String[] sortPatch(String[] temp1) {
+
+
         //题型数量
         int  typeNum = paperGenetic[0].length;
 
@@ -729,6 +790,8 @@ public class ADIController5 {
      *
      */
     public  void  selection(){
+
+
 
         System.out.println("====================== select ======================");
 
@@ -794,6 +857,8 @@ public class ADIController5 {
      */
     private void printDoubleArray( double[] randomId) {
 
+
+
         //把基本数据类型转化为列表 double[]转Double[]
         int num = randomId.length;
         Double [] arrDouble=new Double[num];
@@ -814,6 +879,8 @@ public class ADIController5 {
      *
      */
     private double[] getFitness(int paperSize){
+
+
 
         // 所有试卷的适应度总和
         double fitSum = 0.0;
@@ -1061,6 +1128,7 @@ public class ADIController5 {
      */
     public Double numbCohesion(Double adi){
 
+
         return Double.valueOf(String.format("%.4f", adi));
 
     }
@@ -1073,6 +1141,7 @@ public class ADIController5 {
      *          局部最优和全局最优,都只是一个容器  需要挨个和每套试卷进行比较替换
      */
     private void  elitistStrategy(){
+
 
         System.out.println("================== elitistStrategy ==================");
         //getFitness(paperGenetic.length);
@@ -1093,6 +1162,7 @@ public class ADIController5 {
      *        [8:CHOSE:(1,0,0,0,0), 3:CHOSE:(0,0,0,1,0)]
      */
     private int roulette(HashSet<String> itemSet)  {
+
 
         System.out.println("====================== 构造选题 ======================");
 
@@ -1167,6 +1237,7 @@ public class ADIController5 {
      *
      */
     private double[] getRouletteFitness(HashSet<String> itemSet)  {
+
 
         // 所有试题的适应度总和
         double fitSum = 0.0;
@@ -1243,7 +1314,7 @@ public class ADIController5 {
                     attributeNum5 += 1;
                 }
             }
-        //System.out.println("AttributeRatio1: "+attributeNum1+"\tAttributeRatio2: "+attributeNum2+"\tAttributeRatio3: "+attributeNum3+"\tAttributeRatio4: "+attributeNum4+"\tAttributeRatio5: "+attributeNum5);
+        System.out.println("AttributeRatio1: "+attributeNum1+"\tAttributeRatio2: "+attributeNum2+"\tAttributeRatio3: "+attributeNum3+"\tAttributeRatio4: "+attributeNum4+"\tAttributeRatio5: "+attributeNum5);
 
             //属性比例
             double attributeRatio1 = attributeNum1/23.0;
@@ -1348,7 +1419,7 @@ public class ADIController5 {
         for (double anArr : fitPro) {
             arrayList.add(anArr);
         }
-        //System.out.println(arrayList.toString());
+        System.out.println(arrayList.toString());
 
 
         return  fitPro;
@@ -1357,6 +1428,7 @@ public class ADIController5 {
 
 
     private ArrayList<String> getBank() throws SQLException {
+
 
         return jdbcUtils.select();
 
@@ -1375,6 +1447,8 @@ public class ADIController5 {
      *          3、重复步骤(2)多次（重复次数为种群的大小），直到新的种群规模达到原来的种群规模。
      */
     private int championship(HashSet<String> itemSet) throws SQLException {
+
+
         //9元锦标赛   当N的个数无限接近题库大小时,其和轮盘赌的前半部分是一致的
         int num = 9 ;
 
@@ -1555,6 +1629,8 @@ public class ADIController5 {
      */
     private String hashMapSort(Map<String, Double> map) {
 
+
+
         System.out.println("============排序前============");
         Set<Map.Entry<String, Double>> entrySet = map.entrySet();
         for (Map.Entry s : entrySet) {
@@ -1616,6 +1692,8 @@ public class ADIController5 {
      */
     private ArrayList<String> rearrange(String type, ArrayList<String> listA){
 
+
+
         //定义
         ArrayList<String> listB = new ArrayList<>();
         for (String s : listA) {
@@ -1644,6 +1722,7 @@ public class ADIController5 {
      *
      */
     private void correctLength(int w) throws SQLException {
+
 
         //去重操作
         HashSet<String> setBegin = new HashSet<>(Arrays.asList(paperGenetic[w]));
@@ -1788,6 +1867,7 @@ public class ADIController5 {
      */
     private void correctAttribute(int w) throws SQLException {
 
+
         ArrayList<String> bachItemList = new ArrayList();
         Collections.addAll(bachItemList, paperGenetic[w]);
 
@@ -1886,6 +1966,7 @@ public class ADIController5 {
      *
      */
     private void correctType(int w) throws SQLException {
+
 
 
 //=========================  1.0 指标统计   ================================
@@ -2842,6 +2923,7 @@ public class ADIController5 {
     public ArrayList<String> correctAttributeLess(Set<String> outLess,JDBCUtils4 jdbcUtils,ArrayList<String> bachItemList,int af1,int af2,int af3,int af4,int af5) throws SQLException {
 
 
+
             System.out.println("本套试卷 属性比例不足的情况。");
             System.out.println(outLess);
 
@@ -3019,6 +3101,8 @@ public class ADIController5 {
 
 
 
+
+
             System.out.println("本套试卷 属性比例过高的情况。");
             System.out.println(outMore);
 
@@ -3182,6 +3266,7 @@ public class ADIController5 {
      *
      */
     public ArrayList<String> correctAttributeMoreAndLess(Set<String> outMore,Set<String> outLess,JDBCUtils4 jdbcUtils,ArrayList<String> bachItemList,int af1,int af2,int af3,int af4,int af5) throws SQLException {
+
 
 
             //取交集
@@ -3593,6 +3678,8 @@ public class ADIController5 {
 
     public Set<String> getoutMore(ArrayList<String> bachItemList,int af1,int af2,int af3,int af4,int af5){
 
+
+
             //需要判断 set 是否为空  把判断为空的逻辑 放在上面判断
             Set<String> outMore = new HashSet<>();
 
@@ -3648,6 +3735,7 @@ public class ADIController5 {
     }
 
     public Set<String> getoutLess(ArrayList<String> bachItemList,int af1,int af2,int af3,int af4,int af5){
+
 
         Set<String> outLess = new HashSet<>();
 
@@ -3710,6 +3798,8 @@ public class ADIController5 {
 
     @Test
     public void set() throws SQLException {
+
+
         HashSet<String> setEnd = new HashSet<>();
         //随机选题
         while(setEnd.size() != 100){

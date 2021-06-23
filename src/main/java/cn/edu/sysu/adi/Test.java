@@ -11,6 +11,56 @@ import java.util.*;
  */
 public class Test {
 
+    /**
+     * 找出一个数组中一个数字出现次数最多的数字
+     * 用HashMap的key来存放数组中存在的数字，value存放该数字在数组中出现的次数
+     *
+     */
+    @org.junit.Test
+    public void HashMapTest1(){
+
+           int[] array = {2, 1, 1,2, 3, 4, 5, 2, 2,5, 2, 2};
+            //map的key存放数组中存在的数字，value存放该数字在数组中出现的次数
+            HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+            for(int i = 0; i < array.length; i++) {
+                if(map.containsKey(array[i])) {
+                    int temp = map.get(array[i]);
+                    map.put(array[i], temp + 1);
+                } else {
+                    map.put(array[i], 1);
+                }
+            }
+
+            //分别输出每个个体出现的次数
+            for(Map.Entry<Integer, Integer> entry : map.entrySet()) {
+                //得到value为maxCount的key，也就是数组中出现次数最多的数字
+
+                    Integer key = entry.getKey();
+                    Integer count = entry.getValue();
+                    System.out.println("试题编号："+ key+"  次数："+count);
+
+            }
+
+            //找出map的value中最大的数字，也就是数组中数字出现最多的次数
+            Collection<Integer> count = map.values();
+            int max = Collections.max(count);
+            System.out.println(max);
+
+            int maxNumber = 0;
+            int maxCount = 0;
+            for(Map.Entry<Integer, Integer> entry : map.entrySet()) {
+                //得到value为maxCount的key，也就是数组中出现次数最多的数字
+                if(maxCount < entry.getValue()) {
+                    maxCount = entry.getValue();
+                    maxNumber = entry.getKey();
+                }
+            }
+            System.out.println("出现次数最多的数字为：" + maxNumber);
+            System.out.println("该数字一共出现" + maxCount + "次");
+
+
+    }
+
 
     @org.junit.Test
     public  void sonList() {
