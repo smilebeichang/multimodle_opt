@@ -28,7 +28,7 @@ public class ADIController5 {
     private static ArrayList<String> bankList = new ArrayList();
 
 
-    /* 100套试卷 6道题  */
+    /* 100套试卷 10道题  */
 
     private static String[][] paperGenetic =new String[100][10];
 
@@ -36,7 +36,7 @@ public class ADIController5 {
     private  JDBCUtils4 jdbcUtils = new JDBCUtils4();
 
     // 小生境对象
-    Niche2 niche = new Niche2();
+    private Niche2 niche = new Niche2();
 
 
     /**
@@ -48,8 +48,8 @@ public class ADIController5 {
     @Test
     public  void ori() throws SQLException {
 
-        //选择10套的原因，只有基数够大，才能为交叉变异提供相对较多的原始材料  打算先以10套试卷为变更基础,最后正序取前三
-        //抽取试卷  10套、每套试卷10题
+        //选择100套的原因，只有基数够大，才能为交叉变异提供相对较多的原始材料  打算先以100套试卷为变更基础,最后正序取前三
+        //抽取试卷  100套、每套试卷10题
         Papers papers = new Papers();
         papers.setPc(0.5);
         papers.setPm(0.5);
@@ -64,16 +64,15 @@ public class ADIController5 {
 
 
         // i 迭代次数
-        for (int i = 0; i < 500; i++) {
+        for (int i = 0; i < 100; i++) {
             //选择
             selection();
             //交叉
-            //crossCover(papers);
-            //小生境
+            crossCover(papers);
+            //FIXME  小生境环境的搭建
             niche.RTS(paperGenetic);
             //变异
-            //mutate(papers);
-            // FIXME  待实现 小生境环境的搭建
+            mutate(papers);
             //精英策略
             //elitistStrategy();
         }
@@ -270,15 +269,15 @@ public class ADIController5 {
      *
      *
      *
-     * TODO  疑问： 1.选出可能导致占比失衡的试题   OutList  set（取交集）  设置权重
-     * TODO        2.从题库中选取可能满足的解集   InList  (按顺序遍历，vs 随机  vs 优先级)
-     * TODO        3.占比失衡的情况讨论
-     * TODO        4.停止规则
+     *   疑问： 1.选出可能导致占比失衡的试题   OutList  set（取交集）  设置权重
+     *         2.从题库中选取可能满足的解集   InList  (按顺序遍历，vs 随机  vs 优先级)
+     *         3.占比失衡的情况讨论
+     *         4.停止规则
      *
      *
-     * TODO  本周任务  1.通过构造的方法初始化题目 (轮盘赌  + 锦标赛)
-     * TODO          2.将属性类型个数改为题型，以及比例
-     * TODO          3.交叉变异后 校验比例（题型+属性） 直接替换  （迭代一百次以后，没有就直接退出）
+     *   本周任务  1.通过构造的方法初始化题目 (轮盘赌  + 锦标赛)
+     *           2.将属性类型个数改为题型，以及比例
+     *           3.交叉变异后 校验比例（题型+属性） 直接替换  （迭代一百次以后，没有就直接退出）
      *
      *
      */
@@ -1296,7 +1295,7 @@ public class ADIController5 {
      *       评价题目的好坏指标也应该和已选取的题目相挂钩，不然无法满足题型和属性的比例要求
      *
      *
-     * TODO 遗传算法中的锦标赛选择策略每次从种群中取出一定数量个体（放回抽样），然后选择其中最好的一个进入子代种群。
+     *  遗传算法中的锦标赛选择策略每次从种群中取出一定数量个体（放回抽样），然后选择其中最好的一个进入子代种群。
      *      具体的操作步骤如下：
      *          1、确定每次选择的个体数量N。（N元锦标赛选择即选择N个个体）
      *          2、从种群中随机选择N个个体(每个个体被选择的概率相同) ，根据每个个体的适应度值，
