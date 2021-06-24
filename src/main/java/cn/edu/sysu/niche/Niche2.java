@@ -98,9 +98,34 @@ public class Niche2 {
     /* 100套试卷 10道题  */
     private static String[][] paperGenetic =new String[100][10];
 
-    /** 确定性拥挤算法 */
-    public void deterministic_crowding(){
+    /** 确定性拥挤算法 deterministic crowding */
+    public void DET(String[][] paperGenetictmp) throws SQLException {
+        //赋值给全局变量
+        paperGenetic = paperGenetictmp;
 
+        //有放回的随机选取两个父代个体p1 p2
+        Random random = new Random();
+        int  index1 = random.nextInt(100);
+        int  index2 = random.nextInt(100);
+        ArrayList<Integer> iList = new ArrayList<>(2);
+        iList.add(index1);
+        iList.add(index2);
+
+        String[] p1 = paperGenetic[index1];
+        String[] p2 = paperGenetic[index2];
+
+
+        ArrayList<String[]> pList = new ArrayList<>(2);
+        pList.add(p1);
+        pList.add(p2);
+
+
+        //父代交叉、变异，产生新个体c1/c2
+        ArrayList<String[]> cList = crossMutateDet(p1, p2);
+
+
+        //替换(父代子代进行比较)
+        closestResembleDet(iList,cList,pList);
 
     }
 
@@ -738,6 +763,159 @@ public class Niche2 {
         ArrayList<String[]> cList = new ArrayList<>(1);
         cList.add(c11);
         return  cList;
+
+    }
+
+
+
+    /**
+     *  即使p1/p2相同,交叉无效,但可进一步通过变异获得c1/c2个体
+     *  单点交叉 + 随机变异
+     *
+     */
+    private ArrayList<String[]> crossMutateDet(String[] p1, String[] p2) throws SQLException {
+        //  单点交叉
+        int length = 10;
+        int a = new Random().nextInt(length);
+        String [] c1 = new String[length];
+        String [] c2 = new String[length];
+
+        if (a >= 0) {
+            System.arraycopy(p1, 0, c1, 0, a);
+        }
+
+        if (length - a >= 0) {
+            System.arraycopy(p2, a, c1, a, length - a);
+        }
+
+        if (a >= 0) {
+            System.arraycopy(p2, 0, c2, 0, a);
+        }
+
+        if (length - a >= 0) {
+            System.arraycopy(p1, a, c2, a, length - a);
+        }
+
+        //c1变异
+        Random random = new Random();
+        int mutatePoint = random.nextInt(length-1);
+        //将Array 转 hashSet  去除重复的元素了,有效，但需向上核实为什么会重复？
+        Set<String> set = new HashSet<>(Arrays.asList(c1));
+
+        //将要变异的元素
+        String s = c1[mutatePoint];
+        set.remove(s);
+        int removeId = Integer.parseInt(s.split(":")[0]);
+
+        //试卷临时存储容器
+        String[] c11 = new String[length];
+
+        //生成一个不存在set中的key  新增不同的元素了,有效，交叉本身就会导致基因size丢失
+        while (set.size() != length ){
+            String key = random.nextInt(310)+1+"";
+            if (!(key+"").equals(removeId+"")){
+                ArrayList<String> list = jdbcUtils.selectBachItem(key);
+                set.add(list.get(0)+"");
+            }
+        }
+        set.toArray(c11);
+
+        //c2变异
+        int mutatePoint2 = random.nextInt(length-1);
+        //将Array 转 hashSet
+        Set<String> set2 = new HashSet<>(Arrays.asList(c2));
+
+        //将要变异的元素
+        String s2 = c2[mutatePoint2];
+        set2.remove(s2);
+        int removeId2 = Integer.parseInt(s2.split(":")[0]);
+
+        //试卷临时存储容器
+        String[] c21 = new String[length];
+
+        //生成一个不存在set中的key
+        while (set2.size() != length ){
+            String key = random.nextInt(310)+1+"";
+            if (!(key+"").equals(removeId2+"")){
+                ArrayList<String> list = jdbcUtils.selectBachItem(key);
+                set2.add(list.get(0)+"");
+            }
+        }
+        set2.toArray(c21);
+
+
+        ArrayList<String[]> cList = new ArrayList<>(2);
+        cList.add(c11);
+        cList.add(c21);
+        return  cList;
+
+    }
+
+
+    /**
+     *
+     */
+    private void closestResembleDet(ArrayList<Integer> iList,ArrayList<String[]> cList, ArrayList<String[]> pList) {
+        //  表现型  适应度值，或者minAdi
+        //  基因型  解(2,3,56,24,4,6,89,98,200,23)
+        int i1 = iList.get(0);
+        int i2 = iList.get(1);
+
+
+
+        String[] c1 = cList.get(0);
+        String[] c2 = cList.get(1);
+
+        String[] p1 = pList.get(0);
+        String[] p2 = pList.get(1);
+
+        // 选取表现型做相似性校验
+        similarPhenDet(i1,i2,c1,c2,p1,p2);
+
+
+        //选取基因型做相似性校验
+        //similarGene(c1,cw1);
+
+    }
+
+
+    /**
+     *   3.1 如果[d(p1,c1)+d(p2,c2)]<=[d(p1,c2)+d(p2,c1)]
+     *          如果f(c1)>f(p1),则用c1替换p1,否则保留p1;
+     *          如果f(c2)>f(p2),则用c2替换p2,否则保留p2;
+     *   3.2 否则
+     *          如果f(c1)>f(p2),则用c1替换p2,否则保留p2;
+     *          如果f(c2)>f(p1),则用c2替换p1,否则保留p1;
+     *
+     */
+    private void similarPhenDet(int i1,int i2,String[] c1, String[] c2,String[] p1,String[] p2) {
+
+        double minADIC1 = getMinADI(c1);
+        double minADIC2 = getMinADI(c2);
+        double minADIP1 = getMinADI(p1);
+        double minADIP2 = getMinADI(p2);
+
+
+        //距离计算
+        if(Math.abs(minADIC1 - minADIP1) +Math.abs(minADIC2 - minADIP2) <= Math.abs(minADIC1 - minADIP2) +Math.abs(minADIC2 - minADIP1)){
+            System.out.println("距离1小,选择分支1");
+            //判断适应度值，执行替换
+            if(minADIC1 > minADIP1){
+                paperGenetic[i1] = c1;
+            }
+            if(minADIC2 > minADIP2){
+                paperGenetic[i2] = c2;
+            }
+        }else{
+            System.out.println("距离2小,选择分支2");
+            //判断适应度值，执行替换
+            if(minADIC1 > minADIP2){
+                paperGenetic[i2] = c1;
+            }
+            if(minADIC2 > minADIP1){
+                paperGenetic[i1] = c2;
+            }
+        }
 
     }
 

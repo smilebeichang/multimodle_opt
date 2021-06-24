@@ -3,11 +3,12 @@ FIXME   这周的学习进展：
         1.限制性锦标赛拥挤算法的实现
         2.伪代码的编写   (.txt)
         3.性能对比（覆盖50%的时间,迭代5000次后个体的最大相似个体的数目）
+            hive 读取log文件,形成kv
         4.确定性拥挤算法实现
 
 
 
- 迭代次数：5000
+ 迭代次数：370
  变异概率：0.8
  交叉概率：0.6
  window: 10
@@ -16,5 +17,22 @@ FIXME   这周的学习进展：
 
 
  伪代码编写：
+ public  void RTS(paperGeneticTmp,i) {
+
+
+        // 1.父代变异产生新个体c1
+        mutate(paperGenetic[i])
+
+        // 2.为c1从当前种群中随机选取c*w个体
+        championship()
+
+        // 3.替换
+        closestResemble(cList, cwList)
+
+            // 4.选取表现型做相似性校验
+            similarPhen(c1, cw1)
+
+
+ }
 
 

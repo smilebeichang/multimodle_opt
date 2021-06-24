@@ -5,6 +5,8 @@ import cn.edu.sysu.niche.Niche2;
 import cn.edu.sysu.pojo.Papers;
 import cn.edu.sysu.utils.JDBCUtils4;
 import cn.edu.sysu.utils.KLUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import scala.Function4;
 
@@ -64,7 +66,7 @@ public class ADIController5 {
 
 
         // i 迭代次数
-        for (int i = 0; i < 5000; i++) {
+        for (int i = 0; i < 500; i++) {
             //选择
             selection();
             //交叉
@@ -91,6 +93,9 @@ public class ADIController5 {
      *
      */
     private void countCalculations(String[][] paperGenetic){
+
+        Log log = LogFactory.getLog(ADIController5.class);
+        log.info("测试 log4j");
 
         //int[] array = {2, 1, 1,2, 3, 4, 5, 2, 2,5, 2, 2};
         //将String[][] paperGenetic 转化为 String[] array
@@ -127,6 +132,7 @@ public class ADIController5 {
             String key = entry.getKey();
             Integer count = entry.getValue();
             System.out.println("试题编号："+ key+"  次数："+count);
+            //log.info("试题编号："+ key+"  次数："+count);
 
         }
 
@@ -146,6 +152,8 @@ public class ADIController5 {
         }
         System.out.println("出现次数最多的数字为：" + maxNumber);
         System.out.println("该数字一共出现" + maxCount + "次");
+        //log.info("出现次数最多的数字为：" + maxNumber);
+        log.info("该数字一共出现" + maxCount + "次");
 
 
     }

@@ -75,9 +75,9 @@ public class ADIController6 {
             //选择
             selection();
             //交叉
-            //crossCover(papers);
+            crossCover(papers);
             //变异
-            //mutate(papers);
+            mutate(papers);
             //精英策略
             //elitistStrategy();
             //统计相似个体的数目
@@ -112,11 +112,13 @@ public class ADIController6 {
             //排序操作，为了保证检测出相似性
             String[] strings = sortPatch(paperGenetic[i]);
             StringBuilder idTmp = new StringBuilder();
+            idTmp.append("[");
             for (String s : strings) {
                 //将id抽取出来,并拼接成新数组
                 System.out.println(s.split(":")[0]);
-                idTmp.append(s.split(":")[0]).append(":");
+                idTmp.append(s.split(":")[0]).append(",");
             }
+            idTmp.append("]");
             array[i] = idTmp.toString();
         }
 
@@ -729,17 +731,21 @@ public class ADIController6 {
         for (int i = 0; i < paperGenetic.length; i++) {
             if (Math.random() < papers.getPm()) {
 
-                //使用小生境的变异替换掉原有变异  需要将变异后的种群返回
-                ArrayList<Object> rts = niche2.RTS(paperGenetic, i);
-                int similarPhenIndex = (int) rts.get(0);
-                paperGenetic = (String[][]) rts.get(1);
-
+                //使用限制性锦标赛拥挤小生境的变异替换掉原有变异  需要将变异后的种群返回
+                //ArrayList<Object> rts = niche2.RTS(paperGenetic, i);
+                //int similarPhenIndex = (int) rts.get(0);
+                //paperGenetic = (String[][]) rts.get(1);
                 //执行变异后的修补操作
-                correct(similarPhenIndex);
+                //correct(similarPhenIndex);
+
+                //使用确定性拥挤小生境
+                niche2.DET(paperGenetic);
+
+
             }
         }
 
-        //mutePlus(papers);
+        mutePlus(papers);
 
     }
 
