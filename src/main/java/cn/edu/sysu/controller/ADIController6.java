@@ -71,7 +71,7 @@ public class ADIController6 {
 
 
         // i 迭代次数
-        for (int i = 0; i < 5000; i++) {
+        for (int i = 0; i < 500; i++) {
             //选择
             selection();
             //交叉
@@ -115,7 +115,7 @@ public class ADIController6 {
             idTmp.append("[");
             for (String s : strings) {
                 //将id抽取出来,并拼接成新数组
-                System.out.println(s.split(":")[0]);
+                //System.out.println(s.split(":")[0]);
                 idTmp.append(s.split(":")[0]).append(",");
             }
             idTmp.append("]");
@@ -141,7 +141,7 @@ public class ADIController6 {
             String key = entry.getKey();
             Integer count = entry.getValue();
             System.out.println("试题编号："+ key+"  次数："+count);
-            log.info("试题编号："+ key+"  次数："+count);
+            //log.info("试题编号："+ key+"  次数："+count);
 
         }
 
@@ -732,14 +732,13 @@ public class ADIController6 {
             if (Math.random() < papers.getPm()) {
 
                 //使用限制性锦标赛拥挤小生境的变异替换掉原有变异  需要将变异后的种群返回
-                //ArrayList<Object> rts = niche2.RTS(paperGenetic, i);
-                //int similarPhenIndex = (int) rts.get(0);
-                //paperGenetic = (String[][]) rts.get(1);
+                ArrayList<Object> rts = niche2.RTS(paperGenetic, i);
+                int similarPhenIndex = (int) rts.get(0);
+                paperGenetic = (String[][]) rts.get(1);
                 //执行变异后的修补操作
-                //correct(similarPhenIndex);
-
+                correct(similarPhenIndex);
                 //使用确定性拥挤小生境
-                niche2.DET(paperGenetic);
+                //niche2.DET(paperGenetic);
 
 
             }

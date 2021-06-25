@@ -598,7 +598,7 @@ public class ADIController5 {
                 }
                 // 放在内存执行,每执行一次pc 则校验一次
                 paperGenetic[i] = temp;
-                correct(i);
+                //correct(i);
             }
         }
     }
