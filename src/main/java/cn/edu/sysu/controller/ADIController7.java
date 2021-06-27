@@ -25,12 +25,15 @@ import java.util.*;
  *
  * FIXME 流程的校验和适应度值的计算：
  *          因为变异/多样性过大,是否能维持住全局最优？
+ *          1.今晚将全局交叉、变异 改为 挨个交叉变异(周天)
+ *          2.如何维持全局最优，保证种群往峰的位置演化(周一、周二)
+ *              变异系数导致，解决方案：①降低pm  ②减低小生境c*w
  *
  */
 public class ADIController7 {
 
 
-    /*  容器 全局最优 局部最优  */
+    /**  容器 全局最优 局部最优  */
     private static double GlobalOptimal = 0;
     private static double[] LocalOptimal = new double[100];
     private static ArrayList<String> bankList = new ArrayList();
@@ -42,11 +45,14 @@ public class ADIController7 {
 
     private  JDBCUtils4 jdbcUtils = new JDBCUtils4();
 
-    // 小生境对象
+    /* 小生境对象 */
     private Niche3 niche3 = new Niche3();
 
-    // 打印对象
+    /** 打印对象 */
     Log log = LogFactory.getLog(ADIController7.class);
+
+    /**  散点图索引  */
+    private int scatterIndex = 0;
 
     /**
      * 计算适应度值  ①计算方式 轮盘赌
@@ -72,7 +78,7 @@ public class ADIController7 {
         //initItemBank5();
 
 
-        // i 迭代次数  选择交叉变异，应该从个体的角度出发，全局统一化处理，将导致可能校验的时候，有些解无法校验到
+        // i 迭代次数  选择交叉变异，应该从个体的角度出发，若全局统一化处理，将导致可能校验的时候，有些解无法校验到
         // 解决方案：加一个嵌套循环，size为种群index,然后在交叉变异中使用index依次支持
         for (int i = 0; i < 500; i++) {
             //选择
@@ -143,7 +149,7 @@ public class ADIController7 {
 
             String key = entry.getKey();
             Integer count = entry.getValue();
-            System.out.println("试题编号："+ key+"  次数："+count);
+            //System.out.println("试题编号："+ key+"  次数："+count);
             //log.info("试题编号："+ key+"  次数："+count);
 
         }
@@ -151,7 +157,7 @@ public class ADIController7 {
         //找出map的value中最大的数字，也就是数组中数字出现最多的次数
         Collection<Integer> count = map.values();
         int max = Collections.max(count);
-        System.out.println(max);
+        //System.out.println(max);
 
         String maxNumber = "";
         int maxCount = 0;
@@ -162,8 +168,8 @@ public class ADIController7 {
                 maxNumber = entry.getKey();
             }
         }
-        System.out.println("出现次数最多的数字为：" + maxNumber);
-        System.out.println("该数字一共出现" + maxCount + "次");
+        //System.out.println("出现次数最多的数字为：" + maxNumber);
+        //System.out.println("该数字一共出现" + maxCount + "次");
         //log.info("出现次数最多的数字为：" + maxNumber);
         //log.info("该数字一共出现" + maxCount + "次");
 
@@ -187,14 +193,14 @@ public class ADIController7 {
                 int mutatePoint = random.nextInt((paperGenetic[1].length)-1);
                 //将Array 转 hashSet
                 Set<String> set = new HashSet<>(Arrays.asList( paperGenetic[i]));
-                System.out.println(i+" 原试卷: "+set);
+                //System.out.println(i+" 原试卷: "+set);
 
                 //将要变异的元素   前提是试卷有序排列
                 String s = paperGenetic[i][mutatePoint];
-                System.out.println("  remove element: "+ s);
+                //System.out.println("  remove element: "+ s);
                 set.remove(s);
                 int removeId = Integer.parseInt(s.split(":")[0]);
-                System.out.println("  临时试卷：  "+set);
+                //System.out.println("  临时试卷：  "+set);
 
                 //单套试卷临时存储容器
                 String[] temp1 = new String[paperGenetic[i].length];
@@ -207,7 +213,7 @@ public class ADIController7 {
                         set.add(list.get(0)+"");
                     }
                 }
-                System.out.println("  add element: "+ key);
+                //System.out.println("  add element: "+ key);
                 set.toArray(temp1);
 
                 //排序修补
@@ -218,7 +224,7 @@ public class ADIController7 {
 
             }
 
-            System.out.println("  最终试卷： "+Arrays.toString(paperGenetic[i]));
+            //System.out.println("  最终试卷： "+Arrays.toString(paperGenetic[i]));
         }
 
     }
@@ -279,7 +285,7 @@ public class ADIController7 {
             //list  排序
             Collections.sort(idList);
             //输出所有抽取到的试题id
-            System.out.println("试卷"+j+"的试题id: "+idList);
+            //System.out.println("试卷"+j+"的试题id: "+idList);
 
             String ids = idList.toString().substring(1,idList.toString().length()-1);
 
@@ -296,7 +302,7 @@ public class ADIController7 {
 
         }
 
-        System.out.println(itemList.toString());
+        //System.out.println(itemList.toString());
 
 
     }
@@ -494,7 +500,7 @@ public class ADIController7 {
             //list  排序
             Collections.sort(idList);
             //输出所有抽取到的试题id
-            System.out.println("试卷"+j+"的试题id: "+idList);
+            //System.out.println("试卷"+j+"的试题id: "+idList);
 
 
             String ids = idList.toString().substring(1,idList.toString().length()-1);
@@ -538,7 +544,7 @@ public class ADIController7 {
         }
 
         // 输出
-        System.out.println("tmp解(bachItemList) :"+bachItemList.toString());
+        //System.out.println("tmp解(bachItemList) :"+bachItemList.toString());
 
         //开始校验是否符合属性比例要求
         //ArrayList<String> 转 hashSet<String>
@@ -553,7 +559,7 @@ public class ADIController7 {
 
         //此次迭代各个属性的数目
         for (String tmp:itemSet) {
-            System.out.println(tmp);
+            //System.out.println(tmp);
 
             if("1".equals(tmp.split(":")[2].substring(1,2))){
                 attributeNum1 += 1;
@@ -571,7 +577,7 @@ public class ADIController7 {
                 attributeNum5 += 1;
             }
         }
-        System.out.println("AttributeRatio1: "+attributeNum1+"\tAttributeRatio2: "+attributeNum2+"\tAttributeRatio3: "+attributeNum3+"\tAttributeRatio4: "+attributeNum4+"\tAttributeRatio5: "+attributeNum5);
+        //System.out.println("AttributeRatio1: "+attributeNum1+"\tAttributeRatio2: "+attributeNum2+"\tAttributeRatio3: "+attributeNum3+"\tAttributeRatio4: "+attributeNum4+"\tAttributeRatio5: "+attributeNum5);
 
         //属性比例
         double attributeRatio1 = attributeNum1/23.0;
@@ -628,7 +634,7 @@ public class ADIController7 {
 
         //attributeFlag
         String attributeFlag = "("+af1+","+af2+","+af3+","+af4+","+af5+")";
-        System.out.println("目前属性占比情况： attributeFlag:"+attributeFlag);
+        //System.out.println("目前属性占比情况： attributeFlag:"+attributeFlag);
 
 
         if (attributeFlag.contains("1") || attributeFlag.contains("-1")) {
@@ -649,7 +655,7 @@ public class ADIController7 {
      */
     private void crossCover(Papers papers) throws SQLException {
 
-        System.out.println("================== cross ==================");
+        //System.out.println("================== cross ==================");
 
         //  单点交叉
         int point = paperGenetic[1].length;
@@ -691,7 +697,7 @@ public class ADIController7 {
      */
     private void correct(int i) throws SQLException {
 
-        System.out.println("第 "+i+" 题,开始交叉/变异后校验 ..... ");
+        //System.out.println("第 "+i+" 题,开始交叉/变异后校验 ..... ");
 
         // 长度校验
         correctLength(i);
@@ -784,9 +790,9 @@ public class ADIController7 {
      * 将适应度值打印出来看一下，方便后续比较
      *      打印的位置在哪里：①一进来就打印  可能变异矫正后,已经不是教优解了。
      *                     ②轮盘赌后打印，但其实其和一进来就执行打印差不多，只多了一层筛选而已。
-     *      打印什么呢？全部的fitness信息，top20信息,sum|avg
+     *      打印什么呢？全部的fitness信息(上点图)，top10信息,sum|avg
      *
-     *      精度取小数点后三位,  指标信息取前top20的avg
+     *      精度取小数点后三位,  指标信息取前top10的avg
      *
      */
     public  void  selection(){
@@ -867,7 +873,7 @@ public class ADIController7 {
 
         //Double[]转List
         List<Double> list = Arrays.asList(arrDouble);
-        System.out.println("随机抽取的random概率值："+list);
+        //System.out.println("随机抽取的random概率值："+list);
 
     }
 
@@ -1055,7 +1061,7 @@ public class ADIController7 {
                 ed5 =  Math.abs(edx5 - 0.3);
             }
 
-            System.out.println("题型和属性超额情况： td1:"+td1+" td2:"+td2+" td3:"+td3+" td4:"+td4 + "ed1:"+ed1+" ed2:"+ed2+" ed3:"+ed3+" ed4:"+ed4+" ed5:"+ed5);
+            //System.out.println("题型和属性超额情况： td1:"+td1+" td2:"+td2+" td3:"+td3+" td4:"+td4 + "ed1:"+ed1+" ed2:"+ed2+" ed3:"+ed3+" ed4:"+ed4+" ed5:"+ed5);
 
             // 惩罚个数  只有比例不符合要求时才惩罚，故不会有太大的影响
             double expNum = -(td1 + td2 + td3 + td4 + ed1 + ed2 + ed3 + ed4 + ed5);
@@ -1067,7 +1073,7 @@ public class ADIController7 {
             double avgrum = (adi1r + adi2r + adi3r + adi4r + adi5r)/5 ;
             double minrum = Math.min(Math.min(Math.min(Math.min(adi1r,adi2r),adi3r),adi4r),adi5r) * 100 ;
 
-            System.out.println("minrum: "+minrum);
+            //System.out.println("minrum: "+minrum);
 
             //适应度值 (min * 惩罚系数)
             minrum = minrum * Math.exp(expNum);
@@ -1075,8 +1081,7 @@ public class ADIController7 {
             fitTmp[i] = minrum ;
             fitSum = fitSum + minrum ;
 
-            // 适应度值的打印：
-            log.info("minrum: "+minrum);
+
 
 
 // ==================== elitistStrategy  ====================
@@ -1106,8 +1111,36 @@ public class ADIController7 {
             fitPro[i] = fitTmp[i] / fitSum;
         }
 
+        //冒泡排序 打印top10
+        //bubbleSort(fitTmp);
 
         return  fitPro;
+    }
+
+
+    /**
+     * 冒泡排序  打印top10
+     *
+     */
+    private void bubbleSort(double[] a) {
+        double temp ;
+        for(int i=0 ;i < a.length ;i++) {
+            for(int j=0 ; j< a.length-i -1;j++) {
+                if(a[j]>a[j+1]) {
+                    //互换位置
+                    temp = a[j];
+                    a[j] = a[j+1] ;
+                    a[j+1] = temp ;
+                }
+            }
+        }
+        //遍历数组排序  arr[0]=2.3626148494872097
+        for(int i=a.length -1 ;i >=90  ;i--) {
+            //System.out.printf("arr[%d]=%s\n",i,a[i]);
+            scatterIndex = scatterIndex +1 ;
+            log.info(scatterIndex + ":" + numbCohesion(a[i]));
+        }
+
     }
 
 
@@ -1453,7 +1486,7 @@ public class ADIController7 {
 
         //此次迭代各个题型的数目
         for (String s:itemSet) {
-            System.out.println(s);
+            //System.out.println(s);
 
             //计算每种题型个数
             if(TYPE.CHOSE.toString().equals(s.split(":")[1])){
@@ -1486,7 +1519,7 @@ public class ADIController7 {
 
         //属性数目总和
         for (String s:itemSet) {
-            System.out.println(s);
+            //System.out.println(s);
 
             //计算每种题型个数
             if("1".equals(s.split(":")[2].substring(1,2))){
@@ -1505,7 +1538,7 @@ public class ADIController7 {
                 attributeNum5 += 1;
             }
         }
-        System.out.println("AttributeRatio1: "+attributeNum1+"\tAttributeRatio2: "+attributeNum2+"\tAttributeRatio3: "+attributeNum3+"\tAttributeRatio4: "+attributeNum4+"\tAttributeRatio5: "+attributeNum5);
+        //System.out.println("AttributeRatio1: "+attributeNum1+"\tAttributeRatio2: "+attributeNum2+"\tAttributeRatio3: "+attributeNum3+"\tAttributeRatio4: "+attributeNum4+"\tAttributeRatio5: "+attributeNum5);
 
         //属性比例
         double attributeRatio1 = attributeNum1/23.0;
@@ -1601,7 +1634,7 @@ public class ADIController7 {
         //选出适应度最佳的个体
         String s = hashMapSort(map);
 
-        System.out.println("锦标赛选取的试题: "+s);
+        //System.out.println("锦标赛选取的试题: "+s);
 
         return Integer.parseInt(s.split(":")[0]);
     }
@@ -1615,13 +1648,13 @@ public class ADIController7 {
 
 
 
-        System.out.println("============排序前============");
+        //System.out.println("============排序前============");
         Set<Map.Entry<String, Double>> entrySet = map.entrySet();
         for (Map.Entry s : entrySet) {
-            System.out.println(s.getKey()+"--"+s.getValue());
+            //System.out.println(s.getKey()+"--"+s.getValue());
         }
 
-        System.out.println("============排序后============");
+        //System.out.println("============排序后============");
 
         //借助list实现hashMap排序
 
@@ -1660,7 +1693,7 @@ public class ADIController7 {
 
         //注意这里遍历的是list，也就是我们将map.Entry放进了list，排序后的集合
         for (Map.Entry s : list) {
-            System.out.println(s.getKey()+"--"+s.getValue());
+            //System.out.println(s.getKey()+"--"+s.getValue());
         }
 
         return list.get(0).getKey()+":"+list.get(0).getValue();
@@ -1689,7 +1722,7 @@ public class ADIController7 {
         //差集 并集
         listA.removeAll(listB);
         listB.addAll(listA);
-        System.out.println(listB);
+        //System.out.println(listB);
 
         return listB;
 
@@ -1818,7 +1851,7 @@ public class ADIController7 {
                 setEnd.addAll(tmp);
             }
             //输出集合的大小  setEnd.size()
-            System.out.println("setEnd.size(): "+setEnd.size());
+            //System.out.println("setEnd.size(): "+setEnd.size());
 
             //默认字典序，不会导致变异出现问题  因为数据库的题型不是按照字典序排序
             // hashSet 转 数组
@@ -2185,7 +2218,7 @@ public class ADIController7 {
             // ori解集 - out解 + in解 = 新解(拿新解去再次校验)
             // 循环的逻辑：外层out解，内层in解，不断的调用题型比例校验方法，如满足要求则退出，不满足则继续遍历
 
-            System.out.println("开始outMore修补");
+            //System.out.println("开始outMore修补");
             //System.out.println("校验前的集合:"+batchItemList.toString());
             List<String> outListMore = new ArrayList<>(outMore);
 
@@ -2282,8 +2315,8 @@ public class ADIController7 {
             // ori解集 - out解 + in解 = 新解(拿新解去再次校验)
             // 循环的逻辑：外层out解，内层in解，不断的调用题型比例校验方法，如满足要求则退出，不满足则继续遍历
 
-            System.out.println("开始outMore修补");
-            System.out.println("校验前的集合:"+batchItemList.toString());
+            //System.out.println("开始outMore修补");
+            //System.out.println("校验前的集合:"+batchItemList.toString());
             List<String> outListLess = new ArrayList<>(outLess);
 
             Boolean bl = false;
@@ -2317,7 +2350,7 @@ public class ADIController7 {
                                 }
                             }
                             // 输出
-                            System.out.println("已找到符合要求的解，现退出循环,目前的解集为："+batchItemList.toString());
+                            //System.out.println("已找到符合要求的解，现退出循环,目前的解集为："+batchItemList.toString());
                             break;
                         }
                     }
@@ -2338,7 +2371,7 @@ public class ADIController7 {
                                 }
                             }
                             // 输出
-                            System.out.println("已找到符合要求的解，现退出循环,目前的解集为："+batchItemList.toString());
+                            //System.out.println("已找到符合要求的解，现退出循环,目前的解集为："+batchItemList.toString());
                             break;
                         }
                     }
@@ -2349,7 +2382,7 @@ public class ADIController7 {
 
             }
 
-            System.out.println("校验后的集合:"+batchItemList.toString());
+            //System.out.println("校验后的集合:"+batchItemList.toString());
 
         }
 
@@ -2363,7 +2396,7 @@ public class ADIController7 {
 
         if(outMore.size()==0 && outLess.size()>0){
             System.out.println("本套试卷 题型比例不足的情况。");
-            System.out.println(outLess);
+            //System.out.println(outLess);
 
             //  SQL 均用or没影响  影响范围:inList  and条件使得解集变多，符合题型的要求（一对一）  这个应该用在替补解的过程
             //  CHOSE FILL SHORT COMPREHENSIVE
@@ -2400,7 +2433,7 @@ public class ADIController7 {
             // 原始解集 - out解 + in解 = 新解(拿新解去再次校验)
             // 循环的逻辑：外层out解，内层in解，不断的调用题型比例校验方法，如满足要求则退出，不满足则继续遍历
 
-            System.out.println("校验前的集合:"+batchItemList.toString());
+            //System.out.println("校验前的集合:"+batchItemList.toString());
             List<String> outList = new ArrayList<>(outLess);
 
             Boolean b = false;
@@ -2433,7 +2466,7 @@ public class ADIController7 {
                                 }
                             }
                             // 输出
-                            System.out.println("已找到符合要求的解，现退出循环,目前的解集为："+batchItemList.toString());
+                            //System.out.println("已找到符合要求的解，现退出循环,目前的解集为："+batchItemList.toString());
                             break;
                         }
                     }
@@ -2454,7 +2487,7 @@ public class ADIController7 {
                                 }
                             }
                             // 输出
-                            System.out.println("已找到符合要求的解，现退出循环,目前的解集为："+batchItemList.toString());
+                            //System.out.println("已找到符合要求的解，现退出循环,目前的解集为："+batchItemList.toString());
                             break;
                         }
                     }
@@ -2465,7 +2498,7 @@ public class ADIController7 {
 
             }
 
-            System.out.println("校验后的集合:"+batchItemList.toString());
+            //System.out.println("校验后的集合:"+batchItemList.toString());
 
         }
 
@@ -2475,7 +2508,7 @@ public class ADIController7 {
 
         if(outMore.size()>0 && outLess.size()==0){
             System.out.println("本套试卷 题型比例过多的情况。");
-            System.out.println(outMore);
+            //System.out.println(outMore);
 
             //  SQL 均用or应该没影响  影响范围:inList  and条件使得解集变多，符合题型的要求（一对一）  这个应该用在替补解的过程
             //  CHOSE FILL SHORT COMPREHENSIVE
@@ -2512,7 +2545,7 @@ public class ADIController7 {
             // 原始解集 - out解 + in解 = 新解(拿新解去再次校验)
             // 循环的逻辑：外层out解，内层in解，不断的调用题型比例校验方法，如满足要求则退出，不满足则继续遍历
 
-            System.out.println("校验前的集合:"+batchItemList.toString());
+            //System.out.println("校验前的集合:"+batchItemList.toString());
             List<String> outList = new ArrayList<>(outMore);
 
             Boolean b = false;
@@ -2546,7 +2579,7 @@ public class ADIController7 {
                                 }
                             }
                             // 输出
-                            System.out.println("已找到符合要求的解，现退出循环,目前的解集为："+batchItemList.toString());
+                            //System.out.println("已找到符合要求的解，现退出循环,目前的解集为："+batchItemList.toString());
                             break;
                         }
                     }
@@ -2567,7 +2600,7 @@ public class ADIController7 {
                                 }
                             }
                             // 输出
-                            System.out.println("已找到符合要求的解，现退出循环,目前的解集为："+batchItemList.toString());
+                            //System.out.println("已找到符合要求的解，现退出循环,目前的解集为："+batchItemList.toString());
                             break;
                         }
                     }
@@ -2578,7 +2611,7 @@ public class ADIController7 {
 
             }
 
-            System.out.println("校验后的集合:"+batchItemList.toString());
+            //System.out.println("校验后的集合:"+batchItemList.toString());
 
         }
         //    arrayList 转 数组
@@ -2608,7 +2641,7 @@ public class ADIController7 {
         }
 
         // 输出
-        System.out.println("tmp解(bachItemList) :"+bachItemList.toString());
+        //System.out.println("tmp解(bachItemList) :"+bachItemList.toString());
 
         //开始校验是否符合题型比例
         //ArrayList<String> 转 hashSet<String>
@@ -2636,7 +2669,7 @@ public class ADIController7 {
             }
         }
 
-        System.out.println("目前题型数量情况： typeChose:" + typeChose + " typeFill:" + typeFill + " typeShort:" + typeShort + " typeCompre:" + typeCompre);
+        //System.out.println("目前题型数量情况： typeChose:" + typeChose + " typeFill:" + typeFill + " typeShort:" + typeShort + " typeCompre:" + typeCompre);
 
         //题型比例
         double typeChoseRation = typeChose / 10.0;
@@ -2645,7 +2678,7 @@ public class ADIController7 {
         double typeCompreRation = typeCompre / 10.0;
 
 
-        System.out.println("=================  指标信息flag统计  =====================");
+        //System.out.println("=================  指标信息flag统计  =====================");
 
         //题型flag (-1->少于,0->正常,1->大于)
         int tf1;
@@ -2685,7 +2718,7 @@ public class ADIController7 {
         }
         //typeFlag
         String typeFlag = "(" + tf1 + "," + tf2 + "," + tf3 + "," + tf4 + ")";
-        System.out.println("目前题型占比情况： typeFlag:" + typeFlag);
+        //System.out.println("目前题型占比情况： typeFlag:" + typeFlag);
 
 
 
@@ -2701,7 +2734,7 @@ public class ADIController7 {
 
         //各个属性的数目
         for (String s:itemSet) {
-            System.out.println(s);
+            //System.out.println(s);
 
             //计算每种属性个数
             if("1".equals(s.split(":")[2].substring(1,2))){
@@ -2720,7 +2753,7 @@ public class ADIController7 {
                 attributeNum5 += 1;
             }
         }
-        System.out.println("AttributeRatio1: "+attributeNum1+"\tAttributeRatio2: "+attributeNum2+"\tAttributeRatio3: "+attributeNum3+"\tAttributeRatio4: "+attributeNum4+"\tAttributeRatio5: "+attributeNum5);
+        //System.out.println("ar1: "+attributeNum1+"\tar2: "+attributeNum2+"\tar3: "+attributeNum3+"\tar4: "+attributeNum4+"\tar5: "+attributeNum5);
 
         //属性比例
         double attributeRatio1 = attributeNum1/23.0;
@@ -2776,7 +2809,7 @@ public class ADIController7 {
         }
         //输出 attributeFlag
         String attributeFlag = "("+af1+","+af2+","+af3+","+af4+","+af5+")";
-        System.out.println("目前属性占比情况： attributeFlag:"+attributeFlag);
+        //System.out.println("目前属性占比情况： attributeFlag:"+attributeFlag);
 
 
         if((typeFlag.contains("1")) || (typeFlag.contains("-1")) || (attributeFlag.contains("1")) || (attributeFlag.contains("-1"))){
@@ -2808,7 +2841,7 @@ public class ADIController7 {
         }
 
         // 输出
-        System.out.println("tmp解(bachItemList) :"+bachItemList.toString());
+        //System.out.println("tmp解(bachItemList) :"+bachItemList.toString());
 
         //开始校验是否符合属性比例要求
         //ArrayList<String> 转 hashSet<String>
@@ -2836,7 +2869,7 @@ public class ADIController7 {
             }
         }
 
-        System.out.println("目前题型数量情况： typeChose:" + typeChose + " typeFill:" + typeFill + " typeShort:" + typeShort + " typeCompre:" + typeCompre);
+        //System.out.println("目前题型数量情况： typeChose:" + typeChose + " typeFill:" + typeFill + " typeShort:" + typeShort + " typeCompre:" + typeCompre);
 
         //题型比例
         double typeChoseRation = typeChose / 10.0;
@@ -2845,7 +2878,7 @@ public class ADIController7 {
         double typeCompreRation = typeCompre / 10.0;
 
 
-        System.out.println("=================  指标信息flag统计  =====================");
+        //System.out.println("=================  指标信息flag统计  =====================");
 
         //题型flag (-1->少于,0->正常,1->大于)
         int tf1;
@@ -2885,7 +2918,7 @@ public class ADIController7 {
         }
         //typeFlag
         String typeFlag = "(" + tf1 + "," + tf2 + "," + tf3 + "," + tf4 + ")";
-        System.out.println("目前题型占比情况： typeFlag:" + typeFlag);
+        //System.out.println("目前题型占比情况： typeFlag:" + typeFlag);
 
 
         if(typeFlag.contains("1")){
@@ -2907,7 +2940,7 @@ public class ADIController7 {
 
 
             System.out.println("本套试卷 属性比例不足的情况。");
-            System.out.println(outLess);
+            //System.out.println(outLess);
 
             //SQL 均用and没影响  影响范围:inList  and条件使得解集变少，但更高效
             StringBuilder sb = new StringBuilder();
@@ -2947,7 +2980,7 @@ public class ADIController7 {
 
             // ori解集  out解集  in解集 的关系
             // 原始解集 - out解 + in解 = 新解(拿新解去再次校验)
-            System.out.println("校验前的集合:"+bachItemList.toString());
+            //System.out.println("校验前的集合:"+bachItemList.toString());
             List<String> outList = new ArrayList<>(outLess);
 
 
@@ -2956,7 +2989,7 @@ public class ADIController7 {
 
                 // inList 按照type排序  解决方法: String.contain()
                 String type = outList.get(i).split(":")[1];
-                System.out.println("type:"+type);
+                //System.out.println("type:"+type);
                 ArrayList<String> inListRe = rearrange(type, inList);
 
                 // 寻找完美解
@@ -2972,7 +3005,7 @@ public class ADIController7 {
                             }
                         }
                         // 输出
-                        System.out.println("已找到符合要求的解，现退出循环,目前的解集为："+bachItemList.toString());
+                        //System.out.println("已找到符合要求的解，现退出循环,目前的解集为："+bachItemList.toString());
                         break;
                     }
                 }
@@ -3030,21 +3063,21 @@ public class ADIController7 {
                     // less where 条件的拼接 依靠于 lessFinally,故需要遍历
                     // 倒序取出  [p1, p2]、[p2]、[p1]   [p1]
                     for (int i1 = lessFinally.size() -1 ; i1 >= 1; i1--) {
-                        System.out.println(lessFinally.get(i1));
+                        //System.out.println(lessFinally.get(i1));
                         String tmp1 = lessFinally.get(i1).toString().substring(1);
                         String tmp2=tmp1.replaceAll(","," = 1 and ");
                         String tmp3=tmp2.replace("]"," = 1 ");
-                        System.out.println(tmp3);
+                        //System.out.println(tmp3);
 
                         //拼接 less ori type
                         String sqlFinally = tmp3 + outString + t1;
-                        System.out.println(sqlFinally);
+                        //System.out.println(sqlFinally);
                         ArrayList<String> arrayList = jdbcUtils.selectBySql(sqlFinally);
 
                         if(arrayList.size()>0){
 
-                            System.out.println("out解："+outList.get(i));
-                            System.out.println("in解："+arrayList.get(0));
+                            //System.out.println("out解："+outList.get(i));
+                            //System.out.println("in解："+arrayList.get(0));
 
                             // 删除out解，添加in解
                             for (int k = 0; k < bachItemList.size(); k++) {
@@ -3053,11 +3086,11 @@ public class ADIController7 {
                                 }
                             }
 
-                            System.out.println("找到合适解,退出循环");
+                            //System.out.println("找到合适解,退出循环");
                             b = true;
                             break;
                         }else {
-                            System.out.println("未找到合适解,继续递归查找");
+                            //System.out.println("未找到合适解,继续递归查找");
                         }
                     }
                     if(b){
@@ -3066,7 +3099,7 @@ public class ADIController7 {
                 }
             }
 
-            System.out.println("校验后的集合:"+bachItemList.toString());
+            //System.out.println("校验后的集合:"+bachItemList.toString());
 
             return  bachItemList;
 
@@ -3082,11 +3115,8 @@ public class ADIController7 {
     public ArrayList<String> correctAttributeMore(Set<String> outMore,JDBCUtils4 jdbcUtils,ArrayList<String> bachItemList,int af1,int af2,int af3,int af4,int af5) throws SQLException {
 
 
-
-
-
             System.out.println("本套试卷 属性比例过高的情况。");
-            System.out.println(outMore);
+            //System.out.println(outMore);
 
             //SQL 均用交集没影响  需进一步校验
             StringBuilder sb = new StringBuilder();
@@ -3126,14 +3156,14 @@ public class ADIController7 {
 
             // ori解集 - out解 + in解 = 新解(拿新解去再次校验)
             List<String> outList = new ArrayList<>(outMore);
-            System.out.println("校验前的集合:"+bachItemList.toString());
+            //System.out.println("校验前的集合:"+bachItemList.toString());
 
             Boolean b = false;
             for (int i = 0; i < outList.size(); i++) {
 
                 // inList 按照type排序 解决方法: ①String.contain()
                 String type = outList.get(i).split(":")[1];
-                System.out.println("type:"+type);
+                //System.out.println("type:"+type);
                 ArrayList<String> inListRe = rearrange(type, inList);
 
                 for (int j = 0; j < inListRe.size(); j++) {
@@ -3149,7 +3179,7 @@ public class ADIController7 {
                             }
                         }
                         // 输出
-                        System.out.println("已找到符合要求的解，现退出循环,目前的解集为："+bachItemList.toString());
+                        //System.out.println("已找到符合要求的解，现退出循环,目前的解集为："+bachItemList.toString());
                         break;
                     }
                 }
@@ -3207,26 +3237,26 @@ public class ADIController7 {
                         String tmp1 = moreFinally.get(i1).toString().substring(1);
                         String tmp2=tmp1.replaceAll(","," = 0 and ");
                         String tmp3=tmp2.replace("]"," = 0 ");
-                        System.out.println(tmp3);
+                        //System.out.println(tmp3);
 
                         //more ori type ，条件拼接 p5=1
                         String sqlFinally = tmp3 + a1 + a2 + a3 + a4 + a5 + t1;
-                        System.out.println(sqlFinally);
+                        //System.out.println(sqlFinally);
                         ArrayList<String> arrayList = jdbcUtils.selectBySql(sqlFinally);
 
                         if(arrayList.size()>0){
 
-                            System.out.println("out解："+outList.get(i));
-                            System.out.println("in解："+arrayList.get(0));
+                            //System.out.println("out解："+outList.get(i));
+                            //System.out.println("in解："+arrayList.get(0));
 
                             // 删除out解，添加in解  需要注意
                             outList.set(i,arrayList.get(0));
 
-                            System.out.println("找到合适解,退出循环");
+                            //System.out.println("找到合适解,退出循环");
                             b = true;
                             break;
                         }else {
-                            System.out.println("未找到合适解,继续递归查找");
+                            //System.out.println("未找到合适解,继续递归查找");
                         }
                     }
                     if(b){
@@ -3235,7 +3265,7 @@ public class ADIController7 {
                 }
             }
 
-            System.out.println("校验后的集合:"+bachItemList.toString());
+            //System.out.println("校验后的集合:"+bachItemList.toString());
             return bachItemList;
 
 
@@ -3254,7 +3284,7 @@ public class ADIController7 {
             //取交集
             outMore.retainAll(outLess);
             if(outMore.size()>0){
-                System.out.println("本套试卷 既有属性比例过多，又有属性比例不足的情况   more 和 less 有交集");
+                //System.out.println("本套试卷 既有属性比例过多，又有属性比例不足的情况   more 和 less 有交集");
                 //System.out.println("交集："+outMore);
 
                 StringBuilder sb = new StringBuilder();
@@ -3420,19 +3450,19 @@ public class ADIController7 {
                             String tmp1 = lessFinally.get(i1).toString().substring(1);
                             String tmp2 = tmp1.replaceAll(","," = 1 and ");
                             String tmp3 = tmp2.replace("]"," = 1 ");
-                            System.out.println(tmp3);
+                            //System.out.println(tmp3);
 
                             for (int j = moreFinally.size()-1; j >= 1; j--) {
 
                                 String tmp4 = moreFinally.get(j).toString().substring(1);
                                 String tmp5 = tmp4.replaceAll(","," = 0 and ");
                                 String tmp6 = tmp5.replace("]"," = 0 ");
-                                System.out.println(tmp6);
+                                //System.out.println(tmp6);
 
 
                                 //less more type 原始信息 的条件拼接
                                 String sqlFinally = tmp3 + " and "+ tmp6 + outString + t1;
-                                System.out.println(sqlFinally);
+                                //System.out.println(sqlFinally);
                                 ArrayList<String> arrayList = jdbcUtils.selectBySql(sqlFinally);
 
                                 // 获取第一个解?
@@ -3595,7 +3625,7 @@ public class ADIController7 {
                 attributeNum5 += 1;
             }
         }
-        System.out.println("ar1: "+attributeNum1+"\tar2: "+attributeNum2+"\tar3: "+attributeNum3+"\tar4: "+attributeNum4+"\tar5: "+attributeNum5);
+        //System.out.println("ar1: "+attributeNum1+"\tar2: "+attributeNum2+"\tar3: "+attributeNum3+"\tar4: "+attributeNum4+"\tar5: "+attributeNum5);
 
         //属性比例
         double attributeRatio1 = attributeNum1/23.0;
