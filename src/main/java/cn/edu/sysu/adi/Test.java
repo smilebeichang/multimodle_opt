@@ -11,6 +11,26 @@ import java.util.*;
  */
 public class Test {
 
+    @org.junit.Test
+    public void hashCode2(){
+        ArrayList<String> bachItemList = new ArrayList<String>(){
+            {
+                add("xiao");
+                add("bao");
+            }
+        };
+        ArrayList<String> tmp = new ArrayList<>();
+        System.out.println(tmp.hashCode());
+        System.out.println(bachItemList.hashCode());
+        for (int i = bachItemList.size(); i > 0; i--) {
+            tmp.add(bachItemList.get(i-1));
+        }
+        System.out.println(tmp.hashCode());
+
+
+
+    }
+
     /**
      * 找出一个数组中一个数字出现次数最多的数字
      * 用HashMap的key来存放数组中存在的数字，value存放该数字在数组中出现的次数

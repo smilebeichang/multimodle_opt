@@ -167,6 +167,7 @@ public class Niche3 {
         ArrayList<String[]> cList = mutate(paperGenetic[i]);
 
         //为c1从当前种群中随机选取c*w个体  4个小生境  10元锦标赛
+        //是否是10元锦标赛过大，待后续优化
         ArrayList<Map<Integer, String[]>[]> cwList = championship();
 
         //替换
@@ -262,7 +263,6 @@ public class Niche3 {
      *
      * 替换的是minPhen,属性校验的也应该是minPhen
      * 解决方案：①将minPhen返回，ADI层进行修补
-     *         ②niche层进行修补，但需将全局基因返回到ADI层
      *         为了节省内存开销，采取第一种方案
      *
      */
