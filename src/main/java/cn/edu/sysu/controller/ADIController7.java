@@ -9,7 +9,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
-import javax.xml.transform.Source;
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import java.util.*;
@@ -51,7 +50,7 @@ public class ADIController7 {
     private Niche3 niche3 = new Niche3();
 
     /** 打印对象 */
-    Log log = LogFactory.getLog(ADIController7.class);
+    private Log log = LogFactory.getLog(ADIController7.class);
 
     /**  散点图索引  */
     private int scatterIndex = 0;
@@ -626,12 +625,10 @@ public class ADIController7 {
                 // 放在内存执行,每执行一次pc 则校验一次
                 //对tmp进行排序,
                 paperGenetic[k] = sortPatch(temp);
-                // 此处为什么需要校验属性和类型
+                // 此处需要校验属性和类型
                 // 交叉和变异各执行一次全方面校验，可能就是这个原因导致的多样性如此之高，适应度无法得到充分保证
                 // 变异具有随机性
-                // 长度校验
                 correct(k);
-                //correctLength(k);
             }
         //}
     }
