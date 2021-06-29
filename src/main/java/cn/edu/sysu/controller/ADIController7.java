@@ -5,7 +5,6 @@ import cn.edu.sysu.niche.Niche3;
 import cn.edu.sysu.pojo.Papers;
 import cn.edu.sysu.utils.JDBCUtils4;
 import cn.edu.sysu.utils.KLUtils;
-import com.sun.glass.ui.Size;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
@@ -2080,7 +2079,7 @@ public class ADIController7 {
             batchItemList = correctTypeMore(outMore,jdbcUtils,batchItemList,tf1,tf2,tf3,tf4);
         }
 
-        // arrayList 转 数组
+        // 赋值给全局变量 (arrayList 转 array)
         String[] itemArray = new String[batchItemList.size()];
         for (int i = 0; i < batchItemList.size(); i++) {
             itemArray[i] = batchItemList.get(i);
@@ -2390,12 +2389,10 @@ public class ADIController7 {
     }
 
 
-    public ArrayList<String> correctTypeLess(Set<String> outLess,JDBCUtils4 jdbcUtils,ArrayList<String> batchItemList,int tf1,int tf2,int tf3,int tf4 ) throws SQLException {
+    private ArrayList<String> correctTypeLess(Set<String> outLess, JDBCUtils4 jdbcUtils, ArrayList<String> batchItemList, int tf1, int tf2, int tf3, int tf4) throws SQLException {
 
             System.out.println("本套试卷 题型比例不足的情况。");
 
-            //  SQL 均用or,影响范围:使得inList解集变多
-            //  CHOSE FILL SHORT COMPREHENSIVE
             StringBuilder sb = new StringBuilder();
             if(tf1>0){
                 sb.append(" type != 'CHOSE' or ");
@@ -2421,15 +2418,13 @@ public class ADIController7 {
                 sb.append(" type = 'COMPREHENSIVE' or ");
             }
 
-            //获取in解   大量的解、这个用在替补解的过程
+            // 题型的定向搜索
             String sql = "(" + sb.toString().substring(0, sb.toString().length() - 3) +")";
-            ArrayList<String> inList = jdbcUtils.selectBySql(sql);
 
-            // ori解集  out解集  in解集 的关系
-            // 原始解集 - out解 + in解 = 新解(拿新解去再次校验)
+
+            // ori集 - out解 + in解 = 新解(拿新解去再次校验)
             // 循环的逻辑：外层out解，内层in解，不断的调用题型比例校验方法，如满足要求则退出，不满足则继续遍历
 
-            //System.out.println("校验前的集合:"+batchItemList.toString());
             List<String> outList = new ArrayList<>(outLess);
 
             Boolean b = false;
@@ -2442,33 +2437,37 @@ public class ADIController7 {
                 String p4 = " and p4 = " + outList.get(i).split(":")[2].split(",")[3];
                 String p5 = " and p5 = " + outList.get(i).split(":")[2].split(",")[4].substring(0,1) + " ) ";
 
-                //  获取第二次新解的集合
-                sql = sql + (p1 + p2 + p3 + p4 + p5);
-                ArrayList<String> inList2 = jdbcUtils.selectBySql(sql);
+                // 获取完全吻合的解  题型+属性
+                String sqlperfect = sql + (p1 + p2 + p3 + p4 + p5);
+                // FIXME 最好通过sql去打乱顺序inList2
+                ArrayList<String> inList2 = jdbcUtils.selectBySql(sqlperfect);
 
-                //  判断是否存在第二次新解  // 寻找完美解
+                // 寻找完美解
                 if(inList2.size()>0){
 
-                    //循环的意义是什么呢？  逻辑没问题，但需要优化，省去不必要的部分for if
+                    // 循环的意义是什么呢？  逻辑没问题，但需要优化，省去不必要的部分for if
+                    // ori外层 in内层，这样可以保证替换的解随机性  如果in一开始顺序就乱了，那么可以互换 嵌套本就可以互换，顶多性能上差异
+                    // 当需要嵌套循环时 外层循环越小 性能越好，两种都很小
+
+                    Boolean flagPerfect = false;
                     for (int j = 0; j < inList2.size(); j++) {
-                        //  再次校验  此处不应该校验
-                        //  b = typeCheck(batchItemList,outList.get(i),inList2.get(j));
                         b = true;
 
-                        if(b){
-                            // 删除out解，添加in解
-                            for (int k = 0; k < batchItemList.size(); k++) {
-                                if (batchItemList.get(k).equals(outList.get(i))){
-                                    if(!batchItemList.contains(inList2.get(j))){
-                                        batchItemList.set(k,inList2.get(j));
-                                        break;
-                                    }
+                        // 删除out解，添加in解
+                        for (int k = 0; k < batchItemList.size(); k++) {
+                            if (batchItemList.get(k).equals(outList.get(i))){
+                                if(!batchItemList.contains(inList2.get(j))){
+                                    batchItemList.set(k,inList2.get(j));
+                                    flagPerfect = true;
+                                    break;
                                 }
                             }
-                            // 输出
-                            //System.out.println("已找到符合要求的解，现退出循环,目前的解集为："+batchItemList.toString());
+                        }
+                        // 这个break 有意思
+                        if(flagPerfect){
                             break;
                         }
+
                     }
                     if (b){
                         break;
@@ -2476,6 +2475,10 @@ public class ADIController7 {
 
                 }else{
                     // 寻找替补解   替补解虽会导致一定程度的属性比例轻微变化，但一定能保证比例不失衡 大概率不会跑到这个流程分支来
+                    //  SQL 均用or,影响范围:使得inList解集变多
+                    //  CHOSE FILL SHORT COMPREHENSIVE
+                    ArrayList<String> inList = jdbcUtils.selectBySql(sql);
+
                     for (int j = 0; j < inList.size(); j++) {
 
                         //内存地址问题
@@ -2485,32 +2488,22 @@ public class ADIController7 {
                         }
                         b = typeCheck(tmp,outList.get(i),inList.get(j));
 
-
                         if(b){
                             // 删除out解，添加in解
                             for (int k = 0; k < batchItemList.size(); k++) {
                                 if (batchItemList.get(k).equals(outList.get(i))){
-
                                     batchItemList.set(k,inList.get(j));
                                     break;
-
                                 }
                             }
-                            // 输出
-                            //System.out.println("已找到符合要求的解，现退出循环,目前的解集为："+batchItemList.toString());
                             break;
                         }
                     }
                     if (b){
                         break;
                     }
-
-
                 }
-
             }
-
-            //System.out.println("校验后的集合:"+batchItemList.toString());
 
         return batchItemList;
 
@@ -2711,11 +2704,9 @@ public class ADIController7 {
     public ArrayList<String> correctTypeMore(Set<String> outMore,JDBCUtils4 jdbcUtils,ArrayList<String> batchItemList,int tf1,int tf2,int tf3,int tf4) throws SQLException {
 
             System.out.println("本套试卷 题型比例过多的情况。");
-            //System.out.println(outMore);
 
-            //  SQL 均用or应该没影响  影响范围:inList  and条件使得解集变多，符合题型的要求（一对一）  这个应该用在替补解的过程
+            //  SQL 均用or应该没影响  影响范围:inList解集变多
             //  CHOSE FILL SHORT COMPREHENSIVE
-            //  or 和 and 的区别 是否有影响
             StringBuilder sb = new StringBuilder();
             if(tf1>0){
                 sb.append(" type != 'CHOSE' and ");
@@ -2743,7 +2734,7 @@ public class ADIController7 {
 
             //获取新解的集合   大量的解、这个应该用在替补解的过程  那这么早查询干嘛？？
             String sql = "(" + sb.toString().substring(0, sb.toString().length() - 4) +")";
-            ArrayList<String> inList = jdbcUtils.selectBySql(sql);
+
 
             // ori解集  out解集  in解集 的关系
             // 原始解集 - out解 + in解 = 新解(拿新解去再次校验)
@@ -2764,18 +2755,15 @@ public class ADIController7 {
                 String p5 = " and p5 = " + outList.get(i).split(":")[2].split(",")[4].substring(0,1) + " ) ";
 
                 //  获取第二次新解的集合  题型 + 属性
-                sql = sql + (p1 + p2 + p3 + p4 + p5);
-                ArrayList<String> inList2 = jdbcUtils.selectBySql(sql);
+                String sqlPerfect = sql + (p1 + p2 + p3 + p4 + p5);
+                ArrayList<String> inList2 = jdbcUtils.selectBySql(sqlPerfect);
 
-                //  判断是否存在第二次新解  // 寻找完美解
+                //  寻找完美解
                 if(inList2.size()>0){
-                    Set<String> set3 = new HashSet<>(batchItemList);
-                    if(set3.size() < 10){
-                        System.out.println("size 有问题");
-                    }
-
+                    // boolean是基本数据类型  Boolean是它的封装类
+                    Boolean flagPerfect = false;
                     for (int j = 0; j < inList2.size(); j++) {
-                        // 此处不应该校验  直接使用in将out替换掉了
+
                         b = true;
 
                         // 删除out解，添加in解
@@ -2784,30 +2772,23 @@ public class ADIController7 {
                                 //需加一层判断  in解不能已存在ori中 否则将出现size=9的情况
                                 if(!batchItemList.contains(inList2.get(j))){
                                     batchItemList.set(k,inList2.get(j));
+                                    flagPerfect= true;
                                     break;
                                 }
                             }
                         }
-                        // 输出
-                        //System.out.println("已找到符合要求的解，现退出循环,目前的解集为："+batchItemList.toString());
-                        //判断batchItemList的size arrayList转set
-                        Set<String> set = new HashSet<>(batchItemList);
-                        if(set.size() < 10){
-                            System.out.println("size 有问题");
+                        // 这个break 有意思
+                        if(flagPerfect){
+                            break;
                         }
-                        break;
-
                     }
                     if (b){
                         break;
                     }
-                    //判断batchItemList的size arrayList转set
-                    Set<String> set = new HashSet<>(batchItemList);
-                    if(set.size() < 10){
-                        System.out.println("size 有问题");
-                    }
+
                 }else{
                     // 寻找替补解   替补解虽会导致一定程度的属性比例轻微变化，但一定能保证比例不失衡 大概率不会跑到这个流程分支来
+                    ArrayList<String> inList = jdbcUtils.selectBySql(sql);
                     for (int j = 0; j < inList.size(); j++) {
 
                         //内存地址问题
@@ -2821,35 +2802,20 @@ public class ADIController7 {
                             // 删除out解，添加in解
                             for (int k = 0; k < batchItemList.size(); k++) {
                                 if (batchItemList.get(k).equals(outList.get(i))){
-
                                     batchItemList.set(k,inList.get(j));
                                     break;
-
                                 }
                             }
-                            // 输出
-                            //System.out.println("已找到符合要求的解，现退出循环,目前的解集为："+batchItemList.toString());
                             break;
                         }
                     }
                     if (b){
                         break;
                     }
-                    //判断batchItemList的size arrayList转set
-                    Set<String> set = new HashSet<>(batchItemList);
-                    if(set.size() < 10){
-                        System.out.println("size 有问题");
-                    }
                 }
 
             }
 
-            //System.out.println("校验后的集合:"+batchItemList.toString());
-            //判断batchItemList的size arrayList转set
-            Set<String> set = new HashSet<>(batchItemList);
-            if(set.size() < 10){
-                System.out.println("size 有问题");
-            }
 
         return batchItemList;
 
