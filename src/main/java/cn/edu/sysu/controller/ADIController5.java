@@ -8,7 +8,6 @@ import cn.edu.sysu.utils.KLUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
-import scala.Function4;
 
 import java.sql.SQLException;
 import java.util.*;

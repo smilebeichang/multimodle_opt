@@ -1,6 +1,6 @@
 package cn.edu.sysu.utils;
 
-import jeasy.analysis.MMAnalyzer;
+
 import org.junit.Test;
 
 

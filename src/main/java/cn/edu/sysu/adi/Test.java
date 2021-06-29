@@ -1,6 +1,9 @@
 package cn.edu.sysu.adi;
 
 import cn.edu.sysu.controller.ADIController;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 
 import java.sql.SQLException;
 import java.util.*;
@@ -11,6 +14,9 @@ import java.util.*;
  */
 public class Test {
 
+    //LogFactory.getLog   Logger.getLogger
+    private static Log logger = LogFactory.getLog(Test.class);
+
     @org.junit.Test
     public void hashCode2(){
         ArrayList<String> bachItemList = new ArrayList<String>(){
@@ -20,12 +26,13 @@ public class Test {
             }
         };
         ArrayList<String> tmp = new ArrayList<>();
-        System.out.println(tmp.hashCode());
-        System.out.println(bachItemList.hashCode());
+        //System.out.println(tmp.hashCode());
+        //System.out.println(bachItemList.hashCode());
         for (int i = bachItemList.size(); i > 0; i--) {
             tmp.add(bachItemList.get(i-1));
         }
-        System.out.println(tmp.hashCode());
+        //System.out.println(tmp.hashCode());
+        logger.info(tmp.hashCode());
 
 
 
