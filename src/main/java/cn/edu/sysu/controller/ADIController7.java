@@ -598,15 +598,14 @@ public class ADIController7 {
 
     /**
      * 交叉  此处不涉及适应度
-     * 交叉的单位:  试题
-     * 交叉的结果： 长度,题型,属性比例 进一步用修补算子进行修补
+     *      ①交叉的单位:  试题
+     *      ②交叉的结果： 长度,题型,属性比例 进一步用修补算子进行修补
+     *
      *          random.nextInt(100)  指生成一个介于[0,n)的int值
-     *          选择和轮盘赌：择优录取+多样式减低
+     *          选择（轮盘赌）：择优录取+多样式减低
      *          交叉+变异：增加多样性(外部作用)
      */
     private void crossCover(Papers papers,int k ) throws SQLException {
-
-        //System.out.println("================== cross ==================");
 
         //  单点交叉(只保留交叉一个个体)
         int point = paperGenetic[1].length;
@@ -623,7 +622,7 @@ public class ADIController7 {
                     temp[j] = paperGenetic[k+1][j];
                 }
                 // 放在内存执行,每执行一次pc 则校验一次
-                //对tmp进行排序,
+                // 对tmp进行排序
                 paperGenetic[k] = sortPatch(temp);
                 // 此处需要校验属性和类型
                 // 交叉和变异各执行一次全方面校验，可能就是这个原因导致的多样性如此之高，适应度无法得到充分保证
@@ -654,19 +653,19 @@ public class ADIController7 {
 
         // 长度校验
         correctLength(i);
-        if((new HashSet<>(Arrays.asList(paperGenetic[1]))).size()<10){
+        if((new HashSet<>(Arrays.asList(paperGenetic[i]))).size()<10){
             System.out.println("size 不符合");
         }
 
         // 题型比例校验  题型比例过多的情况:[1, 1, 1, 7, 23, 29, 115, 148, 256, 281]
         correctType(i);
-        if((new HashSet<>(Arrays.asList(paperGenetic[1]))).size()<10){
+        if((new HashSet<>(Arrays.asList(paperGenetic[i]))).size()<10){
             System.out.println("size 不符合");
         }
 
-        // 属性比例校验  校验完后居然出现大面试相似 找点症状了  yeah
+        // 属性比例校验
         correctAttribute(i);
-        if((new HashSet<>(Arrays.asList(paperGenetic[1]))).size()<10){
+        if((new HashSet<>(Arrays.asList(paperGenetic[i]))).size()<10){
             System.out.println("size 不符合");
         }
 
@@ -748,7 +747,7 @@ public class ADIController7 {
      * 选择: 以适应度为导向,轮盘赌为策略，适者生存和多样性的权衡
      *
      *     ①计算适应度：以试卷为单位，min*exp^1
-     *     ②paperGenetic=newPaperGenetic;
+     *     ②轮盘赌进行筛选 paperGenetic=newPaperGenetic;
      *
      * 将适应度值打印出来看一下，方便后续比较
      *      打印的位置在哪里：①一进来就打印  可能变异矫正后,已经不是教优解了。
@@ -778,10 +777,9 @@ public class ADIController7 {
         for (int i = 0; i < paperSize; i++) {
             fitPie[i] = accumulate + fitPro[i];
             accumulate += fitPro[i];
-            //System.out.println("试卷"+ i+"占目前总试卷的适应度累加百分比： "+fitPie[i]);
         }
 
-        //累加的概率为1   数组下标从0开始
+        //累加的概率为1 数组下标从0开始
         fitPie[paperSize-1] = 1;
 
         //初始化容器 随机生成的random概率值
@@ -817,8 +815,6 @@ public class ADIController7 {
         //重新赋值种群的编码
         paperGenetic=newPaperGenetic;
 
-
-
     }
 
     /**
@@ -853,7 +849,7 @@ public class ADIController7 {
      */
     private double[] getFitness(int paperSize){
 
-        log.info("适应值 log4j");
+        //log.info("适应值 log4j");
 
         // 所有试卷的适应度总和
         double fitSum = 0.0;
@@ -1702,20 +1698,19 @@ public class ADIController7 {
     private void correctLength(int w) throws SQLException {
 
 
-        //去重操作
+        //去重操作  (id:type:attributes:adi1_r:adi2_r:adi3_r:adi4_r:adi5_r)
         HashSet<String> setBegin = new HashSet<>(Arrays.asList(paperGenetic[w]));
 
 
         if (setBegin.size() == 10){
 
-            System.out.println("第 "+w+" 题, 交叉/变异后,size正常");
+            //System.out.println("第 "+w+" 题, 交叉/变异后,size正常");
 
         }else{
 
-            System.out.println("第 "+w+" 题, 交叉/变异导致size不匹配：开始进行长度修补 ");
+            //System.out.println("第 "+w+" 题, 交叉/变异导致size不匹配：开始进行长度修补 ");
 
-            HashSet<String> setEnd = new HashSet<>();
-
+            //只考虑下限影响范围是什么？
             double typeLower1 = 0.1;
             double typeLower2 = 0.2;
 
@@ -1752,7 +1747,8 @@ public class ADIController7 {
             double typeShortRation  =  typeShort/10.0;
             double typeCompreRation =  typeCompre/10.0;
 
-            setEnd.addAll(setBegin);
+            //setEnd.addAll(setBegin);
+            HashSet<String> setEnd = new HashSet<>(setBegin);
 
             //选择题
             while(typeChoseRation<typeLower2 && setEnd.size() != 10){
@@ -1892,7 +1888,7 @@ public class ADIController7 {
         //********  3.3 outLess无  outMore有值   **********
         if(outMore.size()>0 && outLess.size()==0){
 
-            //bachItemList = correctAttributeMore(outMore,jdbcUtils,bachItemList,af1,af2,af3,af4,af5);
+            bachItemList = correctAttributeMore(outMore,jdbcUtils,bachItemList,af1,af2,af3,af4,af5);
 
         }
 
@@ -1912,7 +1908,12 @@ public class ADIController7 {
     }
 
 
-    public Set<String> getOutMoreType(ArrayList<String> batchItemList,int tf1,int tf2,int tf3,int tf4){
+    /**
+     * 根据4个tf指标信息，得出outMore解
+     *    集合取并集 多了|少了，本质一样（替换前需校验题型比例是否符合要求），不需要做特殊处理
+     *
+     */
+    private Set<String> getOutMoreType(ArrayList<String> batchItemList, int tf1, int tf2, int tf3, int tf4){
 
         Set<String> outMore = new HashSet<>();
 
@@ -1954,12 +1955,6 @@ public class ADIController7 {
                     }
                 }
             }
-
-            //集合取并集   多了|少了 本质是一样的，不需要做特殊处理
-            //多了，替换时需校验题型比例是否符合要求
-            //少了，替换时需校验题型比例是否符合要求
-            //System.out.println("题型比例过多：" + outMore);
-
         }
         return outMore;
 
@@ -2019,8 +2014,8 @@ public class ADIController7 {
 
     /**
      * 题型校验(前提是不会破坏长度)
-     *      每次校验完成后，进行交叉变异，typeFlag很大概率会再次失衡
-     *      保证每次迭代过程中题型比例适当
+     *      每次校验完成后，下一次的交叉变异，typeFlag很大概率会再次失衡
+     *      无需保证迭代过程中实时的维持一致性，保证每次迭代的选取时题型比例适当即可，即最终一致性
      *
      *
      *
@@ -2028,8 +2023,8 @@ public class ADIController7 {
      *      目标：将in解替换out解
      *      方法：去题库中搜索，取出新解集后，循环遍历，然后重新计算是否符合要求，这样将会导致计算很冗余
      *      要求：
-     *           1.删除/新增不影响其他类型和属性比例 （修改type，但不修改attr）
-     *           2.如果找不到，则在较优解中随机选取一个用作替补解即可
+     *           1.完美解：删除/新增不影响其他类型和属性比例 （修改type）
+     *           2.替补解：如果找不到，则在较优解中随机选取一个用作替补解 （修改type,修改attr,但符合比例要求）
      *
      *      多    ①多一个  ②多N个 先遍历匹配(完美解)，若没有，则寻找替补解
      *      少    ①少一个  ②少N个 先遍历匹配(完美解)，若没有，则寻找替补解
@@ -2039,7 +2034,7 @@ public class ADIController7 {
     private void correctType(int w) throws SQLException {
 
         //==============  1.0 指标统计   ====================
-
+        // 只是转换，不会导致size上的变动
         HashSet<String> setBegin = new HashSet<>(Arrays.asList(paperGenetic[w]));
 
         String typeFlag = getTypeFlag(setBegin);
@@ -2064,8 +2059,8 @@ public class ADIController7 {
         //*****************  3.1 outLess有  outMore有值   **********
         //  outLess有  outMore 有 分别进行两次迭代    迭代过程中需实时更新比例信息
         //  outMore 校验其他类型不要多  outLess 正常校验
-        if(outMore.size()>0 && outLess.size()>0  && false){
-            batchItemList = correctTypeMoreAndLess(outMore,outLess,jdbcUtils,batchItemList,tf1,tf2,tf3,tf4);
+        if(outMore.size()>0 && outLess.size()>0 ){
+            //batchItemList = correctTypeMoreAndLess(outMore,outLess,jdbcUtils,batchItemList,tf1,tf2,tf3,tf4);
         }
 
         //************** 3.2 outLess有  outMore无值   **************
@@ -2428,6 +2423,7 @@ public class ADIController7 {
             List<String> outList = new ArrayList<>(outLess);
 
             Boolean b = false;
+            // 使用out做外层循环,同时寻找完美解和替补解
             for (int i = 0; i < outList.size(); i++) {
 
                 // 校验题型的时候，不破坏原有题目的属性信息   本身是一个矫正因子,是根本
@@ -2438,47 +2434,51 @@ public class ADIController7 {
                 String p5 = " and p5 = " + outList.get(i).split(":")[2].split(",")[4].substring(0,1) + " ) ";
 
                 // 获取完全吻合的解  题型+属性
-                String sqlperfect = sql + (p1 + p2 + p3 + p4 + p5);
+                String sqlPerfect = sql + (p1 + p2 + p3 + p4 + p5);
                 // FIXME 最好通过sql去打乱顺序inList2
-                ArrayList<String> inList2 = jdbcUtils.selectBySql(sqlperfect);
+                ArrayList<String> inList2 = jdbcUtils.selectBySql(sqlPerfect);
 
                 // 寻找完美解
                 if(inList2.size()>0){
 
                     // 循环的意义是什么呢？  逻辑没问题，但需要优化，省去不必要的部分for if
                     // ori外层 in内层，这样可以保证替换的解随机性  如果in一开始顺序就乱了，那么可以互换 嵌套本就可以互换，顶多性能上差异
-                    // 当需要嵌套循环时 外层循环越小 性能越好，两种都很小
+                    // 当需要嵌套循环时 外层循环越小 性能越好，目前两种都很小
 
                     Boolean flagPerfect = false;
                     for (int j = 0; j < inList2.size(); j++) {
                         b = true;
 
-                        // 删除out解，添加in解
+                        // 删除out解，添加in解   保证in解和ori解的不重复
                         for (int k = 0; k < batchItemList.size(); k++) {
                             if (batchItemList.get(k).equals(outList.get(i))){
                                 if(!batchItemList.contains(inList2.get(j))){
                                     batchItemList.set(k,inList2.get(j));
                                     flagPerfect = true;
+                                    //退出batchItemList替换过程
                                     break;
                                 }
                             }
                         }
-                        // 这个break 有意思
+                        // 退出inList2循环
                         if(flagPerfect){
                             break;
                         }
-
                     }
-                    if (b){
+                    // 使用flagPerfect判断是否继续寻找完美解，退出outList循环
+                    // 只替换一次 outList吗?  ①目前只替换一次，除非动态更新4个题型flag以及outList  ②动态更新的好处在于可以一次性将属性校验完成
+                    if (flagPerfect){
+                        System.out.println("完美解找到,退出less题型校验");
                         break;
                     }
 
                 }else{
-                    // 寻找替补解   替补解虽会导致一定程度的属性比例轻微变化，但一定能保证比例不失衡 大概率不会跑到这个流程分支来
+                    // 寻找替补解   替补解虽会导致一定程度的属性比例轻微变化，但能保证最终的比例不失衡 大概率不会跑到这个流程分支来
                     //  SQL 均用or,影响范围:使得inList解集变多
                     //  CHOSE FILL SHORT COMPREHENSIVE
                     ArrayList<String> inList = jdbcUtils.selectBySql(sql);
 
+                    Boolean flagAlternate = false;
                     for (int j = 0; j < inList.size(); j++) {
 
                         //内存地址问题
@@ -2489,17 +2489,31 @@ public class ADIController7 {
                         b = typeCheck(tmp,outList.get(i),inList.get(j));
 
                         if(b){
-                            // 删除out解，添加in解
+                            // 删除out解，添加in解   这里需要保证in解不在ori解中
                             for (int k = 0; k < batchItemList.size(); k++) {
                                 if (batchItemList.get(k).equals(outList.get(i))){
-                                    batchItemList.set(k,inList.get(j));
-                                    break;
+                                    //batchItemList.set(k,inList.get(j));
+                                    //break;
+
+                                    if(!batchItemList.contains(inList.get(j))){
+                                        batchItemList.set(k,inList.get(j));
+                                        flagAlternate = true;
+                                        // 退出batchItemList循环
+                                        break;
+                                    }
+
                                 }
                             }
-                            break;
+                            // break 保证里面的第一层循环没找解的情况下，可以进行第二层inList的寻找
+                            // 退出inList循环
+                            if(flagAlternate){
+                                break;
+                            }
                         }
                     }
-                    if (b){
+                    // 使用flagAlternate来做判断是否退出继续寻找替补解，退出outList循环  目前也只寻找了一个outList
+                    // FIXME  需动态更新4个人typeFlag 和 outList
+                    if (flagAlternate){
                         break;
                     }
                 }
@@ -2549,7 +2563,7 @@ public class ADIController7 {
                 sb.append(" p5=1 and ");
             }
 
-            //获取新解的集合
+            //获取新解的集合  out解不确定，故此处不加题型判断,
             String sql = sb.toString().substring(0, sb.toString().length() - 4);
             ArrayList<String> inList = jdbcUtils.selectBySql(sql);
 
@@ -2559,14 +2573,15 @@ public class ADIController7 {
 
 
             Boolean b = false;
+            Boolean flagAlternate = false;
             for (int i = 0; i < outList.size(); i++) {
 
                 // inList 按照type排序  解决方法: String.contain()
                 String type = outList.get(i).split(":")[1];
-                //System.out.println("type:"+type);
+                //是否需要将 inListRe进行进一步过滤，使其不改变type
                 ArrayList<String> inListRe = rearrange(type, inList);
 
-                // 寻找完美解
+                // 寻找完美解（type可能发生变化，attr完美）
                 for (int j = 0; j < inListRe.size(); j++) {
                     //ArrayList<String> tmp = bachItemList;
                     ArrayList<String> tmp = new ArrayList<>();
@@ -2579,31 +2594,36 @@ public class ADIController7 {
                     b = propCheck(tmp,outList.get(i),inListRe.get(j));
 
                     if(b){
-                        // 删除out解，添加in解
+                        // 删除out解，添加in解  此处进行in和ori关系的判断，避免size=9
                         for (int k = 0; k < bachItemList.size(); k++) {
                             if (bachItemList.get(k).equals(outList.get(i))){
-                                bachItemList.set(k,inListRe.get(j));
-                            // 输出 新增break中断操作
-                            break;
+                                //bachItemList.set(k,inListRe.get(j));
+                                // 输出 新增break中断操作
+                                //break;
+
+                                if(!bachItemList.contains(inListRe.get(j))){
+                                    bachItemList.set(k,inListRe.get(j));
+                                    flagAlternate = true;
+                                    // 退出batchItemList循环
+                                    break;
+                                }
                             }
                         }
-                        break;
+                        //退出inListRe
+                        if(flagAlternate){
+                            break;
+                        }
+
                     }
                 }
-                if (b){
+                //退出outList
+                if (flagAlternate){
                     break;
                 }
-                //    arrayList 转 数组
-                String[] itemArray = new String[bachItemList.size()];
-                for (int p = 0; p < bachItemList.size(); p++) {
-                    itemArray[p] = bachItemList.get(p);
-                }
-                sortPatch(itemArray);
-                System.out.println("上述为寻找完美解的过程");
             }
 
             //替补解 最好完全互补替代 type attribute
-            if(!b) {
+            if(!flagAlternate) {
                 //遍历out解 需考虑终止条件
                 for (int i = 0; i < outList.size(); i++) {
 
@@ -2663,40 +2683,42 @@ public class ADIController7 {
                         ArrayList<String> arrayList = jdbcUtils.selectBySql(sqlFinally);
 
                         if(arrayList.size()>0){
+                            for (int j = 0; j < arrayList.size(); j++) {
+                                // 删除out解，添加in解  是这一步导致数据重复的吗？
+                                for (int k = 0; k < bachItemList.size(); k++) {
+                                    if (bachItemList.get(k).equals(outList.get(i))){
+                                        //bachItemList.set(k,arrayList.get(0));
+                                        //break;
 
-                            //System.out.println("out解："+outList.get(i));
-                            //System.out.println("in解："+arrayList.get(0));
+                                        if(!bachItemList.contains(arrayList.get(j))){
+                                            bachItemList.set(k,arrayList.get(j));
+                                            flagAlternate = true;
+                                            // 退出batchItemList循环
+                                            break;
+                                        }
 
-                            // 删除out解，添加in解  是这一步导致数据重复的吗？
-                            for (int k = 0; k < bachItemList.size(); k++) {
-                                if (bachItemList.get(k).equals(outList.get(i))){
-                                    bachItemList.set(k,arrayList.get(0));
+                                    }
+                                }
+                                //退出arrayList
+                                if(flagAlternate){
                                     break;
                                 }
                             }
-
-                            //System.out.println("找到合适解,退出循环");
-                            b = true;
-                            break;
-                        }
-                    }
-                    if(b){
+                            // 退出lessFinally
+                            if(flagAlternate){
+                                break;
+                            }
+                        }  // if(arrayList.size()>0)
+                    }  // lessFinally
+                    // 退出outList
+                    if(flagAlternate){
                         break;
                     }
-                    //    arrayList 转 数组
-                    String[] itemArray = new String[bachItemList.size()];
-                    for (int p = 0; p < bachItemList.size(); p++) {
-                        itemArray[p] = bachItemList.get(p);
-                    }
-                    sortPatch(itemArray);
-                    System.out.println("上述为寻找替补解的过程");
-                }
-            }
+                } // outList.size()
+            } // !flagAlternate
 
             //System.out.println("校验后的集合:"+bachItemList.toString());
-
             return  bachItemList;
-
 
     }
 
@@ -2831,7 +2853,7 @@ public class ADIController7 {
             System.out.println("本套试卷 属性比例过高的情况。");
             //System.out.println(outMore);
 
-            //SQL 均用交集没影响  需进一步校验
+            //SQL 均用交集没影响  效率更高
             StringBuilder sb = new StringBuilder();
             if(af1>0){
                 sb.append(" p1=0 and ");
@@ -2869,9 +2891,9 @@ public class ADIController7 {
 
             // ori解集 - out解 + in解 = 新解(拿新解去再次校验)
             List<String> outList = new ArrayList<>(outMore);
-            //System.out.println("校验前的集合:"+bachItemList.toString());
 
             Boolean b = false;
+            Boolean flagAlternate = false;
             for (int i = 0; i < outList.size(); i++) {
 
                 // inList 按照type排序 解决方法: ①String.contain()
@@ -2895,23 +2917,33 @@ public class ADIController7 {
                         // 删除out解，添加in解  需要注意
                         for (int k = 0; k < bachItemList.size(); k++) {
                             if (bachItemList.get(k).equals(outList.get(i))){
-                                bachItemList.set(k,inListRe.get(j));
-                                break;
+                                //bachItemList.set(k,inListRe.get(j));
+                                //break;
+
+                                //进行验证后替换
+                                if(!bachItemList.contains(inListRe.get(j))){
+                                    bachItemList.set(k,inListRe.get(j));
+                                    flagAlternate = true;
+                                    // 退出batchItemList循环
+                                    break;
+                                }
                             }
                         }
-                        // 输出
-                        //System.out.println("已找到符合要求的解，现退出循环,目前的解集为："+bachItemList.toString());
-                        break;
+                        //退出inListRe
+                        if(flagAlternate){
+                            break;
+                        }
                     }
                 }
-                if (b){
+                //退出outList
+                if (flagAlternate){
                     break;
                 }
 
             }
 
             //如果没能找到合适的解,则择优录取  完全互补替代 type attribute
-            if(!b) {
+            if(!flagAlternate) {
                 //遍历out解 需考虑终止条件
                 for (int i = 0; i < outList.size(); i++) {
 
@@ -2968,24 +3000,39 @@ public class ADIController7 {
 
                         if(arrayList.size()>0){
 
-                            //System.out.println("out解："+outList.get(i));
-                            //System.out.println("in解："+arrayList.get(0));
+                           // 修改部分
+                            for (int j = 0; j < arrayList.size(); j++) {
+                                // 删除out解，添加in解  是这一步导致数据重复的吗？
+                                for (int k = 0; k < bachItemList.size(); k++) {
+                                    if (bachItemList.get(k).equals(outList.get(i))){
+                                        //bachItemList.set(k,arrayList.get(0));
+                                        //break;
 
-                            // 删除out解，添加in解  需要注意
-                            outList.set(i,arrayList.get(0));
+                                        if(!bachItemList.contains(arrayList.get(j))){
+                                            bachItemList.set(k,arrayList.get(j));
+                                            flagAlternate = true;
+                                            // 退出batchItemList循环
+                                            break;
+                                        }
 
-                            //System.out.println("找到合适解,退出循环");
-                            b = true;
-                            break;
-                        }else {
-                            //System.out.println("未找到合适解,继续递归查找");
-                        }
-                    }
-                    if(b){
+                                    }
+                                }
+                                //退出arrayList
+                                if(flagAlternate){
+                                    break;
+                                }
+                            }
+                            // 退出moreFinally
+                            if(flagAlternate){
+                                break;
+                            }
+                        } // if(arrayList.size()>0)?
+                    }  // moreFinally
+                    if(flagAlternate){
                         break;
                     }
-                }
-            }
+                } // outList.size()
+            }  // !flagAlternate
 
             //System.out.println("校验后的集合:"+bachItemList.toString());
             return bachItemList;
@@ -3543,6 +3590,7 @@ public class ADIController7 {
     }
 
     private String getTypeFlag(HashSet<String> itemSet){
+
         //题型数量
         int typeChose = 0;
         int typeFill = 0;
@@ -3565,7 +3613,6 @@ public class ADIController7 {
             }
         }
 
-        //System.out.println("目前题型数量情况： typeChose:" + typeChose + " typeFill:" + typeFill + " typeShort:" + typeShort + " typeCompre:" + typeCompre);
 
         //题型比例
         double typeChoseRation = typeChose / 10.0;
@@ -3611,7 +3658,7 @@ public class ADIController7 {
         }
 
         String typeFlag =  tf1 + "," + tf2 + "," + tf3 + "," + tf4 ;
-        //System.out.println("目前题型占比情况： typeFlag:" + typeFlag);
+        //System.out.println("目前题型占比情况： typeFlag:" + typeFlag)
         return typeFlag;
     }
 
