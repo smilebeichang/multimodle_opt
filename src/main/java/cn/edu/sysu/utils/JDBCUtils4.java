@@ -215,11 +215,11 @@ public class JDBCUtils4 {
                 int id = rs.getInt("id");
                 String type = rs.getString("type");
                 String pattern = rs.getString("pattern");
-                double adi1_r = rs.getDouble("adi1_r");
-                double adi2_r = rs.getDouble("adi2_r");
-                double adi3_r = rs.getDouble("adi3_r");
-                double adi4_r = rs.getDouble("adi4_r");
-                double adi5_r = rs.getDouble("adi5_r");
+                double adi1_r = numbCohesion(rs.getDouble("adi1_r"));
+                double adi2_r = numbCohesion(rs.getDouble("adi2_r"));
+                double adi3_r = numbCohesion(rs.getDouble("adi3_r"));
+                double adi4_r = numbCohesion(rs.getDouble("adi4_r"));
+                double adi5_r = numbCohesion(rs.getDouble("adi5_r"));
 
                 list.add(id+":"+type+":"+pattern+":"+adi1_r+":"+adi2_r+":"+adi3_r+":"+adi4_r+":"+adi5_r);
             }
@@ -238,6 +238,16 @@ public class JDBCUtils4 {
         }
         //System.out.println();
         return list;
+    }
+
+    /**
+     * 格式转换工具
+     */
+    public Double numbCohesion(Double adi){
+
+
+        return Double.valueOf(String.format("%.4f", adi));
+
     }
 
 

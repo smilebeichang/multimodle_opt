@@ -36,8 +36,8 @@ public class ADIController6 {
     private static ArrayList<String> bankList = new ArrayList();
 
 
-    /* 100套试卷 10道题  */
-    private static String[][] paperGenetic =new String[100][10];
+    /* 200套试卷 15道题  */
+    private static String[][] paperGenetic =new String[200][15];
 
 
     private  JDBCUtils4 jdbcUtils = new JDBCUtils4();

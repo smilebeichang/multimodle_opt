@@ -1079,6 +1079,12 @@ public class ADIController7 {
     }
 
 
+    @Test
+    public void test(){
+        System.out.println(numbCohesion(1000.00));
+        System.out.println(numbCohesion(1000.99999));
+        System.out.println(numbCohesion(1000.0104578));
+    }
 
     /**
      * 格式转换工具

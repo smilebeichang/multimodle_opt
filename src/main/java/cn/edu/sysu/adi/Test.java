@@ -14,6 +14,49 @@ import java.util.*;
  */
 public class Test {
 
+    @org.junit.Test
+    public void e(){
+        int x = 5; //次方数
+        double e = Math.E;//自然常数e的近似值
+        System.out.println("e^="+e);//输出结果
+        double d = Math.pow(e, x);//e^x
+        System.out.println("e^"+x+"="+d);//输出结果
+
+
+        //输出结果
+        double f = Math.pow(e, -2);
+        System.out.println("e^"+-2+"="+f);
+        double g = Math.pow(e, 2);
+        System.out.println("e^"+-2+"="+1/g);
+
+    }
+
+    @org.junit.Test
+    public  void sin(){
+
+        double degrees = 45.0;
+        //将角度转换为弧度
+        double radians = Math.toRadians(degrees);
+
+        System.out.format("pi 的值为 %.4f%n", Math.PI);
+        System.out.format("%.1f 度的正弦值为 %.4f%n", degrees, Math.sin(radians));
+        System.out.format("%.1f 度的余弦值为 %.4f%n", degrees, Math.cos(radians));
+        System.out.format("%.1f 度的正切值是 %.4f%n", degrees, Math.tan(radians));
+
+
+        double degrees2 = 30.0;
+        //将角度转换为弧度
+        double radians2 = Math.toRadians(degrees2);
+
+        System.out.format("pi 的值为 %.4f%n", Math.PI);
+        System.out.format("%.1f 度的正弦值为 %.4f%n", degrees, Math.sin(radians2));
+        System.out.format("%.1f 度的余弦值为 %.4f%n", degrees, Math.cos(radians2));
+        System.out.format("%.1f 度的正切值是 %.4f%n", degrees, Math.tan(radians2));
+
+
+    }
+
+
     //LogFactory.getLog   Logger.getLogger
     private static Log logger = LogFactory.getLog(Test.class);
 

@@ -117,7 +117,7 @@ public class Niche3 {
 
     private JDBCUtils4 jdbcUtils = new JDBCUtils4();
 
-    /* 100套试卷 10道题  */
+    /* 200套试卷 15道题  */
     private static String[][] paperGenetic =new String[100][10];
 
     /** 确定性拥挤算法 deterministic crowding */
@@ -166,11 +166,12 @@ public class Niche3 {
         //父代变异产生新个体c1
         ArrayList<String[]> cList = mutate(paperGenetic[i]);
 
-        //为c1从当前种群中随机选取c*w个体  4个小生境  10元锦标赛
-        //是否是10元锦标赛过大，待后续优化
+        //为c1从当前种群中随机选取c*w个体  5个小生境  4*5元锦标赛
+        //是否是20元锦标赛过大，待后续优化
+        // Map<Integer, String[]>  key是paperGenetic的索引，value是基因型
         ArrayList<Map<Integer, String[]>[]> cwList = championship();
 
-        //替换
+        //替换 or 保留
         int similarPhenIndex = closestResemble(cList, cwList);
 
         ArrayList<Object> result = new ArrayList<>(2);
@@ -211,6 +212,9 @@ public class Niche3 {
     /**
      * 如果f(c1)>f(d1),则用c1替换d1,否则保留d1;
      * 如果f(c2)>f(d2),则用c2替换d2,否则保留d2;
+     *      老师是让我换成基因型吗？为了多样性？还是为了和校验保持一致？
+     *      如果替换表现型相似的个体，其后期跳出循环的可能性不大
+     *      如果替换基因型相似的个体，其是否能维持多样性？ 待确认
      *
      */
     private int closestResemble(ArrayList<String[]> cList, ArrayList<Map<Integer, String[]>[]> cwList) {
@@ -258,12 +262,11 @@ public class Niche3 {
 
 
     /**
-     * 在cw1中寻找c1的近似解  4个小生境  10元锦标赛  c1是一套试卷  cw1是c*w套试卷
+     * 在cw1中寻找c1的近似解  5个小生境  4*5元锦标赛  c1是一套试卷  cw1是c*w套试卷
      * 根据adi来找出最相似的值 返回索引，替换全局基因
      *
-     * 替换的是minPhen,属性校验的也应该是minPhen
-     * 解决方案：①将minPhen返回，ADI层进行修补
-     *         为了节省内存开销，采取第一种方案
+     * 替换的是索引i,属性校验的也应该是i
+     * 解决方案：①将i返回，ADI层进行修补 为了节省内存开销
      *
      */
     private int similarPhen(String[] c1, Map<Integer, String[]>[] cw1) {
@@ -273,6 +276,7 @@ public class Niche3 {
         int minPhen = 0;
 
         //外层C小生境数，内层W元锦标赛
+        //FIXME 考虑一下，窗口大小究竟是 4*5 还是 4
         for (Map<Integer, String[]> aCw11 : cw1) {
             //cwList.get(0)[1].get(2)
             String[] itemArray;
@@ -282,7 +286,8 @@ public class Niche3 {
                     int key = (int) o;
                     itemArray = aCw11.get(key);
 
-                    //获取最相似的解 key
+                    // 获取最相似的解 key
+                    // 相似的判定标准： 基因型 or 表现型
                     double abs = Math.abs(minADI - getMinADI(itemArray));
                     if (min > abs) {
                         min = abs;
@@ -293,10 +298,10 @@ public class Niche3 {
 
         }
 
-        //System.out.println("最相似的个体为："+minPhen + paperGenetic[minPhen]);
+        System.out.println("最相似的个体为："+minPhen + paperGenetic[minPhen]);
 
-        // 替换c1 将abs放开，直接替换呢？看看是否还会导致大面积相似
-        //if (minADI - getMinADI(paperGenetic[minPhen])<0){
+        // 替换c1
+        if (minADI - getMinADI(paperGenetic[minPhen])<0){
             //判断哪个小生境环境下存在最相似的个体  contain
             boolean flag = true;
             for (Map<Integer, String[]> aCw1 : cw1) {
@@ -305,8 +310,9 @@ public class Niche3 {
                     flag = false;
                 }
             }
-        //}
-
+        }
+        // 如果 保留了原有个体，是否还需要返回索引minPhen
+        // 在本次计算过程中,因不进行校验，故没必要将索引返回
         return minPhen;
 
     }
@@ -536,13 +542,13 @@ public class Niche3 {
      *  分别为c1从当前种群中随机选取c*w个体
      *  当前种群和题库的关系
      *  题库: 310 道题
-     *  种群: 4*10<=40（存在重复+交叉变异）
+     *  种群: 4*5<=20（存在重复+交叉变异）
      *
      */
     private ArrayList<Map<Integer, String[]>[]> championship()  {
 
-        //4个小生境  10元锦标赛
-        int num = 4 ;
+        //5个小生境  4*5元锦标赛  需进一步验证  窗口大小的具体含义
+        int num = 5 ;
         Map<Integer, String[]>[] cwList1 = new HashMap[num];
 
         //基本单位:试卷。故随机生成一个下标即可 (需保存下标,方便后续替补 map(k,v))
@@ -550,13 +556,11 @@ public class Niche3 {
         for (int i = 0; i < num; i++) {
             Set<String> set1 = new HashSet<>();
             // 将个体保存为map结构
-            Map<Integer, String[]> mapc1w = new HashMap<>(10);
-            while (set1.size() != 10) {
+            Map<Integer, String[]> mapc1w = new HashMap<>(20);
+            while (set1.size() != 20) {
                 int i1 = new Random().nextInt(paperGenetic.length);
                 if (!set1.contains(":"+i1)) {
                     set1.add(":"+i1 );
-                    //String s = ArrayUtils.toString(paperGenetic[i1])+"_"+i1;
-                    //c1w.add(s);
                     mapc1w.put(i1,paperGenetic[i1]);
                 }
                 cwList1[i] = mapc1w;
@@ -565,7 +569,7 @@ public class Niche3 {
 
         ArrayList<Map<Integer, String[]>[]> cwList = new ArrayList<>(1);
         cwList.add(cwList1);
-        // 获取个体的方法:   cwList.get(0)[1].get(2)
+        // 获取个体的方法:   cwList.get(0)[1]
         return cwList;
 
     }
@@ -752,13 +756,13 @@ public class Niche3 {
     private ArrayList<String[]> mutate(String[] c1) throws SQLException {
 
         //单点交叉
-        int length = 10;
+        int length = 15;
 //      String [] c1 = p1;
 
         //c1变异
         Random random = new Random();
         int mutatePoint = random.nextInt(length-1);
-        //将Array 转 hashSet  去除重复的元素了,有效，但需向上核实为什么会重复？
+        //将Array 转 hashSet  去除重复的元素了,有效，但需向上核实为什么会重复？  交叉导致
         Set<String> set = new HashSet<>(Arrays.asList(c1));
 
         //将要变异的元素
@@ -769,7 +773,7 @@ public class Niche3 {
         //临时存储容器
         String[] c11 = new String[length];
 
-        //生成一个不存在set中的key  保证题型长度符合要求
+        //生成一个不存在set中的key  保证题型长度符合要求  其实还需要保证生成的id,题目中目前不存在
         while (set.size() != length ){
             String key = random.nextInt(310)+1+"";
             if (!(key+"").equals(removeId+"")){
