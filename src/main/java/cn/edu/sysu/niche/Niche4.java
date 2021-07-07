@@ -1,13 +1,9 @@
 package cn.edu.sysu.niche;
 
-import cn.edu.sysu.adi.TYPE;
-import cn.edu.sysu.utils.JDBCUtils4;
-import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
 
+import org.apache.log4j.Logger;
+import org.junit.Test;
 import java.io.FileNotFoundException;
-import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -36,8 +32,11 @@ import java.util.*;
  *             4. 目前的困难在哪里：
  *                  找文献，下载不了，不找了，大不了自己实现
  *                  通过适应度开始验证融合的效果
+ *                  交叉变异有一部耗时严重，需要进一步确认
  *
  * 4. 打印适应度值，绘制折线图
+ *      1.全部打印  行不通，效果无法展示            not ok
+ *      2.每隔10代全量打印一次，显示各个指标的位置   not ok
  *
  *
  *
@@ -47,7 +46,13 @@ public class Niche4 {
     /**
      * 容器
      */
-    static double[][]  paper_genetic =new double[200][10];
+    private static double[][]  paper_genetic =new double[200][10];
+    private int POPULATION_SIZE = 200;
+    private int GENE_SIZE = 10;
+    private int ITERATION_SIZE = 100;
+
+    //private static Log log = LogFactory.getLog(Niche4.class);
+    private static Logger log = Logger.getLogger(Niche4.class);
 
     /**
      *  1.稳态GA
@@ -59,18 +64,22 @@ public class Niche4 {
         init();
 
         // 迭代次数
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < ITERATION_SIZE; i++) {
 
             // 选择
             selection();
-            for (int j = 0; j < 200 - 1; j++) {
+
+            for (int j = 0; j < POPULATION_SIZE - 1; j++) {
                 // 交叉
                 crossCover(j);
+
                 // 变异
                 mutate(j);
+
                 // 精英策略
                 //elitistStrategy();
             }
+
             // 统计相似个体的数目
             if(i%10==0){
                 //countCalculations(paper_genetic);
@@ -86,34 +95,34 @@ public class Niche4 {
      */
     public  void selection( ){
 
-            System.out.println("====================== select ======================");
+            //System.out.println("====================== select ======================");
 
             //200套试卷
-            int paperSize = paper_genetic.length;
+            //int paperSize = POPULATION_SIZE;
 
             //轮盘赌 累加百分比
-            double[] fitPie = new double[paperSize];
+            double[] fitPie = new double[POPULATION_SIZE];
 
             //每套试卷的适应度占比  基因片段平均值的适应度值
-            double[] fitPro = getFitness(paperSize);
+            double[] fitPro = getFitness();
 
             //累加初始值
             double accumulate = 0;
 
             //试卷占总试卷的适应度累加百分比
-            for (int i = 0; i < paperSize; i++) {
+            for (int i = 0; i < POPULATION_SIZE; i++) {
                 fitPie[i] = accumulate + fitPro[i];
                 accumulate += fitPro[i];
             }
 
             //累加的概率为1 数组下标从0开始
-            fitPie[paperSize-1] = 1;
+            fitPie[POPULATION_SIZE-1] = 1;
 
             //初始化容器 随机生成的random概率值
-            double[] randomId = new double[paperSize];
+            double[] randomId = new double[POPULATION_SIZE];
 
             //生成随机id
-            for (int i = 0; i < paperSize; i++) {
+            for (int i = 0; i < POPULATION_SIZE; i++) {
                 randomId[i] = Math.random();
             }
 
@@ -121,18 +130,18 @@ public class Niche4 {
             Arrays.sort(randomId);
 
             //轮盘赌 越大的适应度，其叠加时增长越快，即有更大的概率被选中
-            double[][] newPaperGenetic =new double[paperSize][];
+            double[][] new_paper_genetic =new double[POPULATION_SIZE][];
             int newSelectId = 0;
-            for (int i = 0; i < paperSize; i++) {
-                while (newSelectId < paperSize && randomId[newSelectId] < fitPie[i]){
+            for (int i = 0; i < POPULATION_SIZE; i++) {
+                while (newSelectId < POPULATION_SIZE && randomId[newSelectId] < fitPie[i]){
                     //需要确保fitPie[i] 和 paperGenetic[i] 对应的i 是同一套试卷
-                    newPaperGenetic[newSelectId]   = paper_genetic[i];
+                    new_paper_genetic[newSelectId]   = paper_genetic[i];
                     newSelectId += 1;
                 }
             }
 
             //重新赋值种群的编码
-             paper_genetic=newPaperGenetic;
+            paper_genetic=new_paper_genetic;
 
     }
 
@@ -142,30 +151,29 @@ public class Niche4 {
 
     /**
      * 交叉
-     *      交叉后可能导致题目重复，解决方案：在变异后直接补全size
+     *      交叉后可能导致题目重复，解决方案：在变异后进行补全size
      *
      */
-    public static void crossCover( int k){
+    public  void crossCover( int k ){
 
-        System.out.println("=== crossCover begin ===");
-        Integer point = paper_genetic[0].length;
+        //System.out.println("=== crossCover begin ===");
 
         if (Math.random() < 0.4) {
             //单点交叉  只保留一个个体
-            double[] temp1 = new double[point];
-            int a = new Random().nextInt(point);
+            double[] temp1 = new double[GENE_SIZE];
+            int a = new Random().nextInt(GENE_SIZE);
 
             for (int j = 0; j < a; j++) {
                 temp1[j] = paper_genetic[k][j];
             }
-            for (int j = a; j < point; j++) {
+            for (int j = a; j < GENE_SIZE; j++) {
                 temp1[j] = paper_genetic[k+1][j];
             }
             paper_genetic[k] = temp1;
 
         }
 
-        System.out.println("=== crossCover end ===");
+        //System.out.println("=== crossCover end ===");
     }
 
 
@@ -174,14 +182,13 @@ public class Niche4 {
      */
     public static void mutate(int j)  {
 
-        System.out.println("=== mutate begin ===");
+        //System.out.println("=== mutate begin ===");
 
         //限制性锦标赛拥挤小生境
         ArrayList<Object> rts = new  Niche5().RTS(paper_genetic, j);
-        int similarPhenIndex = (int) rts.get(0);
         paper_genetic = (double[][]) rts.get(1);
 
-        System.out.println("=== mutate end ===");
+        //System.out.println("=== mutate end ===");
     }
 
 
@@ -261,14 +268,14 @@ public class Niche4 {
      */
     public  void  init( ) {
         System.out.println("=== init begin ===");
-        for (int i = 0; i < paper_genetic.length; i++) {
+        for (int i = 0; i < POPULATION_SIZE; i++) {
 
             // 基因容器
-            double[] testGene= new double[paper_genetic[0].length];
+            double[] testGene= new double[GENE_SIZE];
             Set<Double> set = new HashSet<>();
 
             //保证题目不重复,且满足长度约束 随机生成 基因
-            for(int j = 0; j < paper_genetic[0].length; j++){
+            for(int j = 0; j < GENE_SIZE; j++){
 
                 while (set.size() == j ){
                     double key = numbCohesion(Math.random());
@@ -300,37 +307,37 @@ public class Niche4 {
      *          为了保证x的唯一，此处选择将基因片段平均
      *
      */
-    private double[] getFitness(int paperSize){
+    private double[] getFitness(){
 
-        //log.info("适应值 log4j")
+        log.info("适应值 log4j");
 
         // 所有试卷的适应度总和
         double fitSum = 0.0;
 
         // 每套试卷的适应度值
-        double[] fitTmp = new double[paperSize];
+        double[] fitTmp = new double[POPULATION_SIZE];
 
         // 每套试卷的适应度占比
-        double[] fitPro = new double[paperSize];
+        double[] fitPro = new double[POPULATION_SIZE];
 
-        int length = paper_genetic[0].length;
+        // int length = paper_genetic[0].length;
 
         // 计算试卷的适应度值
-        for (int i = 0; i < paperSize; i++) {
+        for (int i = 0; i < POPULATION_SIZE; i++) {
 
             double sumnum = 0 ;
-            for (int i1 = 0; i1 < paper_genetic[i].length; i1++) {
+            for (int i1 = 0; i1 < GENE_SIZE; i1++) {
                 sumnum = sumnum + paper_genetic[i][i1];
             }
 
-            //个体、总和
-            fitTmp[i] = sin1(sumnum/length) ;
+            // 个体、总和
+            fitTmp[i] = sin1(sumnum/GENE_SIZE) ;
             fitSum = fitSum + fitTmp[i] ;
 
         }
 
-        //  各自的比例
-        for (int i = 0; i < paperSize; i++) {
+        // 各自的比例
+        for (int i = 0; i < POPULATION_SIZE; i++) {
             fitPro[i] = fitTmp[i] / fitSum;
         }
 
@@ -355,7 +362,7 @@ public class Niche4 {
             //System.out.format("%.1f 度的正弦值为 %.4f%n", degrees, Math.sin(radians));
             //次方
             //System.out.format("pow(%.3f, 6) 为 %.10f%n", Math.sin(radians),  Math.pow(Math.sin(radians), 6))
-            System.out.format("%f 为 %.10f%n", avgnum,  Math.pow(Math.sin(radians), 6));
+            //System.out.format("%f 为 %.10f%n", avgnum,  Math.pow(Math.sin(radians), 6));
             return Math.pow(Math.sin(radians), 6);
 //        }
 

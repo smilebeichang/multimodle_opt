@@ -116,10 +116,13 @@ import java.util.stream.Collectors;
  */
 public class Niche5 {
 
-    private JDBCUtils4 jdbcUtils = new JDBCUtils4();
+    //private JDBCUtils4 jdbcUtils = new JDBCUtils4();
 
-    /* 200套试卷 10道题  */
+    /** 200套试卷 10道题  */
     private static double[][] paperGenetic =new double[200][10];
+    private int POPULATION_SIZE = 200;
+    private int GENE_SIZE = 10;
+    private int ITERATION_SIZE = 100;
 
 
 
@@ -130,18 +133,16 @@ public class Niche5 {
      */
     public ArrayList<Object>  RTS(double[][] paperGenetictmp,int i)  {
 
-        //赋值给全局变量
+        // 赋值给全局变量
         paperGenetic = paperGenetictmp;
 
-        //父代变异产生新个体c1
+        // 父代变异产生新个体c1
         ArrayList<double[]> cList = mutate(paperGenetic[i]);
 
-        //为c1从当前种群中随机选取c*w个体  5个小生境  4*5元锦标赛
-        //是否是20元锦标赛过大，待后续优化
-        // Map<Integer, String[]>  key是paperGenetic的索引，value是基因型
+        // 为c1从当前种群中随机选取c*w个体  5个小生境  4*5元锦标赛
         ArrayList<Map<Integer, double[]>[]> cwList = championship();
 
-        //替换 or 保留
+        // 替换 or 保留
         closestResemble(cList, cwList);
 
         ArrayList<Object> result = new ArrayList<>(2);
@@ -159,9 +160,10 @@ public class Niche5 {
     /**
      * 如果f(c1)>f(d1),则用c1替换d1,否则保留d1;
      * 如果f(c2)>f(d2),则用c2替换d2,否则保留d2;
-     *      老师是让我换成基因型吗？为了多样性？还是为了和校验保持一致？
-     *      如果替换表现型相似的个体，其后期跳出循环的可能性不大
-     *      如果替换基因型相似的个体，其是否能维持多样性？ 待确认
+     *
+     *      换成基因型吗:为了多样性
+     *      替换表现型相似的个体，其后期跳出循环的可能性不大，以及逻辑上存在问题，多峰且各个峰值相等
+     *      替换基因型相似的个体，其是否能维持多样性？ 待确认
      *
      */
     private void closestResemble(ArrayList<double[]> cList, ArrayList<Map<Integer, double[]>[]> cwList) {
@@ -172,7 +174,7 @@ public class Niche5 {
         Map<Integer, double[]>[] cw1 = cwList.get(0);
 
         // 选取基因型做相似性校验
-        similarPhen(c1, cw1);
+        similarGene(c1, cw1);
 
     }
 
@@ -180,104 +182,89 @@ public class Niche5 {
 
     /**
      * 在cw1中寻找c1的近似解  5个小生境  4*5元锦标赛  c1是一套试卷  cw1是c*w套试卷
-     * FIXME 根据基因型来找出最相似的值 返回索引，替换全局基因
-     *
-     * 替换的是索引i,属性校验的也应该是i
-     * 解决方案：①将i返回，ADI层进行修补 为了节省内存开销
+     * 根据基因型来找出最相似的值
      *
      */
-    private void similarPhen(double[] c1, Map<Integer, double[]>[] cw1) {
+    private void similarGene(double[] c1, Map<Integer, double[]>[] cw1) {
 
         double max = 0;
-        // 设置为0  可能会导致0号索引的数据一直在变化
+        // 设置为0  可能会导致0号索引的数据一直在变化 解决方案：使得每次均能找到相似的个体
         int maxPhen = 0;
 
-        //外层C小生境数，内层W元锦标赛
-        //FIXME 考虑一下，窗口大小究竟是 4*5 还是 4
+        // 外层C小生境数，内层W元锦标赛
+        // FIXME 考虑一下，窗口大小究竟是 4*5 还是 4
         for (Map<Integer, double[]> aCw11 : cw1) {
-            //cwList.get(0)[1].get(2)
-            double[] itemArray;
+
+            double[] c2;
+            // 遍历map
             for (int j = 0; j < aCw11.size(); j++) {
-                //map的每个value,直接赋值给数组
                 for (Object o : aCw11.keySet()) {
                     int key = (int) o;
-                    itemArray = aCw11.get(key);
+                    c2 = aCw11.get(key);
 
-                    // 获取最相似的解 key
-                    // 相似的判定标准： 基因型   基因型的判断可能需要将改变了近似相等
-                    int sameNum = compareArrSameNum(c1, itemArray);
+                    // 获取最相似的解  相似的判定标准：基因型
+                    int sameNum = compareArrSameNum(c1, c2);
                     if (max < sameNum) {
                         max = sameNum;
                         maxPhen = key;
                     }
                 }
             }
-
         }
 
-        System.out.println("最相似的个体为："+maxPhen + paperGenetic[maxPhen]);
+        //System.out.println("相似的个数："+max +"  最相似的个体："+maxPhen );
 
 
-        // 替换c1  使用适应度函数判断
+        // 替换c1  替换判定标准：表现型|适应度
         // 计算试卷的适应度值
-
-
         double sumnum = 0 ;
         for (int i1 = 0; i1 < c1.length; i1++) {
             sumnum = sumnum + c1[i1];
         }
 
         double sumnum2 = 0 ;
-        for (int i1 = 0; i1 < paperGenetic[maxPhen].length; i1++) {
+        for (int i1 = 0; i1 < GENE_SIZE; i1++) {
             sumnum2 = sumnum2 + paperGenetic[maxPhen][i1];
         }
 
         //个体 | 最相似个体 适应度
-        double fitc1 = sin1(sumnum/c1.length) ;
-        double fitMin2 = sin1(sumnum2/paperGenetic[maxPhen].length) ;
+        double fitc1 = sin1(sumnum/GENE_SIZE) ;
+        double fitc2 = sin1(sumnum2/GENE_SIZE) ;
 
-
-        if (fitc1 > fitMin2){
+        if (fitc1 > fitc2){
             paperGenetic[maxPhen] = c1;
-
-            /*//判断哪个小生境环境下存在最相似的个体  contain
-            boolean flag = true;
-            for (Map<Integer, double[]> aCw1 : cw1) {
-                if (aCw1.get(minPhen) != null && flag) {
-                    paperGenetic[minPhen] = c1;
-                    flag = false;
-                }
-            }*/
-
         }
-        // 如果 保留了原有个体，是否还需要返回索引minPhen
-        // 在本次计算过程中,因不进行校验，故没必要将索引返回
-        //return minPhen;
 
     }
 
     /**
      *  比较2个数组中相同的个数
-     *      难点在于 可能基因型都只有一个元素不一样
+     *      难点在于 可能基因型都只有一个元素不一样  故基因型的判断可能需要将改变了近似相等
+     *      会是这里导致 速度变慢的吗？
      */
-    public  int compareArrSameNum(double [] arr,double[]arr2) {
+    private int compareArrSameNum(double[] arr, double[] arr2) {
 
-        //用于计数，后续在循环中再有说明；
+        //用于计数
         int c = 0;
         //遍历arr数组的所有元素
         for (int x = 0; x < arr.length; x++) {
             //遍历arr2数组中的所有元素
             for (int y = 0; y < arr2.length; y++) {
-                //嵌套循环
-                if (arr[x] == arr2[y]) {
-                    //计数+1，即相同元素的个数+1
+                //计数+1，即相同元素的个数+1
+                if (formatDouble(arr[x]).equals(formatDouble(arr2[y]))) {
                     c++;
                 }
-
             }
-
         }
         return  c;
+    }
+
+    /**
+     * double 格式转换，保留小数点后两位
+     */
+    public String formatDouble(double x1){
+
+        return String.format("%.2f", x1);
     }
 
     /**
@@ -294,56 +281,31 @@ public class Niche5 {
 
 
 
-
-    private void similarGene(String[] c1, ArrayList[] cw1){
-
-        HashSet c1Set = new HashSet<>(10);
-
-        //获取c1 c2 的基因型  list.add(id+":"+type+":"+attributes)
-        for (String s : c1) {
-            String id = s.split(":")[0];
-            c1Set.add(id);
-        }
-
-        //在cw1中寻找c1的近似解
-        for (int i = 0; i < cw1.length; i++) {
-
-            ArrayList cw = cw1[i];
-            HashSet<String> idSet = new HashSet<>(10);
-
-            for (int j = 0; j < cw.size(); j++) {
-                String id = cw.get(j).toString().split(":")[0];
-                idSet.add(id);
-            }
-            //计算相似性,并保存最优解  大面积出现相似性为0或者1 的情况
-            idSet.retainAll(c1Set);
-            //System.out.println("t"+i+" : "+idSet.size());
-        }
-        //System.out.println("********************");
-    }
-
     /**
      *  分别为c1从当前种群中随机选取c*w个体
      *  当前种群和题库的关系
      *  题库: 310 道题
      *  种群: 4*5<=20（存在重复+交叉变异）
      *
+     *  是否是20元锦标赛过大，待后续优化
+     *  Map<Integer, String[]>  key是paperGenetic的索引，value是基因型
+     *
      */
     private ArrayList<Map<Integer, double[]>[]> championship()  {
 
-        //5个小生境  4*5元锦标赛  需进一步验证  窗口大小的具体含义
+        // 5个小生境  4*5元锦标赛  需进一步验证  窗口大小的具体含义
         int num = 5 ;
         int window = 4 * 5;
         Map<Integer, double[]>[] cwList1 = new HashMap[num];
 
-        //基本单位:试卷。故随机生成一个下标即可 (需保存下标,方便后续替补 map(k,v))
-        //数组 map
+        // 基本单位:试卷。故随机生成一个下标即可 (需保存下标,方便后续替换 map(k,v))
+        // 数组裹map
         for (int i = 0; i < num; i++) {
             Set<String> set1 = new HashSet<>();
             // 将个体保存为map结构
             Map<Integer, double[]> mapc1w = new HashMap<>(window);
             while (set1.size() != window) {
-                int i1 = new Random().nextInt(paperGenetic.length);
+                int i1 = new Random().nextInt(POPULATION_SIZE);
                 if (!set1.contains(":"+i1)) {
                     set1.add(":"+i1 );
                     mapc1w.put(i1,paperGenetic[i1]);
@@ -365,88 +327,7 @@ public class Niche5 {
 
 
 
-    /**
-     *  即使p1/p2相同,交叉无效,但可进一步通过变异获得c1/c2个体
-     *  单点交叉 + 随机变异
-     *
-     */
-    private ArrayList<String[]> crossMutate(String[] p1, String[] p2) throws SQLException {
-        //  单点交叉
-        int length = 10;
-        int a = new Random().nextInt(length);
-        String [] c1 = new String[length];
-        String [] c2 = new String[length];
 
-        if (a >= 0) {
-            System.arraycopy(p1, 0, c1, 0, a);
-        }
-
-        if (length - a >= 0) {
-            System.arraycopy(p2, a, c1, a, length - a);
-        }
-
-        if (a >= 0) {
-            System.arraycopy(p2, 0, c2, 0, a);
-        }
-
-        if (length - a >= 0) {
-            System.arraycopy(p1, a, c2, a, length - a);
-        }
-
-        //c1变异
-        Random random = new Random();
-        int mutatePoint = random.nextInt(length-1);
-        //将Array 转 hashSet  去除重复的元素了,有效，但需向上核实为什么会重复？
-        Set<String> set = new HashSet<>(Arrays.asList(c1));
-
-        //将要变异的元素
-        String s = c1[mutatePoint];
-        set.remove(s);
-        int removeId = Integer.parseInt(s.split(":")[0]);
-
-        //试卷临时存储容器
-        String[] c11 = new String[length];
-
-        //生成一个不存在set中的key  新增不同的元素了,有效，交叉本身就会导致基因size丢失
-        while (set.size() != length ){
-            String key = random.nextInt(310)+1+"";
-            if (!(key+"").equals(removeId+"")){
-                ArrayList<String> list = jdbcUtils.selectBachItem(key);
-                set.add(list.get(0)+"");
-            }
-        }
-        set.toArray(c11);
-
-        //c2变异
-        int mutatePoint2 = random.nextInt(length-1);
-        //将Array 转 hashSet
-        Set<String> set2 = new HashSet<>(Arrays.asList(c2));
-
-        //将要变异的元素
-        String s2 = c2[mutatePoint2];
-        set2.remove(s2);
-        int removeId2 = Integer.parseInt(s2.split(":")[0]);
-
-        //试卷临时存储容器
-        String[] c21 = new String[length];
-
-        //生成一个不存在set中的key
-        while (set2.size() != length ){
-            String key = random.nextInt(310)+1+"";
-            if (!(key+"").equals(removeId2+"")){
-                ArrayList<String> list = jdbcUtils.selectBachItem(key);
-                set2.add(list.get(0)+"");
-            }
-        }
-        set2.toArray(c21);
-
-
-        ArrayList<String[]> cList = new ArrayList<>(2);
-        cList.add(c11);
-        cList.add(c21);
-        return  cList;
-
-    }
 
 
 
@@ -457,39 +338,31 @@ public class Niche5 {
      */
     private ArrayList<double[]> mutate(double[] c1)  {
 
-        //单点交叉
-        int length = 10;
-
         //c1变异
         Random random = new Random();
-        int mutatePoint = random.nextInt(length-1);
-        //将Array 转 hashSet  去除重复的元素了,有效，但需向上核实为什么会重复？  交叉导致
+        int mutatePoint = random.nextInt(GENE_SIZE-1);
+
+        //将Array 转 hashSet  去除交叉导致的重复的元素
         ArrayList<Double> arrayList = new ArrayList<>(c1.length);
             for (double anArr : c1) {
             arrayList.add(anArr);
         }
-        Set<Double> set = new HashSet<Double>(arrayList);
+        Set<Double> set = new HashSet<>(arrayList);
 
-        //将要变异的元素
+        //去除变异的元素
         double s = c1[mutatePoint];
         set.remove(s);
 
-
         //临时存储容器
-        double[] c11 = new double[length];
+        double[] c11 = new double[GENE_SIZE];
 
-        //生成key  保证题型长度符合要求
-        while (set.size() != length ){
-            //String key = random.nextInt(310)+1+"";
-            //ArrayList<String> list = jdbcUtils.selectBachItem(key);
+        //生成新的元素  保证题型长度符合要求
+        while (set.size() != GENE_SIZE ){
 
             double key = numbCohesion(Math.random());
             set.add(key);
 
         }
-        //set.toArray(c11);
-        //排序
-        //sortPatch(c11);
 
         //增强for循环 进行赋值
         int index = 0;
@@ -505,93 +378,6 @@ public class Niche5 {
 
     }
 
-
-
-
-
-
-    /**
-     *  即使p1/p2相同,交叉无效,但可进一步通过变异获得c1/c2个体
-     *  单点交叉 + 随机变异
-     *
-     */
-    private ArrayList<String[]> crossMutateDet(double[] p1, double[] p2) throws SQLException {
-        //  单点交叉
-        int length = 10;
-        int a = new Random().nextInt(length);
-        String [] c1 = new String[length];
-        String [] c2 = new String[length];
-
-        if (a >= 0) {
-            System.arraycopy(p1, 0, c1, 0, a);
-        }
-
-        if (length - a >= 0) {
-            System.arraycopy(p2, a, c1, a, length - a);
-        }
-
-        if (a >= 0) {
-            System.arraycopy(p2, 0, c2, 0, a);
-        }
-
-        if (length - a >= 0) {
-            System.arraycopy(p1, a, c2, a, length - a);
-        }
-
-        //c1变异
-        Random random = new Random();
-        int mutatePoint = random.nextInt(length-1);
-        //将Array 转 hashSet  去除重复的元素了,有效，但需向上核实为什么会重复？
-        Set<String> set = new HashSet<>(Arrays.asList(c1));
-
-        //将要变异的元素
-        String s = c1[mutatePoint];
-        set.remove(s);
-        int removeId = Integer.parseInt(s.split(":")[0]);
-
-        //试卷临时存储容器
-        String[] c11 = new String[length];
-
-        //生成一个不存在set中的key  新增不同的元素了,有效，交叉本身就会导致基因size丢失
-        while (set.size() != length ){
-            String key = random.nextInt(310)+1+"";
-            if (!(key+"").equals(removeId+"")){
-                ArrayList<String> list = jdbcUtils.selectBachItem(key);
-                set.add(list.get(0)+"");
-            }
-        }
-        set.toArray(c11);
-
-        //c2变异
-        int mutatePoint2 = random.nextInt(length-1);
-        //将Array 转 hashSet
-        Set<String> set2 = new HashSet<>(Arrays.asList(c2));
-
-        //将要变异的元素
-        String s2 = c2[mutatePoint2];
-        set2.remove(s2);
-        int removeId2 = Integer.parseInt(s2.split(":")[0]);
-
-        //试卷临时存储容器
-        String[] c21 = new String[length];
-
-        //生成一个不存在set中的key
-        while (set2.size() != length ){
-            String key = random.nextInt(310)+1+"";
-            if (!(key+"").equals(removeId2+"")){
-                ArrayList<String> list = jdbcUtils.selectBachItem(key);
-                set2.add(list.get(0)+"");
-            }
-        }
-        set2.toArray(c21);
-
-
-        ArrayList<String[]> cList = new ArrayList<>(2);
-        cList.add(c11);
-        cList.add(c21);
-        return  cList;
-
-    }
 
 
 
@@ -613,18 +399,12 @@ public class Niche5 {
      */
     public double sin1(double avgnum ){
 
-//        for (double i = 0; i < 1; i=i+0.001) {
         double degrees = 5 * 180 * avgnum;
         //将角度转换为弧度
         double radians = Math.toRadians(degrees);
-        //正弦
-        //System.out.format("%.1f 度的正弦值为 %.4f%n", degrees, Math.sin(radians));
-        //次方
-        //System.out.format("pow(%.3f, 6) 为 %.10f%n", Math.sin(radians),  Math.pow(Math.sin(radians), 6))
+
         System.out.format("%f 为 %.10f%n", avgnum,  Math.pow(Math.sin(radians), 6));
         return Math.pow(Math.sin(radians), 6);
-//        }
-
 
     }
 

@@ -14,6 +14,13 @@ import java.util.*;
  */
 public class Test {
 
+
+    @org.junit.Test
+    public void formatDouble(){
+        double x1 = 0.026;
+        System.out.println(String.format("%.2f", x1));
+    }
+
     @org.junit.Test
     public void e(){
         //次方数
