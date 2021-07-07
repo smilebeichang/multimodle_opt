@@ -16,11 +16,16 @@ public class Test {
 
     @org.junit.Test
     public void e(){
-        int x = 5; //次方数
-        double e = Math.E;//自然常数e的近似值
-        System.out.println("e^="+e);//输出结果
-        double d = Math.pow(e, x);//e^x
-        System.out.println("e^"+x+"="+d);//输出结果
+        //次方数
+        int x = 5;
+        //自然常数e的近似值
+        double e = Math.E;
+        //输出结果
+        System.out.println("e^="+e);
+        //e^x
+        double d = Math.pow(e, x);
+        //输出结果
+        System.out.println("e^"+x+"="+d);
 
 
         //输出结果
