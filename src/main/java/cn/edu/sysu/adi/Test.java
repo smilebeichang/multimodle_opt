@@ -1,6 +1,6 @@
 package cn.edu.sysu.adi;
 
-import cn.edu.sysu.controller.ADIController;
+import cn.edu.sysu.gmall_publisher.controller.ADIController;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
